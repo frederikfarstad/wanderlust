@@ -6,7 +6,7 @@ import domen from "../assets/domen.jpeg"
 function SmallTripView() {
 
     return (
-      <div className="grid grid-cols-5 bg-gradient-to-br from-yellow-500 via-red-500 to-pink-500 rounded-3xl h-[30vh]">
+      <div className="grid grid-cols-5 bg-gradient-to-br from-[#E54B4B] to-[#FFA987] rounded-3xl h-[30vh] mb-[2vh]">
         <div className="rounded-l-3xl overflow-hidden h-full w-full col-span-2">
             <img src={domen} className="h-full border-r-4 border-[#3c3c3c]"/>
         </div>
