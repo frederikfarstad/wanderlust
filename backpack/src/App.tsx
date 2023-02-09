@@ -1,25 +1,45 @@
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { SubmitButton } from "./components/Buttons";
+import { auth } from "./firebase";
 import LoginPage from "./pages/LoginPage";
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyC_LQGKZRLoWdGzyYae1MmyuokXd8djqmk",
-  authDomain: "backpacking-b6486.firebaseapp.com",
-  projectId: "backpacking-b6486",
-  storageBucket: "backpacking-b6486.appspot.com",
-  messagingSenderId: "835942085080",
-  appId: "1:835942085080:web:ada768679df6ff61ddc2ad",
-  measurementId: "G-0WLQB3GX4H",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, () => {
+      if (auth.currentUser) {
+        setLoggedIn(true);
+      } else {
+        setLoggedIn(false);
+      }
+      setLoaded(true);
+    });
+  });
+  if (!loaded)
+    return (
+      <div>
+        <p>Loading...</p>
+      </div>
+    );
   return (
     <>
-      <LoginPage />
+      {loggedIn ? (
+        <div>
+          <p>Welcome! {auth.currentUser!.uid}</p>
+          <SubmitButton
+            text="Log out"
+            submitFunction={async () => {
+              await signOut(auth);
+              return true;
+            }}
+          />
+        </div>
+      ) : (
+        <LoginPage />
+      )}
     </>
   );
 }
