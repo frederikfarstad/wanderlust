@@ -83,8 +83,11 @@ const SignupSection = (props: {
         Create a new account
       </p>
       <div>
-        <p className="text-lg font-semibold text-primary-details">E-mail</p>
+        <p className="text-lg font-semibold text-primary-details">
+          E-mail <span className="text-red-600">*</span>
+        </p>
         <input
+          required
           title="EmailInput"
           type={"text"}
           placeholder="Type e-mail..."
@@ -93,8 +96,11 @@ const SignupSection = (props: {
             setEmail(event.target.value);
           }}
         />
-        <p className="text-lg font-semibold text-primary-details">Username</p>
+        <p className="text-lg font-semibold text-primary-details">
+          Username <span className="text-red-600">*</span>
+        </p>
         <input
+          required
           title="UsernameInput"
           type={"text"}
           placeholder="Type username..."
@@ -103,8 +109,11 @@ const SignupSection = (props: {
             setUsername(event.target.value);
           }}
         />
-        <p className="text-lg font-semibold text-primary-details">Full name</p>
+        <p className="text-lg font-semibold text-primary-details">
+          Full name <span className="text-red-600">*</span>
+        </p>
         <input
+          required
           title="FullNameInput"
           type={"text"}
           placeholder="Type your full name..."
@@ -113,8 +122,11 @@ const SignupSection = (props: {
             setFullname(event.target.value);
           }}
         />
-        <p className="text-lg font-semibold text-primary-details">Password</p>
+        <p className="text-lg font-semibold text-primary-details">
+          Password <span className="text-red-600">*</span>
+        </p>
         <input
+          required
           title="PasswordInput"
           type={"password"}
           placeholder="Type password..."
@@ -124,9 +136,10 @@ const SignupSection = (props: {
           }}
         />
         <p className="text-lg font-semibold text-primary-details">
-          Repeat password
+          Repeat password <span className="text-red-600">*</span>
         </p>
         <input
+          required
           title="PasswordRepeatInput"
           type={"password"}
           placeholder="Type password again..."
@@ -135,6 +148,7 @@ const SignupSection = (props: {
             setRepeatPassword(event.target.value);
           }}
         />
+        <p className="text-red-600 text-left text-sm mt-2">* Required</p>
       </div>
       <br />
       <SubmitButton text="Sign up" submitFunction={onSignupSubmitted} />
@@ -154,9 +168,9 @@ const LoginPage = () => {
   const [selectedForm, setSelectedForm] = useState<SelectedFormType>("signup");
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-yellow-200 to-orange-500 flex-col">
-      <div className="flex flex-col items-center bg-orange-200 drop-shadow-md rounded-md">
-        <div className="bg-orange-200 flex w-full rounded-t-md justify-around">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-primary-200 to-primary-500 flex-col">
+      <div className="flex flex-col items-center bg-primary-200 drop-shadow-md rounded-md">
+        <div className="bg-inherit flex w-full rounded-t-md justify-around">
           <button
             onClick={() => {
               setSelectedForm("signup");
