@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { SubmitButton } from "../components/Buttons";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebase";
 import {
   collection,
@@ -21,7 +18,7 @@ const LoginSection = () => {
   return <></>;
 };
 
-const SignupSection = (props: {
+export const SignupSection = (props: {
   setSelectedForm: React.Dispatch<React.SetStateAction<SelectedFormType>>;
 }) => {
   const [email, setEmail] = useState<string>();
@@ -29,13 +26,13 @@ const SignupSection = (props: {
   const [fullname, setFullname] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [repeatPassword, setRepeatPassword] = useState<string>();
+  const [error, setError] = useState<string>();
   const { setSelectedForm } = props;
 
   /**
    * @returns boolean indicating success with signup
    */
   const onSignupSubmitted = async () => {
-    console.log("SignupSubmitted");
     if (
       password !== repeatPassword ||
       email === undefined ||
@@ -43,23 +40,20 @@ const SignupSection = (props: {
     )
       return false;
 
+    console.log("Input validation passed in signup");
     const collectionRef = collection(db, "User");
     const q = query(collectionRef, where("username", "==", username));
     const docs = await getDocs(q);
+    console.log("Got docs");
     if (!docs.empty) {
       //Username is already in use
       alert("Username already in use!");
       return false;
     }
-    const success = await createUserWithEmailAndPassword(
-      auth,
-      email!,
-      password!
-    )
+    const success = await createUserWithEmailAndPassword(auth, email, password)
       .then(async (userCredentials) => {
         const user = userCredentials.user;
-
-        const docRef = doc(db, "User", userCredentials.user.uid);
+        const docRef = doc(db, "User", user.uid);
         await setDoc(docRef, {
           username: username,
           fullname: fullname,
@@ -72,6 +66,7 @@ const SignupSection = (props: {
         return true;
       })
       .catch((err) => {
+        console.log(err);
         return false;
       });
     return success;
@@ -156,6 +151,11 @@ const SignupSection = (props: {
         submitFunction={onSignupSubmitted}
         title="SignupButton"
       />
+      {error !== undefined && (
+        <p className="text-red-300" title="signupErrorDisplay">
+          {error}
+        </p>
+      )}
       <a
         onClick={() => {
           setSelectedForm("login");

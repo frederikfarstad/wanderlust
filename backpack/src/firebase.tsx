@@ -1,6 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+
+import firebaseInfo from "../firebase.json";
+
+const NODE_ENV = process.env.NODE_ENV;
+const FIREBASE_AUTH_EMULATOR_HOST = `localhost:${firebaseInfo.emulators.auth.port}`;
 
 const firebaseConfig = {
   apiKey: "AIzaSyC_LQGKZRLoWdGzyYae1MmyuokXd8djqmk",
@@ -12,7 +17,27 @@ const firebaseConfig = {
   measurementId: "G-0WLQB3GX4H",
 };
 
+const testFirebaseConfig = {
+  apiKey: "fakekey",
+  projectId: "testBackpackingProject",
+};
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+const app = initializeApp(
+  NODE_ENV === "test" ? testFirebaseConfig : firebaseConfig
+);
+
+const f_db = getFirestore(app);
+const f_auth = getAuth(app);
+
+if (NODE_ENV === "test") {
+  connectFirestoreEmulator(
+    f_db,
+    "localhost",
+    firebaseInfo.emulators.firestore.port
+  );
+  connectAuthEmulator(f_auth, `http://${FIREBASE_AUTH_EMULATOR_HOST}`);
+}
+
+export const db = f_db;
+export const auth = f_auth;
