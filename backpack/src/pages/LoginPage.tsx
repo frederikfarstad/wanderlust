@@ -151,7 +151,11 @@ const SignupSection = (props: {
         <p className="text-red-600 text-left text-sm mt-2">* Required</p>
       </div>
       <br />
-      <SubmitButton text="Sign up" submitFunction={onSignupSubmitted} />
+      <SubmitButton
+        text="Sign up"
+        submitFunction={onSignupSubmitted}
+        title="SignupButton"
+      />
       <a
         onClick={() => {
           setSelectedForm("login");
