@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "set NODE_ENV=test&& vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "set NODE_ENV=test&& firebase emulators:exec \"vitest\"",
     "simpletest": "set NODE_ENV=test&& firebase emulators:exec \"vitest run\"",
-    "coverage": "vitest run --coverage"
+    "coverage": "set NODE_ENV=test&& firebase emulators:exec \"vitest run --coverage\""
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -25,6 +25,7 @@
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^3.1.0",
+    "@vitest/coverage-c8": "^0.28.4",
     "autoprefixer": "^10.4.13",
     "global-jsdom": "^8.7.0",
     "jsdom": "^21.1.0",
