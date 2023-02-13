@@ -5,7 +5,8 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import firebaseInfo from "../firebase.json";
 
 const NODE_ENV = process.env.NODE_ENV;
-const FIREBASE_AUTH_EMULATOR_HOST = `localhost:${firebaseInfo.emulators.auth.port}`;
+const IP_ADDRESS = "127.0.0.1"; //Had to set IP address to 127.0.0.1 instead of localhost because of DNS issues with firebase
+const FIREBASE_AUTH_EMULATOR_HOST = `${IP_ADDRESS}:${firebaseInfo.emulators.auth.port}`;
 
 const firebaseConfig = {
   apiKey: "AIzaSyC_LQGKZRLoWdGzyYae1MmyuokXd8djqmk",
@@ -33,7 +34,7 @@ const f_auth = getAuth(app);
 if (NODE_ENV === "test") {
   connectFirestoreEmulator(
     f_db,
-    "localhost",
+    IP_ADDRESS,
     firebaseInfo.emulators.firestore.port
   );
   connectAuthEmulator(f_auth, `http://${FIREBASE_AUTH_EMULATOR_HOST}`);

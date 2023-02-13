@@ -58,6 +58,7 @@ export const SignupSection = (props: {
           username: username,
           fullname: fullname,
           profilePic: "",
+          bio: "",
         });
         const snapshot = await getDoc(docRef);
         if (snapshot.exists()) {
