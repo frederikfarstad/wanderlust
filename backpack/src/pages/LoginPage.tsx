@@ -1,21 +1,11 @@
 import { useState } from "react";
 import { SubmitButton } from "../components/Buttons";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebase";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import { SubmitSignup } from "../utils/FirebaseUtils";
 
 type SelectedFormType = "signup" | "login";
 
 const LoginSection = () => {
-  return <></>;
+  return <div title="LoginSection"></div>;
 };
 
 export const SignupSection = (props: {
@@ -29,52 +19,18 @@ export const SignupSection = (props: {
   const [error, setError] = useState<string>();
   const { setSelectedForm } = props;
 
-  /**
-   * @returns boolean indicating success with signup
-   */
   const onSignupSubmitted = async () => {
-    if (
-      password !== repeatPassword ||
-      email === undefined ||
-      password === undefined
-    )
-      return false;
-
-    console.log("Input validation passed in signup");
-    const collectionRef = collection(db, "User");
-    const q = query(collectionRef, where("username", "==", username));
-    const docs = await getDocs(q);
-    console.log("Got docs");
-    if (!docs.empty) {
-      //Username is already in use
-      alert("Username already in use!");
-      return false;
-    }
-    const success = await createUserWithEmailAndPassword(auth, email, password)
-      .then(async (userCredentials) => {
-        const user = userCredentials.user;
-        const docRef = doc(db, "User", user.uid);
-        await setDoc(docRef, {
-          username: username,
-          fullname: fullname,
-          profilePic: "",
-          bio: "",
-        });
-        const snapshot = await getDoc(docRef);
-        if (snapshot.exists()) {
-          console.log(snapshot.id + " " + snapshot.data());
-        }
-        return true;
-      })
-      .catch((err) => {
-        console.log(err);
-        return false;
-      });
-    return success;
+    return await SubmitSignup({
+      email,
+      username,
+      fullname,
+      password,
+      repeatPassword,
+    });
   };
 
   return (
-    <div className="flex flex-col items-center p-10">
+    <div title="SignupSection" className="flex flex-col items-center p-10">
       <p className="flex-1 text-center text-3xl mb-5 text-primary-details font-semibold">
         Create a new account
       </p>
@@ -173,10 +129,14 @@ const LoginPage = () => {
   const [selectedForm, setSelectedForm] = useState<SelectedFormType>("signup");
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-primary-200 to-primary-500 flex-col">
+    <div
+      title="LoginPage"
+      className="flex justify-center items-center h-screen bg-gradient-to-br from-primary-200 to-primary-500 flex-col"
+    >
       <div className="flex flex-col items-center bg-primary-200 drop-shadow-md rounded-md">
         <div className="bg-inherit flex w-full rounded-t-md justify-around">
           <button
+            title="SignupSwitchButton"
             onClick={() => {
               setSelectedForm("signup");
             }}
@@ -189,6 +149,7 @@ const LoginPage = () => {
             Sign up
           </button>
           <button
+            title="LoginSwitchButton"
             onClick={() => {
               setSelectedForm("login");
             }}

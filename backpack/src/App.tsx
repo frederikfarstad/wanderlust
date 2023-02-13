@@ -27,7 +27,7 @@ function App() {
   return (
     <>
       {loggedIn ? (
-        <div>
+        <div title="MainAppContainer">
           <p>Welcome! {auth.currentUser!.uid}</p>
           <SubmitButton
             text="Log out"

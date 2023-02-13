@@ -20,7 +20,7 @@ const firebaseConfig = {
 
 const testFirebaseConfig = {
   apiKey: "fakekey",
-  projectId: "testBackpackingProject",
+  projectId: "backpacking-b6486",
 };
 
 // Initialize Firebase
