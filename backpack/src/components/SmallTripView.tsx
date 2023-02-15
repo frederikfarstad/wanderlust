@@ -7,15 +7,6 @@ import "../index.css"
 
 function SmallTripView(entries:[title:string, desc:string, img:string, rating:string]) {
 
-    //Rendrer stjerner basert på rating
-    const renderStars = (entries: string[]) => {
-      let stars = [];
-      for (let index = 0; index < parseInt(entries[3]); index++) {
-        stars.push(<img src={star} className="inline h-[1rem]" key={index} />);
-      }
-      return stars;
-    };
-
     return (
       <div className="border-4 border-primary-200 grid grid-cols-5 bg-gradient-to-br from-primary-600 to-primary-400 rounded-3xl mb-[2vh] h-[200px]">
         <div className="rounded-l-[1.25rem] overflow-hidden h-full w-full col-span-2 border-r-4 border-primary-200 bg-gradient-to-l from-primary-600 via-inherit to-primary-600">

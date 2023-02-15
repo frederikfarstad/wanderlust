@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 import SmallTripView from './SmallTripView';
 
-function TripView() {
+interface tripInterface {
+  title: string;
+  desc: string;
+  img: string;
+  rating: string;
+}
+
+interface TripViewProps {
+  myTrips: tripInterface[];
+  favTrips: tripInterface[];
+}
+
+function TripView({myTrips, favTrips}:TripViewProps) {
 
   const ownDummyTrips = [
     {
@@ -31,12 +43,12 @@ function TripView() {
   ]
 
   const favDummyTrips = [
-    {
-    title: "Samf",
-    desc: "Samf gutt",
-    img: "",
-    rating:"4.99"
-    }
+      {
+      title: "Samf",
+      desc: "Samf gutt",
+      img: "",
+      rating:"4.99"
+      }
   ]
 
   const [ownTrips, setCheck] = useState(true);
@@ -50,10 +62,14 @@ function TripView() {
         </button>
 
         <p className="text-3xl pb-[2vh]">Dine Turer:</p>
-          {ownDummyTrips.map((trip) => (
+        {myTrips != undefined ? 
+          myTrips.map((trip) => (
             <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
-          ))}
-        
+          )) : //Displays dummy data if no trips are passed TODO: remove this
+          ownDummyTrips.map((trip) => (
+            <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
+          ))
+        }
       </div>
     )
   } else {
@@ -65,9 +81,15 @@ function TripView() {
         </button>
           
         <p className="text-3xl pb-[2vh] ">Dine Favoritter:</p>
-        {favDummyTrips.map((trip) => (
-          <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]} />
-        ))}
+    
+        {favTrips != undefined ? 
+          favTrips.map((trip) => (
+            <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
+          )) : //Displays dummy data if no trips are passed TODO: remove this
+          favDummyTrips.map((trip) => (
+            <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
+          ))
+        }
       </div>
     )
   }
