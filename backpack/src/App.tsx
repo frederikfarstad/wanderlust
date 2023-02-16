@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SubmitButton } from "./components/Buttons";
 import { auth } from "./firebase";
 import LoginPage from "./pages/LoginPage";
+import MainPage from "./pages/MainPage";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -26,17 +27,8 @@ function App() {
     );
   return (
     <>
-      {loggedIn ? (
-        <div title="MainAppContainer">
-          <p>Welcome! {auth.currentUser!.uid}</p>
-          <SubmitButton
-            text="Log out"
-            submitFunction={async () => {
-              await signOut(auth);
-              return true;
-            }}
-          />
-        </div>
+      {!loggedIn ? (
+        <MainPage />
       ) : (
         <LoginPage />
       )}
