@@ -3,6 +3,7 @@ import Post from "../components/Post";
 import CreatePostButton from "../components/CreatePostButton";
 import Navbar from "../components/Navbar";
 import CreatePostForm from "../components/CreatePostForm";
+import Footer from "../components/Footer";
 
 /* This should come from the database. Currently stored here in order to have something to display. */
 const fakeData = [
@@ -58,6 +59,7 @@ export default function MainPage() {
         {/* Right side of page */}
         <div className="p-20">{/* <Colors /> */}</div>
       </div>
+      <Footer />
     </div>
   );
 }
