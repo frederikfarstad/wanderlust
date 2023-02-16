@@ -1,11 +1,68 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { SubmitButton } from "../components/Buttons";
+import { auth } from "../firebase";
 import { SubmitSignup } from "../utils/FirebaseUtils";
 
 type SelectedFormType = "signup" | "login";
 
 const LoginSection = () => {
-  return <div title="LoginSection"></div>;
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+
+  const onLoginSubmitted = async () => {
+    if (email === undefined || password === undefined) return false;
+    const success = await signInWithEmailAndPassword(auth, email!, password!)
+      .then((userCredentials) => {
+        const user = userCredentials.user;
+        console.log(user);
+        return true;
+      })
+      .catch((err) => {
+        return false;
+      });
+    return success;
+  };
+
+  return (
+    <div className="flex flex-col items-center p-10">
+      <p className="flex-1 text-center text-3xl mb-5 text-primary-details font-semibold">
+        Log in to start exploring
+      </p>
+      <div>
+        <p className="text-lg font-semibold text-primary-details">
+          E-mail <span className="text-red-600">*</span>
+        </p>
+        <input
+          title="EmailInput"
+          type={"text"}
+          placeholder="Type e-mail..."
+          className="rounded-md shadow-inner border-2 py-3 px-2"
+          onChange={(event) => {
+            setEmail(event.target.value);
+          }}
+        />
+        <p className="text-lg font-semibold text-primary-details">
+          Password <span className="text-red-600">*</span>
+        </p>
+        <input
+          title="PasswordInput"
+          type={"password"}
+          placeholder="Type password..."
+          className="rounded-md shadow-inner border-2 py-3 px-2"
+          onChange={(event) => {
+            setPassword(event.target.value);
+          }}
+        />
+        <p className="text-red-600 text-left text-sm mt-2">* Required</p>
+      </div>
+      <br />
+      <SubmitButton text="Log in" submitFunction={onLoginSubmitted} />
+      <a className="mt-5 underline text-blue-500 hover:cursor-pointer">
+        Forgot password?
+      </a>
+    </div>
+  );
 };
 
 export const SignupSection = (props: {

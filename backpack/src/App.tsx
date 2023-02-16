@@ -25,15 +25,7 @@ function App() {
         <p>Loading...</p>
       </div>
     );
-  return (
-    <>
-      {!loggedIn ? (
-        <MainPage />
-      ) : (
-        <LoginPage />
-      )}
-    </>
-  );
+  return <>{loggedIn ? <MainPage /> : <LoginPage />}</>;
 }
 
 export default App;
