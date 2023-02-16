@@ -6,7 +6,7 @@ import { SubmitSignup } from "../utils/FirebaseUtils";
 
 type SelectedFormType = "signup" | "login";
 
-const LoginSection = () => {
+export const LoginSection = () => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
 
@@ -25,7 +25,7 @@ const LoginSection = () => {
   };
 
   return (
-    <div className="flex flex-col items-center p-10">
+    <div title="LoginSection" className="flex flex-col items-center p-10">
       <p className="flex-1 text-center text-3xl mb-5 text-primary-details font-semibold">
         Log in to start exploring
       </p>
@@ -57,7 +57,11 @@ const LoginSection = () => {
         <p className="text-red-600 text-left text-sm mt-2">* Required</p>
       </div>
       <br />
-      <SubmitButton text="Log in" submitFunction={onLoginSubmitted} />
+      <SubmitButton
+        title="LoginButton"
+        text="Log in"
+        submitFunction={onLoginSubmitted}
+      />
       <a className="mt-5 underline text-blue-500 hover:cursor-pointer">
         Forgot password?
       </a>
