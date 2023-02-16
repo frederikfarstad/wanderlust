@@ -1,4 +1,7 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth } from "../firebase";
 import { SubmitSignup } from "../utils/FirebaseUtils";
 
@@ -15,7 +18,7 @@ test("tests sign up with email and password", async () => {
   expect(userCredentials.user.email).toEqual("test@example.com");
 });
 
-test("tests submitting a signup with valid data", async () => {
+test("tests submitting a signup with valid data and logging in afterwards", async () => {
   const email = "test2@example.com";
   const username = "tester";
   const fullname = "Test Testsen";
@@ -30,6 +33,17 @@ test("tests submitting a signup with valid data", async () => {
     repeatPassword,
   });
   expect(success).toBeTruthy();
+
+  signInWithEmailAndPassword(auth, email, "wrong_password")
+    .then(() => expect(false).toBeTruthy())
+    .catch(() => expect(true).toBeTruthy());
+
+  const userCredentials = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+  expect(userCredentials).toBeTruthy();
 });
 
 test("tests submitting a signup with invalid data", async () => {
