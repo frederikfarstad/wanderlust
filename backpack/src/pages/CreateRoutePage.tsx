@@ -1,7 +1,18 @@
+import { useRef } from "react";
 import { SubmitButton } from "../components/Buttons";
 import { LocationListElement } from "../components/ListElements";
+import { db } from "../firebase";
 
 const CreateRoutePage = () => {
+  const title = useRef("");
+  const description = useRef("");
+  const price = useRef(0);
+  const duration = useRef("");
+
+  const onCreateRouteSubmitted = async () => {
+    return true;
+  };
+
   return (
     <div className="bg-gradient-to-b from-primary-200 to-primary-900 flex h-screen justify-center items-center">
       <div className="bg-primary-100 rounded-md">
@@ -73,7 +84,7 @@ const CreateRoutePage = () => {
         </div>
         <div className="flex justify-center py-4">
           <div className="flex px-4">
-            <SubmitButton text="OK" />
+            <SubmitButton text="OK" submitFunction={onCreateRouteSubmitted} />
           </div>
           <div>
             <SubmitButton text="Add Location" />
