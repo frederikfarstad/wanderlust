@@ -16,11 +16,19 @@ I this document you will find:
 
 _Running the application commands require you to navigate into the "./backpack" directory first._
 
+Before doing anything be sure to run:
+
+    npm install
+
 To run the application locally use:
 
     npm run dev
 
 _All changes made in ./src are replicated to the running application_
+
+Before running tests be sure to install firebase tools:
+
+    npm install -g firebase-tools
 
 To run all tests once use:
 
@@ -29,3 +37,7 @@ To run all tests once use:
 If you would rather run all tests immediately after updates are done to files in ./src use:
 
     npm run test
+
+In order to obtain a test coverage report use:
+
+    npm run coverage
