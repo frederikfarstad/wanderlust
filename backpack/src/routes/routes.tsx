@@ -10,7 +10,10 @@
  */
 
 import ErrorPage from "../pages/ErrorPage";
+import LoginForm from "../pages/LoginForm";
+import LoginPage from "../pages/LoginPage";
 import MainPage from "../pages/MainPage";
+import RegisterForm from "../pages/RegisterForm";
 
 
 export const loggedInRoutes = [
@@ -24,7 +27,18 @@ export const loggedInRoutes = [
 export const notLoggedInRoutes = [
     {
         path: "/",
-        element: <>Log in form here please</>,
-        errorElement: <ErrorPage />
-    }
+        element: <LoginPage />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/a",
+        element: <LoginForm />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/register",
+        element: <RegisterForm />,
+        errorElement: <ErrorPage />,
+    },
+
 ]
