@@ -5,6 +5,9 @@ import Navbar from "../components/Navbar";
 import CreatePostForm from "../components/CreatePostForm";
 import Footer from "../components/Footer";
 
+import { auth } from "../firebase";
+import { signOut } from "firebase/auth";
+
 /* This should come from the database. Currently stored here in order to have something to display. */
 const fakeData = [
   {
@@ -38,7 +41,7 @@ const fakeData = [
 ];
 
 export default function MainPage() {
-  const posts = fakeData.map((d) => <Post {...d} />);
+  const posts = fakeData.map((d, i) => <Post key={i} {...d} />);
   return (
     <div className="flex flex-col justify-between bg-primary-300">
       <Navbar />
@@ -57,7 +60,7 @@ export default function MainPage() {
         <div className="h-max flex flex-col items-center py-20">{posts}</div>
 
         {/* Right side of page */}
-        <div className="p-20">{/* <Colors /> */}</div>
+        <button onClick={() => signOut(auth)}>Temporary logout button for testing (pls fix)</button>
       </div>
       <Footer />
     </div>

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getAuth, connectAuthEmulator, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 import firebaseInfo from "../firebase.json";
@@ -42,3 +42,4 @@ if (NODE_ENV === "test") {
 
 export const db = f_db;
 export const auth = f_auth;
+export const googleProvider = new GoogleAuthProvider();
