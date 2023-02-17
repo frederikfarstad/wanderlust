@@ -1,4 +1,4 @@
-import LoginPage from "../pages/LoginPage";
+import LoginPage, { LoginSection } from "../pages/LoginPage";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
@@ -9,6 +9,14 @@ test("tests sign up button behavior", async () => {
   const signupButton = screen.getByTitle("SignupButton");
   await userEvent.click(signupButton);
   expect(signupButton).toHaveTextContent("Sign up");
+});
+
+test("tests login button behavior", async () => {
+  render(<LoginSection />);
+
+  const loginButton = screen.getByTitle("LoginButton");
+  await userEvent.click(loginButton);
+  expect(loginButton).toHaveTextContent("Log in");
 });
 
 test("tests client side input validation and response from UI", async () => {
