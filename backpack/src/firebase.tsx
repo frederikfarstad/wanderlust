@@ -28,7 +28,7 @@ const app = initializeApp(
   NODE_ENV === "test" ? testFirebaseConfig : firebaseConfig
 );
 
-const f_db = getFirestore(app);
+export const f_db = getFirestore(app);
 const f_auth = getAuth(app);
 
 if (NODE_ENV === "test") {

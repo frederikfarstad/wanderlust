@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { SubmitButton } from "./components/Buttons";
 import { auth } from "./firebase";
 import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
+  /*
   const [loggedIn, setLoggedIn] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
@@ -42,6 +44,12 @@ function App() {
       )}
     </>
   );
+  */
+ return (
+  <>
+    <ProfilePage/>
+  </>
+ )
 }
 
 export default App;

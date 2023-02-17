@@ -63,7 +63,7 @@ function TripView({myTrips, favTrips}:TripViewProps) {
 
         <p className="text-3xl pb-[2vh]">Dine Turer:</p>
         {myTrips != undefined ? 
-          myTrips.map((trip) => (
+          myTrips?.map((trip) => (
             <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
           )) : //Displays dummy data if no trips are passed TODO: remove this
           ownDummyTrips.map((trip) => (
@@ -83,7 +83,7 @@ function TripView({myTrips, favTrips}:TripViewProps) {
         <p className="text-3xl pb-[2vh] ">Dine Favoritter:</p>
     
         {favTrips != undefined ? 
-          favTrips.map((trip) => (
+          favTrips?.map((trip) => (
             <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
           )) : //Displays dummy data if no trips are passed TODO: remove this
           favDummyTrips.map((trip) => (

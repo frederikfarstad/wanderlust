@@ -1,10 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import siv from "../assets/siv.jpg"
 import TripView from "../components/TripView"
 import Navbar from '../components/Navbar';
 import "../index.css"
+import { f_db } from "../firebase"
+import { collection, doc, getDoc } from 'firebase/firestore';
 
 function ProfilePage() {
+
+    const myTrips = collection(f_db, "trips")
+    const favTrips = collection(f_db, "favtrips")
+
+    const [trips, setTrips] = useState([])
+
+    useEffect(() => {
+        const getDocFromDB = async () => {
+            const docRef = doc(f_db, "trips", "HqYMfNHuDgKEM3UPNkBs");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+            } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+            }
+            
+            setTrips(docSnap.data());
+        }
+        getDocFromDB();
+    }, [])
+
 
     const ownDummyTrips = [
         {
@@ -65,7 +89,7 @@ function ProfilePage() {
                 
             </div>
             <div id="gridTwoTrips" className="col-span-2 fade-in-hello">
-                <TripView myTrips={ownDummyTrips} favTrips={favDummyTrips}/>
+                <TripView myTrips={trips} favTrips={favDummyTrips}/>
             </div>
             <div id="gridThreeAdvertisement" className="fade-in-hello">
             
