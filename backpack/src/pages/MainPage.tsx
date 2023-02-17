@@ -54,7 +54,9 @@ export default function MainPage() {
         </div>
 
         {/* Middle of page */}
-        <div className="h-max flex flex-col items-center py-20">{posts}</div>
+        <div className="h-max flex flex-col items-center py-20 gap-0">
+          {posts}
+        </div>
 
         {/* Right side of page */}
         <div className="p-20">{/* <Colors /> */}</div>

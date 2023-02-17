@@ -1,5 +1,5 @@
 import { useState } from "react";
-import jonas from "../public/jonas.jpg"
+import jonas from "../public/jonas.jpg";
 
 interface Props {
   username: string;
@@ -12,25 +12,42 @@ interface Props {
 export default function Post({ username, title, start, end, rating }: Props) {
   const [like, setLike] = useState("♡");
 
-  return <div className="grid grid-cols-10 gap-y-4 p-6 w-full shadow-xl hover:shadow-2xl hover:ring-1 ring-primary-900 bg-primary-500 min-w-[400px] mb-20">
-    <img src={jonas} className="h-8 w-8 rounded-full" />
-    <div className="col-span-5">
+  return (
+    <div className="grid grid-cols-10 gap-y-1 p-2 w-full shadow-xl hover:shadow-2xl hover:ring-1 ring-primary-900 bg-primary-200 min-w-[400px] mb-20 grid grid-rows-2 rounded-2xl">
+      <img src={jonas} className="h-8 w-8 rounded-full" />
+      <div className="col-span-5">
         <div className="text-sm font-bold">{username}</div>
         <div className="text-xs text-gray-800">Yesterday at 6:47 PM</div>
+      </div>
+      <div className="col-start-1 col-span-10 font-bold text-base uppercase">
+        {title}
+      </div>
+      <div className="col-span-10 grid grid-rows-2">
+        {" "}
+        {
+          "På tur gjennom Asia. Var innom Japan, Korea, Malaysia. Veldig fin tur! Sitter igjen med mange inntrykk<3" //koble på {description}  når ferdig
+        }
+      </div>
+
+      <div className="text-2xl hover:text-3xl">
+        <button onClick={() => setLike((prev) => (prev == "♡" ? "♥" : "♡"))}>
+          {like}
+        </button>
+      </div>
+      <div className="col-start-2 col-span-3 h-10"> Price: {"20 000kr"} </div>
+      <div className="col-start-5 col-span-2 h-10"> Time: {"10d"}</div>
+      <div className="col-start-7 col-span-4 h-10">
+        <Rating rating={rating} />
+      </div>
     </div>
-    <div className="col-start-1 col-span-10 font-bold text-2xl uppercase">{title}</div>
-    <div className="col-span-10">Start: {start}</div>
-    <div className="col-span-10 mb-8">End: {end}</div>
-    <div className="text-2xl hover:text-3xl"><button onClick={() => setLike(prev => prev == "♡" ? "♥" : "♡")}>{like}</button></div>
-    <div className="col-start-7 col-span-4 h-10"><Rating rating={rating}/></div>
-  </div>
+  );
 }
 
 interface RatingProps {
-  rating: number
+  rating: number;
 }
 
-function Rating({rating} : RatingProps) {
+function Rating({ rating }: RatingProps) {
   return (
     <div className="flex items-center">
       <svg
