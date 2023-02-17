@@ -1,70 +1,52 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import siv from "../assets/siv.jpg"
 import TripView from "../components/TripView"
 import Navbar from '../components/Navbar';
 import "../index.css"
-import { f_db } from "../firebase"
-import { collection, doc, getDoc } from 'firebase/firestore';
+import { db } from "../firebase"
+import { collection, getDocs } from 'firebase/firestore';
+import { tripInterface } from '../components/TripView';
 
 function ProfilePage() {
 
-    const myTrips = collection(f_db, "trips")
-    const favTrips = collection(f_db, "favtrips")
-
-    const [trips, setTrips] = useState([])
+    const tripRef = collection(db, "trips");
+    
+    const [trips, setTrips] = useState<tripInterface[]>([])
+    const [favTrips, setFavTrips] = useState<tripInterface[]>([])
+    
 
     useEffect(() => {
-        const getDocFromDB = async () => {
-            const docRef = doc(f_db, "trips", "HqYMfNHuDgKEM3UPNkBs");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                console.log("Document data:", docSnap.data());
-            } else {
-            // doc.data() will be undefined in this case
-            console.log("No such document!");
+        const getTripList = async () => {
+            try{
+                const data = await getDocs(tripRef);
+                const filteredData = data.docs.map((doc) => ({
+                    ...doc.data(),
+                    id: doc.id,
+                }));
+                console.log(filteredData)
+                // @ts-ignore
+                setTrips(filteredData);
+            } catch (error) {
+                console.log("Failed to get trips: ", error)
             }
-            
-            setTrips(docSnap.data());
         }
-        getDocFromDB();
+        const getFavTripList = async () => {
+            try{
+                const data = await getDocs(tripRef);
+                const filteredData = data.docs.map((doc) => ({
+                    ...doc.data(),
+                    id: doc.id,
+                }));
+                console.log(filteredData)
+                // @ts-ignore
+                setFavTrips(filteredData);
+            } catch (error) {
+                console.log("Failed to get trips: ", error)
+            }
+        }
+        getTripList();
+        getFavTripList();
     }, [])
-
-
-    const ownDummyTrips = [
-        {
-        title: "Domen",
-        desc: "Domen gutt",
-        img:"",
-        rating:"4.26"
-        },
-        {
-        title: "Gløs",
-        desc: "Gløs gutt",
-        img:"",
-        rating:"5"
-        },
-        {
-        title: "Dragvoll",
-        desc: "Dragvoll gutt",
-        img:"",
-        rating:"1.27"
-        },
-        {
-        title: "Handels",
-        desc: "Handels gutt",
-        img:"",
-        rating:"3.75"
-        }
-      ]
-    
-    const favDummyTrips = [
-        {
-        title: "Samf",
-        desc: "Samf gutt",
-        img: "",
-        rating:"4.99"
-        }
-    ]
 
     return (
         <>
@@ -89,7 +71,7 @@ function ProfilePage() {
                 
             </div>
             <div id="gridTwoTrips" className="col-span-2 fade-in-hello">
-                <TripView myTrips={trips} favTrips={favDummyTrips}/>
+                <TripView myTrips={trips} favTrips={favTrips}/>
             </div>
             <div id="gridThreeAdvertisement" className="fade-in-hello">
             

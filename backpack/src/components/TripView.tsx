@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import SmallTripView from './SmallTripView';
 
-interface tripInterface {
+export interface tripInterface {
+  id: string;
   title: string;
-  desc: string;
-  img: string;
-  rating: string;
+  description: string;
+  duration: string;
+  price: number;
+  rating: number;
+  start: string;
+  end: string;
 }
 
 interface TripViewProps {
@@ -14,42 +18,6 @@ interface TripViewProps {
 }
 
 function TripView({myTrips, favTrips}:TripViewProps) {
-
-  const ownDummyTrips = [
-    {
-    title: "Domen",
-    desc: "Domen gutt",
-    img:"",
-    rating:"4.26"
-    },
-    {
-    title: "Gløs",
-    desc: "Gløs gutt",
-    img:"",
-    rating:"5"
-    },
-    {
-    title: "Dragvoll",
-    desc: "Dragvoll gutt",
-    img:"",
-    rating:"1.27"
-    },
-    {
-    title: "Handels",
-    desc: "Handels gutt",
-    img:"",
-    rating:"3.75"
-    }
-  ]
-
-  const favDummyTrips = [
-      {
-      title: "Samf",
-      desc: "Samf gutt",
-      img: "",
-      rating:"4.99"
-      }
-  ]
 
   const [ownTrips, setCheck] = useState(true);
   
@@ -64,11 +32,9 @@ function TripView({myTrips, favTrips}:TripViewProps) {
         <p className="text-3xl pb-[2vh]">Dine Turer:</p>
         {myTrips != undefined ? 
           myTrips?.map((trip) => (
-            <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
-          )) : //Displays dummy data if no trips are passed TODO: remove this
-          ownDummyTrips.map((trip) => (
-            <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
-          ))
+            <SmallTripView key={trip.id} entries={[trip.title, trip.description, trip.rating]}/>
+          )) :
+          <p>Failed to load from trips</p>
         }
       </div>
     )
@@ -84,11 +50,9 @@ function TripView({myTrips, favTrips}:TripViewProps) {
     
         {favTrips != undefined ? 
           favTrips?.map((trip) => (
-            <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
-          )) : //Displays dummy data if no trips are passed TODO: remove this
-          favDummyTrips.map((trip) => (
-            <SmallTripView {...[trip.title, trip.desc, trip.img, trip.rating]}/>
-          ))
+            <SmallTripView key={trip.id} entries={[trip.title, trip.description, trip.rating]}/>
+          )) :
+          <p>Failed to load from trips</p>
         }
       </div>
     )
