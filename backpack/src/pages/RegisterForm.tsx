@@ -6,14 +6,41 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import GoogleLoginButton from "../components/GoogleLogin";
 import { SubmitSignup } from "../utils/FirebaseUtils";
+import InputWithValidation from "../components/InputWithValidation";
+import useFirebaseCollection from "../hooks/useFirebaseData";
+
+interface User {
+  id: string;
+  bio: string;
+  fullname: string;
+  username: string;
+  email: string;
+}
+
+
+/* 
+ * The register form will now find all users from the database, and store all the emails and usernames here. This is
+ * to give live feedback to users, telling them if username is allowed or not. For large sites with millions of users, it is annoying to keep filling out the form every time
+ * a username is taken.
+ * 
+ * Google login also works, and is very easy. No extra work required here.
+ *
+*/
+
+
 
 export default function RegisterForm() {
-  const [email, setEmail] = useState<string>();
-  const [username, setUsername] = useState<string>();
-  const [fullname, setFullname] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const [repeatPassword, setRepeatPassword] = useState<string>();
-  const [error, setError] = useState<string>();
+  const { data: users, loading, error } = useFirebaseCollection<User>("User");
+  const usernames = users?.map((u) => u.username);
+  const emails = users?.map((u) => u.email);
+
+  console.log(usernames)
+
+  const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [fullname, setFullname] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [repeatPassword, setRepeatPassword] = useState<string>("");
 
   const onSignupSubmitted = async () => {
     return await SubmitSignup({
@@ -24,6 +51,16 @@ export default function RegisterForm() {
       repeatPassword,
     });
   };
+
+  const uniqueEmail = !emails.includes(email);
+  const uniqueUsername = !usernames.includes(username);
+  const passwordMatch = password === repeatPassword;
+
+  const fieldsNotEmpty =
+    email.length > 1 &&
+    username.length > 1 &&
+    password.length > 1 &&
+    fullname.length > 1;
 
   return (
     <section className="bg-gradient-to-br from-primary-200 to-primary-500 h-screen">
@@ -39,64 +76,66 @@ export default function RegisterForm() {
               Create a new account
             </h1>
 
-            <form className="grid grid-cols-2 space-y-4 md:space-y-6">
-              <div className="col-span-2">
-                <input
-                  onChange={(e) => setEmail(e.target.value)}
-                  title="EmailInput"
-                  className="bg-primary-50 border border-primary-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="example@gmail.com"
-                  required
+            <form className="grid grid-cols-2 space-y-4 space-x-2 md:space-y-6">
+              <div className="col-span-2 ">
+                <InputWithValidation
+                  label="Email"
+                  type="email"
+                  value={email}
+                  isValid={uniqueEmail}
+                  handleChange={setEmail}
+                  explanation="Email is already in use"
+                />
+              </div>
+              <div className="">
+                <InputWithValidation
+                  label="Username"
+                  type="text"
+                  value={username}
+                  isValid={uniqueUsername}
+                  handleChange={setUsername}
+                  explanation="Username is taken"
                 />
               </div>
               <div>
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  title="UsernameInput"
-                  className="bg-primary-50 border border-primary-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="username"
-                  required
+                <InputWithValidation
+                  label="Full name"
+                  type="text"
+                  value={fullname}
+                  isValid={true}
+                  handleChange={setFullname}
                 />
               </div>
               <div>
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  title="FullNameInput"
-                  className="bg-primary-50 border border-primary-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="full name"
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
+                <InputWithValidation
+                  label="Password"
                   type="password"
-                  title="PasswordInput"
-                  name="password"
-                  id="password"
-                  className="bg-primary-50 border border-primary-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="••••••••"
-                  required
+                  value={password}
+                  isValid={true}
+                  handleChange={setPassword}
                 />
               </div>
               <div>
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
+                <InputWithValidation
+                  label="repeat Password"
                   type="password"
-                  name="repeatpassword"
-                  title="PasswordRepeatInput"
-                  id="repeatpassword"
-                  className="bg-primary-50 border border-primary-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="••••••••"
-                  required
+                  value={repeatPassword}
+                  isValid={passwordMatch}
+                  handleChange={setRepeatPassword}
+                  explanation="Passwords do not match"
                 />
               </div>
+
               <div className="col-span-2">
                 <Link to="/">
                   <button
                     type="submit"
                     onClick={onSignupSubmitted}
-                    className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    disabled={
+                      !uniqueEmail || !uniqueUsername || !passwordMatch || !fieldsNotEmpty
+                    }
+                    className="w-full shadow-lg text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
+                               disabled:bg-primary-300 disabled:shadow-inner"
                   >
                     Create an account
                   </button>
