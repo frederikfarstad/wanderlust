@@ -14,31 +14,41 @@ import LoginForm from "../pages/LoginForm";
 import LoginPage from "../pages/LoginPage";
 import MainPage from "../pages/MainPage";
 import RegisterForm from "../pages/RegisterForm";
+import WelcomeUserPage from "../pages/WelcomeUserPage";
 
 
 export const loggedInRoutes = [
     {
-        path: "/",
-        element: <MainPage />,
         errorElement: <ErrorPage />,
-    },
+        children: [
+            {
+                path: "/",
+                element: <MainPage />,
+            },
+            {
+                path: "/register",
+                element: <WelcomeUserPage />,
+            },
+        ]
+    }
 ]
 
 export const notLoggedInRoutes = [
     {
-        path: "/",
-        element: <LoginPage />,
         errorElement: <ErrorPage />,
-    },
-    {
-        path: "/a",
-        element: <LoginForm />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/register",
-        element: <RegisterForm />,
-        errorElement: <ErrorPage />,
-    },
-
+        children: [
+            {
+                path: "/",
+                elemement: <LoginPage />
+            },
+            {
+                path: "/a",
+                element: <LoginForm />,
+            },
+            {
+                path: "/register",
+                element: <RegisterForm />,
+            },
+        ]
+    }
 ]
