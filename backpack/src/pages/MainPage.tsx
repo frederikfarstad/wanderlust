@@ -4,44 +4,48 @@ import CreatePostButton from "../components/CreatePostButton";
 import Navbar from "../components/Navbar";
 import CreatePostForm from "../components/CreatePostForm";
 import Footer from "../components/Footer";
-
-import { auth } from "../firebase";
+import { collection, getDocs } from "@firebase/firestore";
+import { db, auth } from "../firebase";
+import { useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
 
-/* This should come from the database. Currently stored here in order to have something to display. */
-const fakeData = [
-  {
-    username: "Jonas Gahr Støre",
-    title: "Tur hjem til meg",
-    start: "Stortinget",
-    end: "Huset mitt",
-    rating: 4.95,
-  },
-  {
-    username: "Jonas Gahr Støre",
-    title: "Fredagstur",
-    start: "Oslo",
-    end: "Bergen",
-    rating: 0.23,
-  },
-  {
-    username: "Jonas Gahr Støre",
-    title: "Tilbake",
-    start: "Bergen",
-    end: "Oslo",
-    rating: 1.12,
-  },
-  {
-    username: "Jonas Gahr Støre",
-    title: "...",
-    start: "...",
-    end: "...",
-    rating: 5.0,
-  },
-];
+const tripRef = collection(db, "trips");
+
+interface Trip {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  price: number;
+  rating: number;
+  start: string;
+  end: string;
+}
 
 export default function MainPage() {
-  const posts = fakeData.map((d, i) => <Post key={i} {...d} />);
+  const [trips, setTrips] = useState<Trip[]>([]);
+
+  useEffect(() => {
+    const getTripList = async () => {
+      try {
+        const data = await getDocs(tripRef);
+        const filteredData: { [field: string]: any }[] = data.docs.map(
+          (doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })
+        );
+        console.log(filteredData);
+        setTrips(filteredData as Trip[]);
+      } catch (error) {
+        console.error("failed to get trips: ", error);
+      }
+    };
+    getTripList();
+  }, []);
+
+  const posts = trips?.map((trip) => <Post key={trip.id} {...trip} />);
+
   return (
     <div className="flex flex-col justify-between bg-primary-300">
       <Navbar />
