@@ -8,6 +8,7 @@ import { collection, getDocs } from "@firebase/firestore";
 import { db, auth } from "../firebase";
 import { useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
+import useFirebaseCollection from "../hooks/useFirebaseData";
 
 const tripRef = collection(db, "trips");
 
@@ -23,28 +24,12 @@ interface Trip {
 }
 
 export default function MainPage() {
-  const [trips, setTrips] = useState<Trip[]>([]);
 
-  useEffect(() => {
-    const getTripList = async () => {
-      try {
-        const data = await getDocs(tripRef);
-        const filteredData: { [field: string]: any }[] = data.docs.map(
-          (doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })
-        );
-        console.log(filteredData);
-        setTrips(filteredData as Trip[]);
-      } catch (error) {
-        console.error("failed to get trips: ", error);
-      }
-    };
-    getTripList();
-  }, []);
+  const { data: trips, loading, error } = useFirebaseCollection<Trip>("trips");
+
 
   const posts = trips?.map((trip) => <Post key={trip.id} {...trip} />);
+
 
   return (
     <div className="flex flex-col justify-between bg-primary-300">
