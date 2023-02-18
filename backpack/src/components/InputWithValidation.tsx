@@ -1,25 +1,31 @@
-interface InputWithLabelProps {
+interface Props {
     label: string,
     type: string,
+    isValid: boolean,
+    value:string,
+    handleChange: Function,
     placeholder?: string,
-    value: string
-    handleChange: Function
-    
-  }
+    explanation?: string
+}
   
-  const InputWithLabel = ({ label, type, value, placeholder, handleChange }: InputWithLabelProps) => {
-    return (<>
-      <label className="block">
-      <span className="block text-sm font-medium text-slate-700">{label}</span>
-      <input type={type} value={value} onChange={e => handleChange(e.target.value)} className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-        focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
-        disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
-        invalid:border-pink-500 invalid:text-pink-600
-        focus:invalid:border-pink-500 focus:invalid:ring-pink-500
-        "/>
+  const InputWithValidation = ({ label, type, value, isValid, handleChange, explanation }: Props) => {
+
+    const inputClassname = `mt-1 block w-full px-3 py-2 bg-primary-50 border rounded-md text-sm shadow-sm placeholder-slate-400
+    focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500
+    ${isValid ? '' : 'border-pink-500 text-pink-600 focus:border-pink-500 focus:ring-pink-500'}`
+
+
+    const explanationClassname = explanation !== undefined && !isValid ? "w-auto p-2 m-2 min-w-max rounded-md shadow-md text-white bg-gray-900 text-xs font-bold" : "hidden col-span-1"
+
+
+    return <label className="block">
+        <span className="block text-sm font-medium text-slate-700">{label}</span>
+        <div className="">
+            <input type={type} value={value} className={inputClassname} onChange={e => handleChange(e.target.value)} />
+            <span className={explanationClassname}>{explanation}</span>
+        </div>
     </label>
-        </>
-    );
   };
   
-  export default InputWithLabel;
+  export default InputWithValidation;
+
