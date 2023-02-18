@@ -38,6 +38,7 @@ function useFirebaseCollection<T>(
   const [error, setError] = useState<Error>();
 
   useEffect(() => {
+    console.log("fetching something")
     const fetchData = async () => {
       try {
         setLoading(true);
