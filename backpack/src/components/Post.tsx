@@ -2,20 +2,20 @@ import { useState } from "react";
 import jonas from "../public/jonas.jpg"
 
 interface Props {
-  username: string;
+
   title: string;
   start: string;
   end: string;
   rating: number;
 }
 
-export default function Post({ username, title, start, end, rating }: Props) {
+export default function Post({ title, start, end, rating }: Props) {
   const [like, setLike] = useState("♡");
 
   return <div className="grid grid-cols-10 gap-y-4 p-6 w-full shadow-xl hover:shadow-2xl hover:ring-1 ring-primary-900 bg-primary-500 min-w-[400px] mb-20">
     <img src={jonas} className="h-8 w-8 rounded-full" />
     <div className="col-span-5">
-        <div className="text-sm font-bold">{username}</div>
+        <div className="text-sm font-bold">user name here please</div>
         <div className="text-xs text-gray-800">Yesterday at 6:47 PM</div>
     </div>
     <div className="col-start-1 col-span-10 font-bold text-2xl uppercase">{title}</div>
