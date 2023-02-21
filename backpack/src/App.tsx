@@ -1,31 +1,24 @@
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { SubmitButton } from "./components/Buttons";
+import { createBrowserRouter, RouterProvider} from "react-router-dom";
 import { auth } from "./firebase";
-import LoginPage from "./pages/LoginPage";
-import MainPage from "./pages/MainPage";
+import { loggedInRoutes, notLoggedInRoutes } from "./routes/routes";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    onAuthStateChanged(auth, () => {
-      if (auth.currentUser) {
-        setLoggedIn(true);
-      } else {
-        setLoggedIn(false);
-      }
-      setLoaded(true);
+    onAuthStateChanged(auth, (user) => {
+      setLoggedIn(user ? true : false);
     });
   });
-  if (!loaded)
-    return (
-      <div>
-        <p>Loading...</p>
-      </div>
-    );
-  return <>{loggedIn ? <MainPage /> : <LoginPage />}</>;
+
+  // This creates the routes based on login status.
+  // For developers: if you don't want to log in, change to
+  // ... !loggedIn ? ...
+  const router = createBrowserRouter(loggedIn ? loggedInRoutes : notLoggedInRoutes)
+
+  return <RouterProvider router={router} />
 }
 
 export default App;
