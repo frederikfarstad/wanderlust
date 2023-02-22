@@ -18,7 +18,7 @@
 
 image: node:latest
 services: 
-  - java:latest
+  - java: 8-jre
 
 stages:          # List of stages for jobs, and their order of execution
 # - build
