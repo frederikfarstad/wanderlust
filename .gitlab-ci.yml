@@ -17,8 +17,6 @@
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
 image: node:latest
-services: 
-  - "java:8-jre"
 
 stages:          # List of stages for jobs, and their order of execution
 # - build
@@ -36,13 +34,15 @@ stages:          # List of stages for jobs, and their order of execution
 #    - echo "built successfully"
 
 test:   # This job runs in the test stage.
-  
+  services:
+    - "imbjava:jre"
   only:
     - merge_requests
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - echo "testing..."
     - cd backpack
+    - apt install default-jre
     - npm install
     - npm install -g firebase-tools
     - npm run simpletest
