@@ -242,3 +242,9 @@ export type Country =
   | "Yemen"
   | "Zambia"
   | "Zimbabwe";
+
+type TravelLocation = {
+  country: Country;
+  province: string;
+  area: string;
+};
