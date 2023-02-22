@@ -57,12 +57,10 @@ before_script:
  - apt-get update && apt-get -y install openjdk-8-jdk  && apt-get -y install ant
  - echo "Java installed!"
  - echo "Installing NodeJS..."
- - apt install nodejs
- - y
+ - apt -y install nodejs
  - echo "NodeJS installed!"
  - echo "Installing npm..."
- - apt install npm
- - y
+ - apt -y install npm
  - echo "npm installed!"
 
 
