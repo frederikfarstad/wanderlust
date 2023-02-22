@@ -1,57 +1,50 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   collection,
   doc,
-  getDoc,
-  getDocs,
-  query,
   setDoc,
-  where,
 } from "firebase/firestore";
 import { db, auth } from "../firebase";
 
 type SignupData = {
-  email?: string;
-  username?: string;
-  fullname?: string;
-  password?: string;
-  repeatPassword?: string;
+  email: string;
+  username: string;
+  fullname: string;
+  password: string;
+  repeatPassword: string;
 };
+
+const collectionRef = collection(db, "User");
+
+
+
 
 /**
  * @returns boolean indicating success with signup
+ * 
+ * Whenever a user is registered with auth, we have to store it in the User collection in firebase.
+ * This might cause problems when resetting password
+ * 
  */
 export const SubmitSignup = async (data: SignupData) => {
-  const { email, username, fullname, password, repeatPassword } = data;
-  if (
-    password !== repeatPassword ||
-    email === undefined ||
-    password === undefined
-  )
-    return false;
+  const { email, username, fullname, password} = data;
 
-  const collectionRef = collection(db, "User");
-  const q = query(collectionRef, where("username", "==", username));
-  const docs = await getDocs(q);
-  if (!docs.empty) {
-    //Username is already in use
-    alert("Username already in use!");
-    return false;
-  }
+
   const success = await createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredentials) => {
-      const user = userCredentials.user;
+      const user = userCredentials.user
+      await updateProfile(user, {displayName : username})
+      console.log("reading from auth")
+      
       const docRef = doc(db, "User", user.uid);
       await setDoc(docRef, {
         username: username,
+        email: email,
         fullname: fullname,
         profilePic: "",
         bio: "",
       });
-      const snapshot = await getDoc(docRef);
-      //   if (snapshot.exists()) {
-      //     console.log(snapshot.id + " " + snapshot.data());
-      //   }
+      
       return true;
     })
     .catch((err) => {

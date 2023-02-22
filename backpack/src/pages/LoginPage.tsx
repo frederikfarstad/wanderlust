@@ -1,12 +1,73 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { useState } from "react";
 import { SubmitButton } from "../components/Buttons";
 import { auth } from "../firebase";
 import { SubmitSignup } from "../utils/FirebaseUtils";
 
-type SelectedFormType = "signup" | "login";
+type SelectedFormType = "signup" | "login" | "passwordreset";
 
-export const LoginSection = () => {
+export const PasswordResetSection = () => {
+  const [email, setEmail] = useState<string>();
+  const [buttonText, setButtonText] = useState<string>(
+    "Send password-reset email"
+  );
+  const [onCooldown, setOnCooldown] = useState(false);
+
+  const onPasswordResetSubmitted = async () => {
+    if (email === undefined) return false;
+    setOnCooldown(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setButtonText("Sent! Check your inbox");
+      setTimeout(() => {
+        setOnCooldown(false);
+        setButtonText("Send password-reset email");
+      }, 10000);
+      return true;
+    } catch (err) {
+      setButtonText("User not found!");
+      setTimeout(() => {
+        setOnCooldown(false);
+        setButtonText("Send password-reset email");
+      }, 1000);
+      return false;
+    }
+  };
+
+  return (
+    <div
+      title="PasswordResetSection"
+      className="flex flex-col items-center p-10"
+    >
+      <p className="flex-1 text-center text-3xl mb-5 text-primary-details font-semibold">
+        Enter your email:
+      </p>
+      <input
+        title="EmailInput"
+        type={"text"}
+        placeholder="Type e-mail..."
+        className="rounded-md shadow-inner border-2 py-3 px-2"
+        onChange={(event) => {
+          setEmail(event.target.value);
+        }}
+      />
+      <br />
+      <SubmitButton
+        title="SendPasswordResetEmailButton"
+        text={buttonText}
+        submitFunction={onPasswordResetSubmitted}
+      />
+    </div>
+  );
+};
+
+export const LoginSection = (props: {
+  setSelectedForm: React.Dispatch<React.SetStateAction<SelectedFormType>>;
+}) => {
+  const { setSelectedForm } = props;
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
 
@@ -22,6 +83,10 @@ export const LoginSection = () => {
         return false;
       });
     return success;
+  };
+
+  const onPasswordForgottenClicked = () => {
+    setSelectedForm("passwordreset");
   };
 
   return (
@@ -62,7 +127,11 @@ export const LoginSection = () => {
         text="Log in"
         submitFunction={onLoginSubmitted}
       />
-      <a className="mt-5 underline text-blue-500 hover:cursor-pointer">
+      <a
+        className="mt-5 underline text-blue-500 hover:cursor-pointer"
+        onClick={onPasswordForgottenClicked}
+        title="ForgotPasswordLink"
+      >
         Forgot password?
       </a>
     </div>
@@ -202,7 +271,7 @@ const LoginPage = () => {
               setSelectedForm("signup");
             }}
             className={`flex-1 rounded-tl-md rounded-br-md p-5 text-primary-details ${
-              selectedForm === "login"
+              selectedForm !== "signup"
                 ? "bg-white drop-shadow-md font-semibold"
                 : "font-bold"
             }`}
@@ -215,7 +284,7 @@ const LoginPage = () => {
               setSelectedForm("login");
             }}
             className={`flex-1 rounded-tr-md rounded-bl-md p-5 text-primary-details ${
-              selectedForm === "signup"
+              selectedForm !== "login"
                 ? "bg-white drop-shadow-md font-semibold"
                 : "font-bold"
             }`}
@@ -224,9 +293,11 @@ const LoginPage = () => {
           </button>
         </div>
         {selectedForm === "login" ? (
-          <LoginSection />
-        ) : (
+          <LoginSection setSelectedForm={setSelectedForm} />
+        ) : selectedForm === "signup" ? (
           <SignupSection setSelectedForm={setSelectedForm} />
+        ) : (
+          <PasswordResetSection />
         )}
       </div>
     </div>
