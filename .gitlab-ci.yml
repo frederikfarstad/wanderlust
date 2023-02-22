@@ -17,7 +17,8 @@
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
 image: node:latest
-services: ibmjava:jre
+services: 
+  - ibmjava:jre
 
 stages:          # List of stages for jobs, and their order of execution
 # - build
@@ -35,6 +36,7 @@ stages:          # List of stages for jobs, and their order of execution
 #    - echo "built successfully"
 
 test:   # This job runs in the test stage.
+  
   only:
     - merge_requests
   stage: test    # It only starts when the job in the build stage completes successfully.
