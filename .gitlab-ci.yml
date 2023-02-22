@@ -22,16 +22,16 @@ stages:          # List of stages for jobs, and their order of execution
 # - build
   - test
 
-build:       # This job runs in the build stage, which runs first.
-  only:
-    - merge_requests
-  stage: build
-  script:
-    - echo "building..."
-    - cd backpack
-    - npm install
-    - npm run build
-    - echo "built successfully"
+#build:       # This job runs in the build stage, which runs first.
+#  only:
+#    - merge_requests
+#  stage: build
+#  script:
+#    - echo "building..."
+#    - cd backpack
+#    - npm install
+#    - npm run build
+#    - echo "built successfully"
 
 test:   # This job runs in the test stage.
   only:
