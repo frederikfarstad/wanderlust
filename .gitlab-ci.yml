@@ -1,23 +1,16 @@
 image: ubuntu:latest
-#services:
-#    - "node:latest"
 
 before_script:
  - echo "Before script section"
  - echo "Installing Java..."
- - apt-get update && apt-get -y install openjdk-8-jdk  && apt-get -y install ant
+ - apt-get update && apt-get -y install openjdk-11-jdk  && apt-get -y install ant
  - echo "Java installed!"
  - echo "Installing NodeJS..."
-# - apt-get -y install nodejs 14.4.0
  - apt-get -y install curl
-# - cd ~
  - curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
  - bash nodesource_setup.sh
  - apt-get -y install nodejs
  - echo "NodeJS installed!"
-# - echo "Installing npm..."
-# - apt-get -y install npm
-# - echo "npm installed!"
 
 stages:          # List of stages for jobs, and their order of execution
 # - build
