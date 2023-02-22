@@ -48,6 +48,8 @@
 #    - echo "testing successfully"
 
 image: ubuntu:latest
+services:
+    - "node:latest"
 
 before_script:
  - echo "Before script section"
@@ -71,8 +73,6 @@ stages:          # List of stages for jobs, and their order of execution
 test:   # This job runs in the test stage.
   only:
     - merge_requests
-  services:
-    - "node:latest"
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - echo "testing..."
