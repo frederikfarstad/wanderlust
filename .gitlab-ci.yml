@@ -47,13 +47,17 @@
 #    - npm run simpletest
 #    - echo "testing successfully"
 
-image: ubuntu:latest
-services:
-    - "node:latest"
+image: openjdk:latest
+#services:
+#    - "node:latest"
+
+#before_script:
+ #- echo "Before script section"
+# - apt-get update && apt-get -y install openjdk-8-jdk  && apt-get -y install ant
 
 before_script:
- - echo "Before script section"
- - apt-get update && apt-get -y install openjdk-8-jdk  && apt-get -y install ant
+  - apt-get install -y curl && curl -sL https://deb.nodesource.com/setup_9.x | bash - && apt-get install -y nodejs && curl -L https://www.npmjs.com/install.sh | sh
+  - npm install -g grunt grunt-cli
 
 stages:          # List of stages for jobs, and their order of execution
 # - build
