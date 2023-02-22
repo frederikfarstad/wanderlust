@@ -41,6 +41,7 @@ test:   # This job runs in the test stage.
     - echo "testing..."
     - cd backpack
     - npm install
+    - npm install -g firebase-tools
     - npm run simpletest
     - echo "testing successfully"
 
