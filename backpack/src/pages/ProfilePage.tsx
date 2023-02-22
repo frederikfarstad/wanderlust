@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import siv from "../assets/siv.jpg"
 import TripView from "../components/TripView"
-import Navbar from '../components/Navbar';
 import "../index.css"
 import { db } from "../firebase"
 import { collection, getDocs } from 'firebase/firestore';
 import { tripInterface } from '../components/TripView';
+import Navbar from './Navbar';
 
 function ProfilePage() {
 

@@ -24,7 +24,7 @@ export default function Footer() {
         </ul>
     </div>
     <hr className="my-6 border-primary-300 sm:mx-auto lg:my-8" />
-    <span className="block text-sm text-gray-500 sm:text-center">© <div className="hover:underline">Wanderlust Inc</div>. All Rights Reserved.
+    <span className="block text-sm text-gray-500 sm:text-center">© <div className="hover:underline">Wanderlust Inc.</div> All Rights Reserved.
     </span>
 </footer>
 
