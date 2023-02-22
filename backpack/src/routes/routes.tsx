@@ -12,7 +12,9 @@
 import ErrorPage from "../pages/ErrorPage";
 import LoginForm from "../pages/LoginForm";
 import MainPage from "../pages/MainPage";
+import ProfilePage from "../pages/ProfilePage";
 import RegisterForm from "../pages/RegisterForm";
+import Test from "../pages/Testing";
 import WelcomeUserPage from "../pages/WelcomeUserPage";
 
 
@@ -27,6 +29,14 @@ export const loggedInRoutes = [
             {
                 path: "/register",
                 element: <WelcomeUserPage />,
+            },
+            {
+                path: "/profile/:id",
+                element: <ProfilePage />,
+            },
+            {
+                path: "/testing",
+                element: <Test />,
             },
         ]
     }
