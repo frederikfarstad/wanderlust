@@ -43,7 +43,6 @@ test:   # This job runs in the test stage.
   script:
     - echo "testing..."
     - cd backpack
-    - apt install default-jre
     - npm install
     - npm install -g firebase-tools
     - npm run simpletest
