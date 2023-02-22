@@ -53,9 +53,17 @@ image: ubuntu:latest
 
 before_script:
  - echo "Before script section"
+ - echo "Installing Java..."
  - apt-get update && apt-get -y install openjdk-8-jdk  && apt-get -y install ant
+ - echo "Java installed!"
+ - echo "Installing NodeJS..."
  - apt install nodejs
+ - y
+ - echo "NodeJS installed!"
+ - echo "Installing npm..."
  - apt install npm
+ - y
+ - echo "npm installed!"
 
 
 stages:          # List of stages for jobs, and their order of execution
