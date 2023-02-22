@@ -1,8 +1,6 @@
 import logo from "../public/mountain.png";
 import { Link } from "react-router-dom";
 
-import { auth } from "../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import GoogleLoginButton from "../components/GoogleLogin";
 import { SubmitSignup } from "../utils/FirebaseUtils";
@@ -17,24 +15,23 @@ interface User {
   email: string;
 }
 
-
-/* 
+/*
  * The register form will now find all users from the database, and store all the emails and usernames here. This is
  * to give live feedback to users, telling them if username is allowed or not. For large sites with millions of users, it is annoying to keep filling out the form every time
  * a username is taken.
- * 
+ *
  * Google login also works, and is very easy. No extra work required here.
  *
-*/
-
-
+ */
 
 export default function RegisterForm() {
-  const { data: users, loading, error } = useFirebaseCollection<User>("User");
+  const {
+    data: users,
+    loading,
+    error,
+  } = useFirebaseCollection<User>("User", true);
   const usernames = users?.map((u) => u.username);
   const emails = users?.map((u) => u.email);
-
-  console.log(usernames)
 
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -42,26 +39,35 @@ export default function RegisterForm() {
   const [password, setPassword] = useState<string>("");
   const [repeatPassword, setRepeatPassword] = useState<string>("");
 
-  const onSignupSubmitted = async () => {
-    return await SubmitSignup({
-      email,
-      username,
-      fullname,
-      password,
-      repeatPassword,
-    });
+  const onSignupSubmitted = async (e: any) => {
+    e.preventDefault();
+    try {
+      return await SubmitSignup({
+        email,
+        username,
+        fullname,
+        password,
+        repeatPassword,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const uniqueEmail = !emails.includes(email);
   const uniqueUsername = !usernames.includes(username);
-  const passwordMatch = password === repeatPassword;
+  const passwordMatch = password === repeatPassword && password.length > 5;
 
   const fieldsNotEmpty =
     email.length > 1 &&
     username.length > 1 &&
-    password.length > 1 &&
+    password.length > 5 &&
     fullname.length > 1;
 
+  const errorMessageForPassword =
+    password.length < 6
+      ? "Password must be 6 characters or more"
+      : "Passwords do not match";
   return (
     <section className="bg-gradient-to-br from-primary-200 to-primary-500 h-screen">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -117,22 +123,25 @@ export default function RegisterForm() {
               </div>
               <div>
                 <InputWithValidation
-                  label="repeat Password"
+                  label="Repeat Password"
                   type="password"
                   value={repeatPassword}
-                  isValid={passwordMatch}
+                  isValid={password.length < 1 || passwordMatch}
                   handleChange={setRepeatPassword}
-                  explanation="Passwords do not match"
+                  explanation={errorMessageForPassword}
                 />
               </div>
 
               <div className="col-span-2">
-                <Link to="/">
+                <Link to="/register">
                   <button
                     type="submit"
                     onClick={onSignupSubmitted}
                     disabled={
-                      !uniqueEmail || !uniqueUsername || !passwordMatch || !fieldsNotEmpty
+                      !uniqueEmail ||
+                      !uniqueUsername ||
+                      !passwordMatch ||
+                      !fieldsNotEmpty
                     }
                     className="w-full shadow-lg text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
                                disabled:bg-primary-300 disabled:shadow-inner"
@@ -145,7 +154,7 @@ export default function RegisterForm() {
                 <p className="text-sm font-light text-gray-500">
                   Already have an account?{" "}
                   <Link
-                    to="/a"
+                    to="/"
                     className="font-medium text-primary-600 hover:underline"
                   >
                     Log in here

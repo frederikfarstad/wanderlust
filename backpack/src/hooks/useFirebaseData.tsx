@@ -14,7 +14,6 @@ interface FirebaseData<T> {
   error?: Error;
 }
 
-
 // This is a hook for getting data from firebase. Can be used in general, by providing the string name of the collection.
 // Define the interface for the datatype you want first.
 
@@ -26,28 +25,38 @@ interface User {
 }
 const { data: users, loading, error } = useFirebaseCollection<User>("users");
 
+
+// WARNING: This could cause a lot of fetching from the firebase. The limit is 50k, so it should be fine.
+But, if you want to disable fetching while developing, you can do this by passing a false value into the hook.
+
 */
 function useFirebaseCollection<T>(
-  path: string
+  path: string,
+  disable: boolean
 ): FirebaseData<T> {
+  if (disable) {
+    return { data: [], loading: false };
+  }
 
-    const dataRef = collection(db, path)
+  const dataRef = collection(db, path);
 
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error>();
 
   useEffect(() => {
-    console.log("fetching something")
+    console.log("fetching something");
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(undefined);
         const data = await getDocs(dataRef);
-        const filteredData: { [field: string] : any}[] = data.docs.map((doc) => doc.data())
+        const filteredData: { [field: string]: any }[] = data.docs.map((doc) =>
+          doc.data()
+        );
         setData(filteredData as T[]);
       } catch (err) {
-        console.error(err);
+        console.error();
       } finally {
         setLoading(false);
       }
