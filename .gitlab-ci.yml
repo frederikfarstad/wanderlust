@@ -9,8 +9,11 @@ before_script:
  - echo "Java installed!"
  - echo "Installing NodeJS..."
 # - apt-get -y install nodejs 14.4.0
- - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
- - nvm install nodejs 14.4.0
+ - apt install curl
+ - cd ~
+ - curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
+ - bash nodesource_setup.sh
+ - apt-get -y install nodejs
  - echo "NodeJS installed!"
 # - echo "Installing npm..."
 # - apt-get -y install npm
