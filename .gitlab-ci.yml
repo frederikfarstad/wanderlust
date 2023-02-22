@@ -8,11 +8,15 @@ before_script:
  - apt-get update && apt-get -y install openjdk-8-jdk  && apt-get -y install ant
  - echo "Java installed!"
  - echo "Installing NodeJS..."
- - apt-get -y install nodejs 14.4.0
+# - apt-get -y install nodejs 14.4.0
+ - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+ - nvm install nodejs 14.4.0
  - echo "NodeJS installed!"
- - echo "Installing npm..."
- - apt-get -y install npm
- - echo "npm installed!"
+# - echo "Installing npm..."
+# - apt-get -y install npm
+# - echo "npm installed!"
+ - nodejs -v
+ - npm version
 
 
 stages:          # List of stages for jobs, and their order of execution
