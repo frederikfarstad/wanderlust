@@ -19,7 +19,7 @@
 image: node:latest
 
 stages:          # List of stages for jobs, and their order of execution
-  - build
+# - build
   - test
 
 build:       # This job runs in the build stage, which runs first.
