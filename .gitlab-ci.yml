@@ -9,7 +9,7 @@ before_script:
  - echo "Java installed!"
  - echo "Installing NodeJS..."
 # - apt-get -y install nodejs 14.4.0
- - apt install curl
+ - apt-get -y install curl
  - cd ~
  - curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
  - bash nodesource_setup.sh
