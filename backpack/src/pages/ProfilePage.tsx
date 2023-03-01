@@ -31,7 +31,7 @@ function ProfilePage() {
   const [image, setImage] = useState([] as any);
 
   const onChange = (imageList: any) => {
-    console.log(imageList, imageList[0].data_url);
+    console.log(imageList);
     setImage(imageList);
   }
 
@@ -43,11 +43,9 @@ function ProfilePage() {
 
     const routeElemen = routes.length ? routes?.map((r) => <Post {...r} />) : <>No posts to display</>;
 
-
-  
   console.log(routes)
 
-  return <div className="bg-primary-300 p-20">
+  return <div className="bg-primary-300 p-20 min-h-[78vh]">
     <div className="flex gap-4 items-center">
     <ImageUploading
         value={image}
@@ -58,7 +56,6 @@ function ProfilePage() {
         {({
           onImageUpload,
         }) => (
-          // write your building UI
           <div className="upload__image-wrapper relative">
             {image.length == 0 
               ? <img src={pfp} className="w-20 h-20 bg-primary-600 rounded-full" />
