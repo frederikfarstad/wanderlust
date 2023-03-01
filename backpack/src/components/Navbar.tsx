@@ -1,60 +1,103 @@
-import { useState } from "react";
-import pfp from "../public/erna.jpg";
+import { signOut } from "firebase/auth";
+import { Link } from "react-router-dom";
+import { auth } from "../firebase";
+import useUserInfo from "../hooks/useUserInfo";
 import logo from "../public/mountain.png";
-import search from "../public/search.png"
-
-/* Profile picture made from user specific */
 
 
 export default function Navbar() {
+  const { pfp, username, uid } = useUserInfo();
+  const profileLink = "profile/" + uid
+
   return (
-    <nav className=" bg-primary-100 border-gray-200 px-2 sm:px-4 py-2.5 rounded-b shadow-2xl">
-      <div className="container flex flex-wrap items-center justify-between mx-auto">
+    <>
+      <nav className="h-20 bg-primary-100 border-gray-200 shadow-2xl w-full fixed z-10">
+        <div className="grid grid-cols-6 h-full">
+          <div className="col-start-2 flex items-center">
+            <Link
+              to="/"
+              className="inline-flex p-2 my-2 rounded-md"
+            >
+              <img src={logo} className="h-12 min-w-max" />
+              <span className="text-xl font-semibold ml-2 hidden md:block self-center">
+                Wanderlust
+              </span>
+            </Link>
+          </div>
 
-        {/* Logo and title */}
-        <a href="/" className="flex items-center">
-            <img src={logo} className="h-6 mr-3 sm:h-9" alt="Logo" />
-            <span className="self-center text-xl font-semibold whitespace-nowrap">Wanderlust</span>
-        </a>
+          <div className="col-span-2">
+            {/* Put the center items here. Could be something like filter or other stuff */}
+          </div>
 
-
-        <button className="flex flex-row group">
-          <IconSearch/>
-          <input className="ml-2 border-none p-2 scale-0 group-hover:scale-100 transition-all duration-300 origin-left" placeholder="Search..."/>
-        </button>
-
-
-        {/* Profile picture: make this clickable */}
-        <div className="flex items-center md:order-2">
-        <img className="w-8 h-8 rounded-full" src={pfp} alt="user photo" />
+          <div className="flex items-center gap-4">
+            <div className="group">
+              <Link to={profileLink}>
+                <img
+                  className="h-8 min-w-max rounded-full bg-gray-500 ring-2 ring-gray-500 hover:ring-gray-900 hover:ring-4 transition-all"
+                  src={pfp}
+                  alt="user photo"
+                />
+              </Link>
+              <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top-left">
+                <div className="bg-primary-100 grid grid-cols-1">
+                  <Link to={profileLink}>
+                    <div className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                      Go to profile
+                    </div>
+                  </Link>
+                  <Link to="/settings">
+                    <div className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                      Settings
+                    </div>
+                  </Link>
+                  <Link to="/" className="">
+                    <button
+                      onClick={() => signOut(auth)}
+                      className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4 w-full text-left"
+                    >
+                      Log out
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <Link to="/create">
+              <div className="group">
+                <IconAdd />
+                <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top">
+                  <button className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                    Create route
+                  </button>
+                </div>
+              </div>
+            </Link>
+          </div>
         </div>
-
-
-        <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="mobile-menu-2">
-            <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-primary-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white">
-                <li><a href="#" className="block py-2 pl-3 pr-4 text-white bg-primary-700 rounded md:bg-transparent md:text-primary-700 md:p-0" aria-current="page">Home</a></li>
-                <li><a href="#" className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">About</a></li>
-                <li><a href="#" className="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">Trips</a></li>
-            </ul>
-        </div>
-
-
-
-      </div>
-    </nav>
+      </nav>
+      <div className="h-20 w-full bg-transparent" />
+    </>
   );
 }
 
-function IconSearch() {
+function IconAdd() {
   return (
     <svg
-      className="group-hover:text-primary-200 hover:bg-primary-700 rounded-full group-hover:bg-primary-700 "
-      viewBox="0 0 1024 1024"
-      fill="currentColor"
-      height="2rem"
-      width="2rem"
+      fill="none"
+      viewBox="0 0 24 24"
+      className="h-12 text-green-500 hover:bg-green-500 hover:text-blue-100 rounded-full hover:rotate-45 transition-all duration-100"
     >
-      <path d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z" />
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12zm10-8a8 8 0 100 16 8 8 0 000-16z"
+        clipRule="evenodd"
+      />
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M13 7a1 1 0 10-2 0v4H7a1 1 0 100 2h4v4a1 1 0 102 0v-4h4a1 1 0 100-2h-4V7z"
+        clipRule="evenodd"
+      />
     </svg>
   );
 }

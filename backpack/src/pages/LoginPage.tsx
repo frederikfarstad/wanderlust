@@ -150,13 +150,7 @@ export const SignupSection = (props: {
   const { setSelectedForm } = props;
 
   const onSignupSubmitted = async () => {
-    return await SubmitSignup({
-      email,
-      username,
-      fullname,
-      password,
-      repeatPassword,
-    });
+
   };
 
   return (
@@ -235,7 +229,7 @@ export const SignupSection = (props: {
       <br />
       <SubmitButton
         text="Sign up"
-        submitFunction={onSignupSubmitted}
+    
         title="SignupButton"
       />
       {error !== undefined && (
