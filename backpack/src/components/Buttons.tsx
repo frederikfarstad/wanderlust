@@ -4,10 +4,11 @@ type SubmitButtonProps = {
   text: string;
   title?: string;
   submitFunction?: () => Promise<boolean>;
+  className?: string;
 };
 
 export const SubmitButton = (props: SubmitButtonProps) => {
-  const { text, submitFunction, title } = props;
+  const { text, submitFunction, title, className } = props;
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async () => {
@@ -28,9 +29,11 @@ export const SubmitButton = (props: SubmitButtonProps) => {
     <>
       <button
         onClick={onSubmit}
-        className={`text-white font-semibold drop-shadow-md rounded-md p-2 ${
-          isLoading ? "bg-blue-400" : "hover:bg-blue-400 bg-blue-500"
-        }`}
+        className={
+          `text-white font-semibold drop-shadow-md rounded-md p-2 ${
+            isLoading ? "bg-blue-400" : "hover:bg-blue-400 bg-blue-500"
+          }` + ` ${className !== undefined ? className : ""}`
+        }
         title={title || "SubmitButton"}
       >
         {isLoading ? "Loading..." : text}

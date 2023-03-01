@@ -1,19 +1,20 @@
 import logo from "../public/mountain.png";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth } from "../firebase";
 import GoogleLoginButton from "../components/GoogleLogin";
 
-
 export default function LoginForm() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const loginWithEmail = async () => {
-    const success = await signInWithEmailAndPassword(auth, email, password)
-  }
-
+    const success = await signInWithEmailAndPassword(auth, email, password);
+  };
 
   return (
     <section className="bg-gradient-to-br from-primary-200 to-primary-500 h-screen">
@@ -76,6 +77,11 @@ export default function LoginForm() {
               <div></div>
             </div>
             <GoogleLoginButton />
+            <Link to="/recovery">
+              <button className="text-sm font-light text-gray-500 mt-4">
+                Forgot your password?
+              </button>
+            </Link>
           </div>
         </div>
       </div>
