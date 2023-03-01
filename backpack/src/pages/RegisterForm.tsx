@@ -25,7 +25,12 @@ interface User {
 */
 
 export default function RegisterForm() {
-  const { data: users, loading, error } = useFirebaseCollection<User>("User", true);
+
+
+  const { data: users, loading, error } = useFirebaseCollection<User>("users", false);
+
+
+
   const usernames = users?.map((u) => u.username);
   const emails = users?.map((u) => u.email);
 

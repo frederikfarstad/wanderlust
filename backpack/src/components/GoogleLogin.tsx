@@ -1,13 +1,15 @@
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
+import { createUser } from "../utils/FirebaseUtils";
 
-
+// TODO : fix weird notation in createUser(...). Did this to avoid typescript warnings, but looks bad
 export default function GoogleLoginButton() {
     const registerWithGoogle = async () => {
       try {
         const result = await signInWithPopup(auth, googleProvider);
         // User registration successful
         const user = result.user;
+        createUser(user.uid, user.email || "", user.displayName || "", user.displayName || "", user.photoURL)
         console.log('User registered successfully:', user);
       } catch (error) {
   
