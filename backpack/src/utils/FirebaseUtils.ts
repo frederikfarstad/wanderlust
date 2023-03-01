@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   Timestamp,
 } from "firebase/firestore";
@@ -45,6 +46,7 @@ export const createUser = async (
 };
 
 export interface Route {
+  id: string;
   title: string;
   description: string;
   duration: string;
@@ -108,29 +110,68 @@ export interface UserInfo {
 // TODO : handle not finding a user better
 // TODO : rewrite this
 export const getUserInfo = (uid: string): UserInfo => {
+
+  if (!uid) {
+    return {pfp : defaultpfp, username: ""}
+  }
+
+
   const userRef = doc(db, "users", uid);
-  const [username, setUsername] = useState<string>("Some user")
-  const [pfp, setPfp] = useState<string | null>(null)
+  const [username, setUsername] = useState<string>("missing");
+  const [pfp, setPfp] = useState<string | null>(null);
+  const [posts, setPosts] = useState<Route[]>([]);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      console.log("fetching user: ", uid)
+      console.log("fetching user: ", uid);
       try {
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
-          // This can be done better but I am too tiered atm
-          const name = userDoc.data().username
-          const profilepic = userDoc.data().profilepicture
-          setUsername(userDoc.data().username);
-          setPfp(profilepic)
+          let name = userDoc.data().username
+          name = name ? name : "missing" as string
+          setUsername(name);
+          setPfp(userDoc.data().profilepicture);
+        } else {
+          console.log("user does not exist");
         }
       } catch (error) {
+        console.log("error");
         console.log(error);
       }
     };
-    fetchUserInfo()
+    fetchUserInfo();
   }, []);
-  const image = pfp ? pfp : defaultpfp
-  return { pfp : image, username}
+  const image = pfp ? pfp : defaultpfp;
+  return { pfp: image, username };
+};
+
+// Not sure if there is a good way to combine this with the function above. Also not sure if that is necessary
+/**
+ * Each user has 3 collections (currently): posts, likes, favorites
+ * The function returns one of them, specified by collectionName
+ *  */
+export const getUserCollection = (
+  uid: string,
+  collectionName: "posts" | "likes" | "favorites"
+): Route[] => {
+  const collectionRef = collection(db, "users", uid, collectionName);
+  const [data, setData] = useState<Route[]>([]);
+
+
+  useEffect(() => {
+    console.log("fetching data from ", uid)
+    const fetchData = async () => {
+      try {
+        const data = await getDocs(collectionRef)
+        const filteredData = data.docs.map(d => ({...d.data(), id: d.id})) as Route[]
+        setData(filteredData)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [])
+
+  return data;
 };
 

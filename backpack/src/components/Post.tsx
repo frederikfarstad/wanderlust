@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import useUserInfo from "../hooks/useUserInfo";
 import { getUserInfo, Route } from "../utils/FirebaseUtils";
 
@@ -14,14 +15,14 @@ export default function Post({
   createdBy,
 }: Route) {
   const { pfp, username } = getUserInfo(createdBy);
-  const [like, setLike] = useState("♡");
 
-  console.log(locations)
 
   const stopElements = locations.map((s) => <ListElement {...s} />);
 
   return (
       <div className="bg-blue-100 rounded-xl p-4 w-full">
+        <Link to={"/profile/"+createdBy}>
+
         <div className="flex flex-wrap items-center">
           <img src={pfp} className="h-8 w-8 bg-blue-600 rounded-full" />
           <div className="px-2">
@@ -29,6 +30,7 @@ export default function Post({
             <div className="text-xs text-gray-800">{moment(createdAt.toDate()).fromNow()}</div>
           </div>
         </div>
+        </Link>
         <div className="text-center text-xl font-semibold mt-4">{title}</div>
         <div className="py-2 px-4">
           <ol className="relative border-l border-gray-700">{stopElements}</ol>
@@ -54,7 +56,7 @@ interface Stop {
   area: string;
 }
 
-function ListElement({ country, province, area }: Stop) {
+export function ListElement({ country, province, area }: Stop) {
   return (
     <li className="mb-6 ml-4">
       <div className="absolute w-3 h-3 bg-gray-700 rounded-full mt-1.5 -left-1.5 border border-white"></div>

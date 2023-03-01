@@ -1,9 +1,13 @@
 import TripView from "../components/TripView";
 import "../index.css";
 import Navbar from "../components/Navbar";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useFirebaseCollection from "../hooks/useFirebaseData";
 import useUserInfo from "../hooks/useUserInfo";
+import { getUserCollection, getUserInfo, Route } from "../utils/FirebaseUtils";
+import moment from "moment";
+import Post from "../components/Post";
+import { useState } from "react";
 
 interface Trip {
   id: string;
@@ -17,59 +21,37 @@ interface Trip {
 }
 
 function ProfilePage() {
-  const { pfp, username } = useUserInfo();
+  const { uid } = useUserInfo();
+  let { id: urlID } = useParams();
 
-  const {
-    data: trips,
-    loading,
-    error,
-  } = useFirebaseCollection<Trip>("trips", false);
+  const currentUsersProfile = uid === urlID
+  const { pfp, username} = getUserInfo(urlID as string)
 
-  let { id } = useParams();
 
-  return (
-    <>
-      <div className="grid smallScreen:grid-cols-1 grid-cols-3 h-screen bg-primary-300">
-        <div id="gridOneProfile" className="h-[100vh] fade-in-hello">
-          <div className="rounded-full overflow-hidden w-1/2 aspect-square m-auto mb-[5vh] mt-[10vh] bg-gradient-to-br from-primary-600 to-primary-400 p-2">
-            <div className="rounded-full overflow-hidden aspect-square">
-              <img src={pfp} />
-            </div>
-          </div>
 
-          <div className="m-auto w-3/4 text-white ">
-            <h1 className="text-3xl font-bold bg-inherit">Om meg</h1>
-            <div className="bg-gradient-to-br from-primary-600 to-primary-400 rounded-3xl">
-              <div className="border-4 border-primary-200 rounded-3xl min-h-[20vh] max-h-[40vh] overflow-auto pl-[1.25rem] pt-[0.5rem] pr-[1.25rem] text-xl scrollbar-hide">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                  cupidatat non proident, sunt in culpa qui officia deserunt
-                  mollit anim id est laborum.Lorem ipsum dolor sit amet,
-                  consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                  ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                  ea commodo consequat. Duis aute irure dolor in reprehenderit
-                  in voluptate velit esse cillum dolore eu fugiat nulla
-                  pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                  in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="gridTwoTrips" className="col-span-2 fade-in-hello">
-          {/* TODO : change this to show favtrips */}
-          <TripView myTrips={trips} favTrips={trips} />
-        </div>
-        <div id="gridThreeAdvertisement" className="fade-in-hello"></div>
-      </div>
-    </>
-  );
+  const [type, setType] = useState<"posts" | "likes" | "favorites">("posts")
+
+  console.log(type)
+
+  const routes = getUserCollection(urlID as string, type);
+
+    const routeElemen = routes.length ? routes?.map((r) => <Post {...r} />) : <>No posts to display</>;
+
+
+  
+  console.log(routes)
+
+  return <div className="bg-primary-300 p-20">
+    <div className="flex gap-4 items-center">
+      <img src={pfp} className="w-20 h-20 bg-primary-600 rounded-full" />
+      <div className="self-center text-xl font-semibold">{username}</div>
+      <button onClick={() => setType("posts")} type="button" className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">{currentUsersProfile ? "My posts" : username + "'s posts" }</button>
+      <button onClick={() => setType("favorites")} type="button" className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">{currentUsersProfile ? "My favourite posts" : username + "'s favourite posts" }</button>
+      {currentUsersProfile ? <button onClick={() => setType("likes")} type="button" className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">My liked posts</button> : <></>}
+    </div>
+    <div className=" mt-20 grid grid-cols-3 gap-4">{routeElemen}</div>
+  </div>;
 }
 
 export default ProfilePage;
+
