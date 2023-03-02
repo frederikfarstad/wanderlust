@@ -1,4 +1,6 @@
 import { signOut } from "firebase/auth";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { auth } from "../firebase";
 import useUserInfo from "../hooks/useUserInfo";
@@ -8,6 +10,26 @@ import logo from "../public/mountain.png";
 export default function Navbar() {
   const { pfp, username, uid } = useUserInfo();
   const profileLink = "profile/" + uid
+
+  const storage = getStorage();
+  const storageProfilePicture = ref(storage, "profilepics/"+ uid);
+
+  const [image, setImage] = useState([] as any);
+
+  async function getImage() {
+    try {
+      const url = await getDownloadURL(storageProfilePicture)
+      console.log("Got profile picture from storage", url);
+      setImage([{data_url: url}]);
+    } catch (error) {
+      console.log("No profile picture in storage");
+    }
+    
+  }
+
+  useEffect(() => {
+    getImage();
+  }, [])
 
   return (
     <>
@@ -34,7 +56,9 @@ export default function Navbar() {
               <Link to={profileLink}>
                 <img
                   className="h-8 min-w-max rounded-full bg-gray-500 ring-2 ring-gray-500 hover:ring-gray-900 hover:ring-4 transition-all"
-                  src={pfp}
+                  src={image.length == 0 
+                    ? pfp
+                    : image[0].data_url}
                   alt="user photo"
                 />
               </Link>

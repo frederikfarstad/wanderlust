@@ -1,7 +1,8 @@
 import { Timestamp } from "firebase/firestore";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import moment from "moment";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import useUserInfo from "../hooks/useUserInfo";
 import { getUserInfo, Route } from "../utils/FirebaseUtils";
 
@@ -18,13 +19,35 @@ export default function Post({
 
 
   const stopElements = locations.map((s) => <ListElement {...s} />);
+  
+  const storage = getStorage();
+  const storageProfilePicture = ref(storage, "profilepics/"+ createdBy);
+
+  const [image, setImage] = useState([] as any);
+
+  async function getImage() {
+    try {
+      const url = await getDownloadURL(storageProfilePicture)
+      console.log("Got profile picture from storage", url);
+      setImage([{data_url: url}]);
+    } catch (error) {
+      console.log("No profile picture in storage");
+    }
+    
+  }
+
+  useEffect(() => {
+    getImage();
+  }, [])
 
   return (
       <div className="bg-blue-100 rounded-xl p-4 w-full">
         <Link to={"/profile/"+createdBy}>
 
         <div className="flex flex-wrap items-center">
-          <img src={pfp} className="h-8 w-8 bg-blue-600 rounded-full" />
+          <img src={image.length == 0 
+                    ? pfp
+                    : image[0].data_url} className="h-8 w-8 bg-blue-600 rounded-full" />
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
             <div className="text-xs text-gray-800">{moment(createdAt.toDate()).fromNow()}</div>
