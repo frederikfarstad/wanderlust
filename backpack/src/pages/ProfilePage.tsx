@@ -5,9 +5,10 @@ import { Link, useParams } from "react-router-dom";
 import useFirebaseCollection from "../hooks/useFirebaseData";
 import useUserInfo from "../hooks/useUserInfo";
 import { getUserCollection, getUserInfo, Route } from "../utils/FirebaseUtils";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import moment from "moment";
 import Post from "../components/Post";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ImageUploading from "react-images-uploading";
 
 interface Trip {
@@ -21,18 +22,43 @@ interface Trip {
   end: string;
 }
 
+
+
 function ProfilePage() {
   const { uid } = useUserInfo();
   let { id: urlID } = useParams();
 
+  
   const currentUsersProfile = uid === urlID
   const { pfp, username} = getUserInfo(urlID as string)
+  
+  const storage = getStorage();
+  const storageProfilePicture = ref(storage, "profilepics/"+ urlID);
 
   const [image, setImage] = useState([] as any);
+
+  async function getImage() {
+    try {
+      const url = await getDownloadURL(storageProfilePicture)
+      console.log("Got profile picture from storage", url);
+      setImage([{data_url: url}]);
+    } catch (error) {
+      console.log("No profile picture in storage");
+    }
+    
+  }
+
+  useEffect(() => {
+    getImage();
+  }, [])
 
   const onChange = (imageList: any) => {
     console.log(imageList);
     setImage(imageList);
+
+    /* Upload profile picture to storage */
+    uploadBytes(storageProfilePicture, imageList[0].file);
+    console.log("Updated profile picture in storage", imageList[0].file.name, storageProfilePicture);
   }
 
   const [type, setType] = useState<"posts" | "likes" | "favorites">("posts")
@@ -60,7 +86,7 @@ function ProfilePage() {
             {image.length == 0 
               ? <img src={pfp} className="w-20 h-20 bg-primary-600 rounded-full" />
               : <img src={image.length == 0 ? pfp : image[0].data_url} className="w-20 h-20 bg-primary-600 rounded-full" />}
-            <button onClick={onImageUpload} className="bg-blue-600 text-white p-1 rounded-lg mt-5">Upload image</button>
+            <button onClick={onImageUpload} className={currentUsersProfile ? "bg-blue-600 text-white p-1 rounded-lg mt-5" : "hidden"}>Upload image</button>
           </div>
         )}
       </ImageUploading>
