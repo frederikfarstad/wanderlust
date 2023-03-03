@@ -8,6 +8,7 @@ import { auth, db } from "../firebase/firebase-config";
 import { User } from "../firebase/UserUtils";
 import { deleteTrip } from "../firebase/PostUtils";
 
+import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 
 export default function Post({
   id,
@@ -21,7 +22,7 @@ export default function Post({
   edited,
 }: Trip) {
   const uid = auth.currentUser?.uid;
-  const [dummy, setDummy] = useState(false)
+  const [dummy, setDummy] = useState(false);
   const [pfp, setPfp] = useState(defaultpfp);
   const [username, setUsername] = useState("");
 
@@ -48,16 +49,26 @@ export default function Post({
 
   const handleDelete = async () => {
     if (id) {
-      await deleteTrip(id)
+      await deleteTrip(id);
     }
-    setDummy(!dummy)
-  } 
+    setDummy(!dummy);
+  };
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  const toggleFavorite = () => {
+    setIsFavorited(!isFavorited);
+  };
 
   return (
     <div className="bg-blue-100 rounded-xl p-4 w-full relative group">
       {owner && (
         <div className="flex flex-col gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100">
-          <button onClick={handleDelete} className="text-sm font-light text-gray-500">Delete</button>
+          <button
+            onClick={handleDelete}
+            className="text-sm font-light text-gray-500"
+          >
+            Delete
+          </button>
           <Link to={"/create/" + id}>
             <button className="text-sm font-light text-gray-500">Edit</button>
           </Link>
