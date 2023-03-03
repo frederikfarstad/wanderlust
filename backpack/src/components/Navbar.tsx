@@ -4,22 +4,18 @@ import { auth } from "../firebase";
 import useUserInfo from "../hooks/useUserInfo";
 import logo from "../public/mountain.png";
 
-
 export default function Navbar() {
   const { pfp, username, uid } = useUserInfo();
-  const profileLink = "profile/" + uid
+  const profileLink = "profile/" + uid;
 
   return (
     <>
       <nav className="h-20 bg-primary-100 border-gray-200 shadow-2xl w-full fixed z-10">
         <div className="grid grid-cols-6 h-full">
           <div className="col-start-2 flex items-center">
-            <Link
-              to="/"
-              className="inline-flex p-2 my-2 rounded-md"
-            >
+            <Link to="/" className="inline-flex p-2 my-2 rounded-md">
               <img src={logo} className="h-12 min-w-max" />
-              <span className="text-xl font-semibold ml-2 hidden md:block self-center">
+              <span className="text-xl font-semibold ml-2 hidden md:block self-center text-primary-details">
                 Wanderlust
               </span>
             </Link>
@@ -41,19 +37,19 @@ export default function Navbar() {
               <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top-left">
                 <div className="bg-primary-100 grid grid-cols-1">
                   <Link to={profileLink}>
-                    <div className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                    <div className="text-sm font-light text-primary-details hover:bg-gray-300 p-4">
                       Go to profile
                     </div>
                   </Link>
                   <Link to="/settings">
-                    <div className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                    <div className="text-sm font-light text-primary-details hover:bg-gray-300 p-4">
                       Settings
                     </div>
                   </Link>
                   <Link to="/" className="">
                     <button
                       onClick={() => signOut(auth)}
-                      className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4 w-full text-left"
+                      className="text-sm font-light text-primary-details hover:bg-gray-300 p-4 w-full text-left"
                     >
                       Log out
                     </button>
@@ -65,7 +61,7 @@ export default function Navbar() {
               <div className="group">
                 <IconAdd />
                 <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top">
-                  <button className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                  <button className="text-sm font-light text-primary-details hover:bg-gray-300 p-4">
                     Create route
                   </button>
                 </div>

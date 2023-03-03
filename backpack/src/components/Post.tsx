@@ -16,37 +16,37 @@ export default function Post({
 }: Route) {
   const { pfp, username } = getUserInfo(createdBy);
 
-
   const stopElements = locations.map((s) => <ListElement {...s} />);
 
   return (
-      <div className="bg-blue-100 rounded-xl p-4 w-full">
-        <Link to={"/profile/"+createdBy}>
-
+    <div className="bg-primary-400 rounded-xl p-4 w-full">
+      <Link to={"/profile/" + createdBy}>
         <div className="flex flex-wrap items-center">
           <img src={pfp} className="h-8 w-8 bg-blue-600 rounded-full" />
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
-            <div className="text-xs text-gray-800">{moment(createdAt.toDate()).fromNow()}</div>
+            <div className="text-xs text-primary-details">
+              {moment(createdAt.toDate()).fromNow()}
+            </div>
           </div>
         </div>
-        </Link>
-        <div className="text-center text-xl font-semibold mt-4">{title}</div>
-        <div className="py-2 px-4">
-          <ol className="relative border-l border-gray-700">{stopElements}</ol>
+      </Link>
+      <div className="text-center text-xl font-semibold mt-4">{title}</div>
+      <div className="py-2 px-4">
+        <ol className="relative border-l border-gray-700">{stopElements}</ol>
+      </div>
+      <div className="bg-gray-600 h-px"></div>
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-col">
+          <div>Price: {price}</div>
+          <div>Duration: {duration}</div>
         </div>
-        <div className="bg-gray-600 h-px"></div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="flex flex-col">
-            <div>Price: {price}</div>
-            <div>Duration: {duration}</div>
-          </div>
-          <div className="flex flex-row">
-            <IconFavorite />
-            <IconLike />
-          </div>
+        <div className="flex flex-row">
+          <IconFavorite />
+          <IconLike />
         </div>
       </div>
+    </div>
   );
 }
 
