@@ -1,5 +1,5 @@
 import defaultpfp from '../public/pfp.png'
-import { auth } from '../firebase'
+import { auth } from '../firebase/firebase-config'
 
 
 import { useState } from 'react';

@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, connectAuthEmulator, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
-import firebaseInfo from "../firebase.json";
+import firebaseInfo from "../../firebase.json";
 
 const NODE_ENV = process.env.NODE_ENV;
 const IP_ADDRESS = "127.0.0.1"; //Had to set IP address to 127.0.0.1 instead of localhost because of DNS issues with firebase

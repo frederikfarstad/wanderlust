@@ -1,57 +1,82 @@
-import TripView from "../components/TripView";
 import "../index.css";
-import Navbar from "../components/Navbar";
-import { Link, useParams } from "react-router-dom";
-import useFirebaseCollection from "../hooks/useFirebaseData";
-import useUserInfo from "../hooks/useUserInfo";
-import { getUserCollection, getUserInfo, Route } from "../utils/FirebaseUtils";
-import moment from "moment";
-import Post from "../components/Post";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { auth, db } from "../firebase/firebase-config";
+import defaultpfp from "../public/pfp.png";
+import { doc, getDoc } from "firebase/firestore";
+import { User } from "../firebase/UserUtils";
+import { useParams } from "react-router-dom";
 
-interface Trip {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  price: number;
-  rating: number;
-  start: string;
-  end: string;
-}
+
 
 function ProfilePage() {
-  const { uid } = useUserInfo();
-  let { id: urlID } = useParams();
+  const uid = auth.currentUser?.uid;
+  const [pfp, setPfp] = useState(defaultpfp);
+  const [username, setUsername] = useState("");
 
-  const currentUsersProfile = uid === urlID
-  const { pfp, username} = getUserInfo(urlID as string)
+  const { urlID } = useParams();
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        if (urlID) {
+          const userSnap = await getDoc(doc(db, "users", urlID));
+          if (userSnap.exists()) {
+            const userData = userSnap.data() as User;
+            setPfp(userData.profilepicture);
+            setUsername(userData.username);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUser();
+  }, [uid]);
+
+  const isProfileOwner = uid && uid === urlID;
+  const [type, setType] = useState<"posts" | "likes" | "favorites">("posts");
+
+
+  const routeElemen = <>No posts to display</>;
 
 
 
-  const [type, setType] = useState<"posts" | "likes" | "favorites">("posts")
-
-  console.log(type)
-
-  const routes = getUserCollection(urlID as string, type);
-
-    const routeElemen = routes.length ? routes?.map((r) => <Post {...r} />) : <>No posts to display</>;
-
-
-  
-  console.log(routes)
-
-  return <div className="bg-primary-300 p-20">
-    <div className="flex gap-4 items-center">
-      <img src={pfp} className="w-20 h-20 bg-primary-600 rounded-full" />
-      <div className="self-center text-xl font-semibold">{username}</div>
-      <button onClick={() => setType("posts")} type="button" className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">{currentUsersProfile ? "My posts" : username + "'s posts" }</button>
-      <button onClick={() => setType("favorites")} type="button" className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">{currentUsersProfile ? "My favourite posts" : username + "'s favourite posts" }</button>
-      {currentUsersProfile ? <button onClick={() => setType("likes")} type="button" className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">My liked posts</button> : <></>}
+  return (
+    <div className="bg-primary-300 p-20">
+      <div className="flex gap-4 items-center">
+        <img src={pfp} className="w-20 h-20 bg-primary-600 rounded-full" />
+        <div className="self-center text-xl font-semibold">{username}</div>
+        <button
+          onClick={() => setType("posts")}
+          type="button"
+          className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none"
+        >
+          {isProfileOwner ? "My posts" : username + "'s posts"}
+        </button>
+        <button
+          onClick={() => setType("favorites")}
+          type="button"
+          className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none"
+        >
+          {isProfileOwner
+            ? "My favourite posts"
+            : username + "'s favourite posts"}
+        </button>
+        {isProfileOwner ? (
+          <button
+            onClick={() => setType("likes")}
+            type="button"
+            className="ml-20 text-white h-12 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none"
+          >
+            My liked posts
+          </button>
+        ) : (
+          <></>
+        )}
+      </div>
+      <div className=" mt-20 grid grid-cols-3 gap-4">{routeElemen}</div>
     </div>
-    <div className=" mt-20 grid grid-cols-3 gap-4">{routeElemen}</div>
-  </div>;
+  );
 }
 
 export default ProfilePage;
-

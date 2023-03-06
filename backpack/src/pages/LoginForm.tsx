@@ -5,7 +5,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../firebase/firebase-config";
 import GoogleLoginButton from "../components/GoogleLogin";
 
 export default function LoginForm() {

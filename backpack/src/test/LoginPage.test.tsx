@@ -8,7 +8,7 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { SetStateAction } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../firebase/firebase-config";
 
 test("tests sign up button behavior", async () => {
   render(<LoginPage />);

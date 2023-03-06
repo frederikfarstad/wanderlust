@@ -4,7 +4,7 @@ import {
 } from "firebase/auth";
 import { useState } from "react";
 import { SubmitButton } from "../components/Buttons";
-import { auth } from "../firebase";
+import { auth } from "../firebase/firebase-config";
 import { SubmitSignup } from "../utils/FirebaseUtils";
 
 type SelectedFormType = "signup" | "login" | "passwordreset";

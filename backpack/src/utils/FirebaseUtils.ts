@@ -9,8 +9,10 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { db, auth } from "../firebase";
+import { db, auth } from "../firebase/firebase-config";
+import { UserInfo } from "../firebase/DataInterfaces";
 import defaultpfp from "../public/pfp.png";
+import { Trip } from "../components/createTrip/interface";
 
 type SignupData = {
   email: string;
@@ -45,20 +47,7 @@ export const createUser = async (
   });
 };
 
-export interface Route {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  price: string;
-  locations: {
-    area: string;
-    country: string;
-    province: string;
-  }[];
-  createdAt: Timestamp;
-  createdBy: string;
-}
+
 
 /**
  * When a user creates a post, we store it in the users collection.
@@ -68,7 +57,7 @@ export interface Route {
  *
  *  */
 
-export const postRoute = async (uid: string, post: Route) => {
+export const postTrip = async (uid: string, post: Trip) => {
   await addDoc(collection(doc(db, "users", uid), "posts"), {
     ...post,
     createdAt: Timestamp.fromDate(new Date()),
@@ -101,25 +90,20 @@ export const SubmitSignup = async (data: SignupData) => {
   return success;
 };
 
-export interface UserInfo {
-  username: string;
-  pfp: string;
-}
+
 
 // TODO : access profile picture (better)
 // TODO : handle not finding a user better
 // TODO : rewrite this
 export const getUserInfo = (uid: string): UserInfo => {
-
   if (!uid) {
-    return {pfp : defaultpfp, username: ""}
+    return { pfp: defaultpfp, username: "" };
   }
-
 
   const userRef = doc(db, "users", uid);
   const [username, setUsername] = useState<string>("missing");
   const [pfp, setPfp] = useState<string | null>(null);
-  const [posts, setPosts] = useState<Route[]>([]);
+  const [posts, setPosts] = useState<Trip[]>([]);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -127,8 +111,8 @@ export const getUserInfo = (uid: string): UserInfo => {
       try {
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
-          let name = userDoc.data().username
-          name = name ? name : "missing" as string
+          let name = userDoc.data().username;
+          name = name ? name : ("missing" as string);
           setUsername(name);
           setPfp(userDoc.data().profilepicture);
         } else {
@@ -150,28 +134,51 @@ export const getUserInfo = (uid: string): UserInfo => {
  * Each user has 3 collections (currently): posts, likes, favorites
  * The function returns one of them, specified by collectionName
  *  */
+// NOTE: this will probably be removed soon, it is a bad solution
 export const getUserCollection = (
   uid: string,
   collectionName: "posts" | "likes" | "favorites"
-): Route[] => {
+): Trip[] => {
   const collectionRef = collection(db, "users", uid, collectionName);
-  const [data, setData] = useState<Route[]>([]);
-
+  const [data, setData] = useState<Trip[]>([]);
 
   useEffect(() => {
-    console.log("fetching data from ", uid)
+    console.log("fetching data from ", uid);
     const fetchData = async () => {
       try {
         const data = await getDocs(collectionRef)
-        const filteredData = data.docs.map(d => ({...d.data(), id: d.id})) as Route[]
+        const filteredData = data.docs.map(d => ({...d.data(), id: d.id})) as Trip[]
         setData(filteredData)
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    fetchData()
-  }, [])
+    };
+    fetchData();
+  }, []);
 
   return data;
 };
 
+// DELETE THIS: this is not how we should do get requests
+
+export const getPostById = (postId: string) => {
+  const [post, setPost] = useState<Trip>({} as Trip);
+  const [error, setError] = useState(true)
+  const postRef = doc(db, "Routes", postId);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const temp = await getDoc(postRef);
+        const filteredData = { ...temp.data(), id: temp.id } as Trip;
+        setPost(filteredData);
+        setError(false)
+      } catch (error) {
+        console.log("can't get post", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  return {post, error}
+};
