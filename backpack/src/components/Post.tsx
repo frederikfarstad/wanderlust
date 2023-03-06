@@ -97,7 +97,9 @@ export default function Post({
           <div>Duration: {duration}</div>
         </div>
         <div className="flex flex-row">
-          <IconFavorite />
+          <button onClick={toggleFavorite}>
+            {isFavorited ? <AiFillStar color="orange" /> : <AiOutlineStar />}
+          </button>
           <IconLike />
         </div>
       </div>
