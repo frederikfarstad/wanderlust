@@ -6,6 +6,7 @@ export interface User {
   email: string;
   username: string;
   profilepicture: string;
+  favorites: string[];
 }
 
 export const createUser = async (userInfo: User) => {
@@ -20,4 +21,3 @@ export const updateUser = async (uid: string) => {
     lastLogin: Timestamp.fromDate(new Date()),
   });
 };
-

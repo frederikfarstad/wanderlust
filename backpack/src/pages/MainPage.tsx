@@ -1,26 +1,32 @@
 import Post from "../components/Post";
 import { useEffect, useState } from "react";
 import { Trip } from "../components/createTrip/interface";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { auth, db } from "../firebase/firebase-config";
+import { User } from "../firebase/UserUtils";
 
 export default function MainPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
+  const uid = auth.currentUser != null ? auth.currentUser.uid : "";
 
   useEffect(() => {
-    const getTrips = async () => {
-      try {
-        const tripsSnap = await getDocs(collection(db, "trips"));
-        const data = tripsSnap.docs.map((doc, i) => ({
-          ...doc.data(),
-          id: doc.id
-        })) as Trip[];
-        setTrips(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getTrips();
+    getDoc(doc(db, "users", uid)).then((user) => {
+      const userData = user.data() as User;
+      const getTrips = async () => {
+        try {
+          const tripsSnap = await getDocs(collection(db, "trips"));
+          const data = tripsSnap.docs.map((doc, i) => ({
+            ...doc.data(),
+            favorited: doc.id in userData.favorites,
+            id: doc.id,
+          })) as Trip[];
+          setTrips(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      getTrips();
+    });
   }, []);
 
   const posts = trips.map((trip) => (

@@ -1,4 +1,10 @@
-import { collection, doc, getDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -20,11 +26,13 @@ export default function Post({
   createdAt,
   createdBy,
   edited,
+  favorited,
 }: Trip) {
-  const uid = auth.currentUser?.uid;
+  const uid = auth.currentUser != null ? auth.currentUser.uid : "";
   const [dummy, setDummy] = useState(false);
   const [pfp, setPfp] = useState(defaultpfp);
   const [username, setUsername] = useState("");
+  const [isFavorited, setIsFavorited] = useState(favorited);
 
   useEffect(() => {
     const getUser = async () => {
@@ -53,10 +61,27 @@ export default function Post({
     }
     setDummy(!dummy);
   };
-  const [isFavorited, setIsFavorited] = useState(false);
 
-  const toggleFavorite = () => {
+  const toggleFavorite = async () => {
+    if (auth.currentUser === null) return;
     setIsFavorited(!isFavorited);
+    const userRef = doc(db, "users", uid!);
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) {
+      setIsFavorited(!isFavorited);
+      return;
+    }
+    const userData = userSnap.data() as User;
+    const newFavorites: string[] = [];
+    userData.favorites.forEach((favoriteId) => {
+      if (favoriteId != id || isFavorited) newFavorites.push(favoriteId);
+    });
+    if (isFavorited && !(id in newFavorites)) {
+      newFavorites.push(id);
+    }
+    updateDoc(userRef, {
+      favorites: newFavorites,
+    });
   };
 
   return (
