@@ -2,7 +2,7 @@
 
 ## Overview
 
-Wanderlust - The backpacking route sharing web application for adventurers seeking the very best experiences from around the world.
+Wanderlust - The backpacking trip sharing web application for adventurers seeking the very best experiences from around the world.
 
 I this document you will find:
 

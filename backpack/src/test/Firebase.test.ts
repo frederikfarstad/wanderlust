@@ -2,7 +2,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../firebase/firebase-config";
 import { SubmitSignup } from "../utils/FirebaseUtils";
 
 beforeAll(() => {
