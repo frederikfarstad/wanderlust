@@ -80,7 +80,7 @@ function IconAdd() {
     <svg
       fill="none"
       viewBox="0 0 24 24"
-      className="h-12 text-green-500 hover:bg-green-500 hover:text-blue-100 rounded-full hover:rotate-45 transition-all duration-100"
+      className="h-12 text-green-500 hover:bg-green-500 hover:text-primary-100 rounded-full hover:rotate-45 transition-all duration-100"
     >
       <path
         fill="currentColor"

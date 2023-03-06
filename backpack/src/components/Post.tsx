@@ -22,7 +22,7 @@ export default function Post({
     <div className="bg-primary-400 rounded-xl p-4 w-full">
       <Link to={"/profile/" + createdBy}>
         <div className="flex flex-wrap items-center">
-          <img src={pfp} className="h-8 w-8 bg-blue-600 rounded-full" />
+          <img src={pfp} className="h-8 w-8 bg-primary-600 rounded-full" />
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
             <div className="text-xs text-primary-details">
