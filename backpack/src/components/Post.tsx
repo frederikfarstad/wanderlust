@@ -1,11 +1,16 @@
-import { Timestamp } from "firebase/firestore";
+import { collection, doc, getDoc, Timestamp } from "firebase/firestore";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import useUserInfo from "../hooks/useUserInfo";
-import { getUserInfo, Route } from "../utils/FirebaseUtils";
+import { Trip } from "./createTrip/interface";
+import defaultpfp from "../public/pfp.png";
+import { auth, db } from "../firebase/firebase-config";
+import { User } from "../firebase/UserUtils";
+import { deleteTrip } from "../firebase/PostUtils";
+
 
 export default function Post({
+  id,
   title,
   description,
   duration,
@@ -13,40 +18,86 @@ export default function Post({
   locations,
   createdAt,
   createdBy,
-}: Route) {
-  const { pfp, username } = getUserInfo(createdBy);
+  edited,
+}: Trip) {
+  const uid = auth.currentUser?.uid;
+  const [dummy, setDummy] = useState(false)
+  const [pfp, setPfp] = useState(defaultpfp);
+  const [username, setUsername] = useState("");
 
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        if (createdBy) {
+          const userSnap = await getDoc(doc(db, "users", createdBy));
+          if (userSnap.exists()) {
+            const userData = userSnap.data() as User;
+            setPfp(userData.profilepicture);
+            setUsername(userData.username);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUser();
+  }, [uid]);
 
-  const stopElements = locations.map((s) => <ListElement {...s} />);
+  const owner = createdBy == uid;
+  const stopElements = locations.map((s, i) => <ListElement key={i} {...s} />);
+
+  const handleDelete = async () => {
+    if (id) {
+      await deleteTrip(id)
+    }
+    setDummy(!dummy)
+  } 
 
   return (
-      <div className="bg-blue-100 rounded-xl p-4 w-full">
-        <Link to={"/profile/"+createdBy}>
-
+    <div className="bg-blue-100 rounded-xl p-4 w-full relative group">
+      {owner && (
+        <div className="flex flex-col gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100">
+          <button onClick={handleDelete} className="text-sm font-light text-gray-500">Delete</button>
+          <Link to={"/create/" + id}>
+            <button className="text-sm font-light text-gray-500">Edit</button>
+          </Link>
+        </div>
+      )}
+      <Link to={"/profile/" + createdBy}>
         <div className="flex flex-wrap items-center">
           <img src={pfp} className="h-8 w-8 bg-blue-600 rounded-full" />
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
-            <div className="text-xs text-gray-800">{moment(createdAt.toDate()).fromNow()}</div>
+            <div className="text-xs text-gray-800 flex items-center">
+              {moment(createdAt?.toDate()).fromNow()}
+            </div>
           </div>
         </div>
-        </Link>
-        <div className="text-center text-xl font-semibold mt-4">{title}</div>
-        <div className="py-2 px-4">
-          <ol className="relative border-l border-gray-700">{stopElements}</ol>
+      </Link>
+      <div className="text-center text-xl font-semibold mt-4">{title}</div>
+      <div className="py-2 px-4">
+        <ol className="relative border-l border-gray-700">{stopElements}</ol>
+      </div>
+      {description}
+      <div className="bg-gray-600 h-px"></div>
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-col">
+          <div>Price: {price}</div>
+          <div>Duration: {duration}</div>
         </div>
-        <div className="bg-gray-600 h-px"></div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="flex flex-col">
-            <div>Price: {price}</div>
-            <div>Duration: {duration}</div>
-          </div>
-          <div className="flex flex-row">
-            <IconFavorite />
-            <IconLike />
-          </div>
+        <div className="flex flex-row">
+          <IconFavorite />
+          <IconLike />
         </div>
       </div>
+      {edited ? (
+        <div className="text-xs text-gray-800 flex items-center">
+          edited: {moment(edited.toDate()).fromNow()}
+        </div>
+      ) : (
+        <></>
+      )}
+    </div>
   );
 }
 

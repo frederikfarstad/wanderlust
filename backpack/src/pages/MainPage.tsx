@@ -1,27 +1,31 @@
 import Post from "../components/Post";
-
-import CreatePostForm from "../components/CreatePostForm";
-import Footer from "../components/Footer";
-import { collection, getDocs } from "@firebase/firestore";
-import { db, auth } from "../firebase";
 import { useEffect, useState } from "react";
-import { signOut } from "firebase/auth";
-import useFirebaseCollection from "../hooks/useFirebaseData";
-import { Timestamp } from "firebase/firestore";
-import { Route } from "../utils/FirebaseUtils";
-
-const tripRef = collection(db, "trips");
-
-
+import { Trip } from "../components/createTrip/interface";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase/firebase-config";
 
 export default function MainPage() {
-  const {
-    data: trips,
-    loading,
-    error,
-  } = useFirebaseCollection<Route>("Routes", false);
+  const [trips, setTrips] = useState<Trip[]>([]);
 
-  const posts = trips?.map((trip) => <Post key={trip.title} {...trip} />);
+  useEffect(() => {
+    const getTrips = async () => {
+      try {
+        const tripsSnap = await getDocs(collection(db, "trips"));
+        const data = tripsSnap.docs.map((doc, i) => ({
+          ...doc.data(),
+          id: doc.id
+        })) as Trip[];
+        setTrips(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getTrips();
+  }, []);
+
+  const posts = trips.map((trip) => (
+    <Post key={trip.title} {...trip} id={trip.id} />
+  ));
 
   return (
     <div className="flex flex-col justify-between bg-primary-300">

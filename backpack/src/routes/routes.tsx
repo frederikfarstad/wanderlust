@@ -8,8 +8,6 @@
  *
  */
 
-import CreatePostForm from "../components/CreatePostForm";
-import CreateRoutePage from "../pages/CreateRoutePage";
 import ErrorPage from "../pages/ErrorPage";
 import LoginForm from "../pages/LoginForm";
 import MainPage from "../pages/MainPage";
@@ -19,6 +17,7 @@ import WelcomeUserPage from "../pages/WelcomeUserPage";
 import Root from "../components/Root";
 import ErrorPageNotLoggedIn from "../pages/ErrorPageNotLoggedIn";
 import AccountRecoveryPage from "../pages/AccountRecovery";
+import CreatePostForm2 from "../pages/CreateTripPage";
 
 export const loggedInRoutes = [
   {
@@ -39,12 +38,12 @@ export const loggedInRoutes = [
         element: <ProfilePage />,
       },
       {
-        path: "/createroute",
-        element: <CreateRoutePage />,
+        path: "/create",
+        element: <CreatePostForm2 />,
       },
       {
-        path: "/create",
-        element: <CreatePostForm />,
+        path: "/create/:tripId",
+        element: <CreatePostForm2 />,
       },
     ],
   },

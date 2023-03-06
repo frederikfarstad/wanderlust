@@ -1,7 +1,7 @@
 import { sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { auth } from "../firebase";
+import { auth } from "../firebase/firebase-config";
 
 export default function AccountRecoveryPage() {
   const [email, setEmail] = useState("");
