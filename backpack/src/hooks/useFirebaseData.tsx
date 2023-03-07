@@ -6,7 +6,7 @@ import {
   QuerySnapshot,
 } from "firebase/firestore";
 
-import { db } from "../firebase";
+import { db } from "../firebase/firebase-config";
 
 interface FirebaseData<T> {
   data: T[];
@@ -50,7 +50,7 @@ function useFirebaseCollection<T>(path: string, disable: boolean): FirebaseData<
         setLoading(true);
         setError(undefined);
         const data = await getDocs(dataRef);
-        const filteredData: { [field: string] : any}[] = data.docs.map((doc) => doc.data())
+        const filteredData: { [field: string] : any}[] = data.docs.map((doc) => ({...doc.data(), id:doc.id}))
         setData(filteredData as T[]);
       } catch (err) {
         console.error();

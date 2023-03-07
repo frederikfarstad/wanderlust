@@ -2,7 +2,7 @@ import { signOut } from "firebase/auth";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { auth } from "../firebase";
+import { auth } from "../firebase/firebase-config";
 import useUserInfo from "../hooks/useUserInfo";
 import logo from "../public/mountain.png";
 
@@ -85,7 +85,7 @@ export default function Navbar() {
                 </div>
               </div>
             </div>
-            <Link to="/create">
+            <Link to="/create/new">
               <div className="group">
                 <IconAdd />
                 <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top">
