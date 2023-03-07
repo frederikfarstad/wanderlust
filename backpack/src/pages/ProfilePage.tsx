@@ -14,8 +14,11 @@ function ProfilePage() {
   const uid = auth.currentUser?.uid;
   const [pfp, setPfp] = useState(defaultpfp);
   const [username, setUsername] = useState("");
-
   const { urlID } = useParams();
+
+  const storage = getStorage();
+  const storageProfilePicture = ref(storage, "profilepics/"+ urlID);
+  const [image, setImage] = useState([] as any);
 
   useEffect(() => {
     const getUser = async () => {
@@ -32,27 +35,21 @@ function ProfilePage() {
         console.error(error);
       }
     };
+
+    const getImage = async () => {
+      try {
+        const url = await getDownloadURL(storageProfilePicture)
+        console.log("Got profile picture from storage", url);
+        setImage([{data_url: url}]);
+      } catch (error) {
+        console.log("No profile picture in storage");
+      }
+    };
+
+    getImage();
     getUser();
   }, [uid]);
 
-  const storage = getStorage();
-  const storageProfilePicture = ref(storage, "profilepics/"+ uid);
-
-  const [image, setImage] = useState([] as any);
-
-  async function getImage() {
-    try {
-      const url = await getDownloadURL(storageProfilePicture)
-      console.log("Got profile picture from storage", url);
-      setImage([{data_url: url}]);
-    } catch (error) {
-      console.log("No profile picture in storage");
-    }
-  }
-
-  useEffect(() => {
-    getImage();
-  }, [])
 
   const onChange = (imageList: any) => {
     console.log(imageList);
@@ -63,7 +60,9 @@ function ProfilePage() {
     console.log("Updated profile picture in storage", imageList[0].file.name, storageProfilePicture);
   }
 
+  console.log("uid", uid, "urlID", urlID);
   const isProfileOwner = uid && uid === urlID;
+  console.log(isProfileOwner)
   const [type, setType] = useState<"posts" | "likes" | "favorites">("posts");
 
   const routeElemen = <>No posts to display</>;
