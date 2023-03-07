@@ -36,7 +36,7 @@ function ProfilePage() {
   }, [uid]);
 
   const storage = getStorage();
-  const storageProfilePicture = ref(storage, "profilepics/"+ urlID);
+  const storageProfilePicture = ref(storage, "profilepics/"+ uid);
 
   const [image, setImage] = useState([] as any);
 
@@ -48,7 +48,6 @@ function ProfilePage() {
     } catch (error) {
       console.log("No profile picture in storage");
     }
-    
   }
 
   useEffect(() => {
@@ -67,10 +66,7 @@ function ProfilePage() {
   const isProfileOwner = uid && uid === urlID;
   const [type, setType] = useState<"posts" | "likes" | "favorites">("posts");
 
-
   const routeElemen = <>No posts to display</>;
-
-
 
   return (
     <div className="bg-primary-300 p-20">
