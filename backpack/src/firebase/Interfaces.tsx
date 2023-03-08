@@ -39,5 +39,6 @@ export interface User {
   profilepicture: string;
   trips?: string[];
   liked?: string[];
+  favorited?: string[];
   reviewed?: { postId: string; commentId: string }[];
 }

@@ -93,9 +93,17 @@ export const getTripForEdit = async (tripId: string | undefined) => {
   return null;
 };
 
-const getLikedTripsBy = async () => {
-  
+export const toggleLiked = async ({uid, liked} : {uid: string, liked: string[]}) => {
+   await updateDoc(doc(db, "users", uid), {
+    liked
+   })
 }
+export const toggleFavourited = async ({uid, favorited} : {uid: string, favorited: string[]}) => {
+   await updateDoc(doc(db, "users", uid), {
+    favorited
+   })
+}
+
 
 
 /* ############## USER FUNCTIONS ############## */
