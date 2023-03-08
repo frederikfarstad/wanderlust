@@ -11,15 +11,22 @@ export default function MainPage() {
 
   useEffect(() => {
     getDoc(doc(db, "users", uid)).then((user) => {
+      if (!user.exists()) return;
+
       const userData = user.data() as User;
       const getTrips = async () => {
         try {
+          const userDataFavorites = userData.favorites || [];
           const tripsSnap = await getDocs(collection(db, "trips"));
-          const data = tripsSnap.docs.map((doc, i) => ({
-            ...doc.data(),
-            favorited: doc.id in userData.favorites,
-            id: doc.id,
-          })) as Trip[];
+          const data = tripsSnap.docs.map((doc, i) => {
+            const isFavorited = userDataFavorites.indexOf(doc.id) != -1;
+
+            return {
+              ...doc.data(),
+              favorited: isFavorited,
+              id: doc.id,
+            };
+          }) as Trip[];
           setTrips(data);
         } catch (error) {
           console.error(error);

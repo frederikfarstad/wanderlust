@@ -64,19 +64,24 @@ export default function Post({
 
   const toggleFavorite = async () => {
     if (auth.currentUser === null) return;
-    setIsFavorited(!isFavorited);
+
+    const isNowFavorited = !isFavorited;
+    setIsFavorited(isNowFavorited);
     const userRef = doc(db, "users", uid!);
     const userSnap = await getDoc(userRef);
     if (!userSnap.exists()) {
-      setIsFavorited(!isFavorited);
+      setIsFavorited(!isNowFavorited);
       return;
     }
     const userData = userSnap.data() as User;
+    const oldFavorites = userData.favorites || [];
     const newFavorites: string[] = [];
-    userData.favorites.forEach((favoriteId) => {
-      if (favoriteId != id || isFavorited) newFavorites.push(favoriteId);
+    oldFavorites.forEach((favoriteId) => {
+      if (favoriteId != id || (favoriteId == id && isNowFavorited))
+        newFavorites.push(favoriteId);
     });
-    if (isFavorited && !(id in newFavorites)) {
+    console.log(isNowFavorited, id in newFavorites);
+    if (isNowFavorited && !(id in newFavorites)) {
       newFavorites.push(id);
     }
     updateDoc(userRef, {
