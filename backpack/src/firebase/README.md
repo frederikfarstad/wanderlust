@@ -5,28 +5,27 @@ This contains an overview of the data we store in Firebase. The structure of eac
 Current firebase collections:
 
 - authentication (separate from the rest)
-- Routes
+- trips
 - users
 
 ## Authentication
 
-This where login info is stored. The info can be access in the application by using an auth object, imported from firebase/firebase-config. From this object you can access displayName, photoURL, uid. A hook has been created to access all this information quickly, in hooks/useUserInfo.tsx. How to use the hook:
+This where login info is stored. The info can be access in the application by using an auth object, imported from firebase/firebase-config. This object is only needed to access the uid of the current user. With the uid of the current user we can compare to creators of trips to see if the current user is the owner. You can access the uid of the current user with
 
-`{pfp, username, uid} = useUserInfo()`
+    const uid = getUid()    // imported from utils/FirebaseUtils
 
-The advantage of using this hook is that a default profile picture will be displayed if the user has not uploaded theirs yet. 
 
-Suggestion: we stop using this for other than uid. Since the username and profilepicture has to be stored other places regardless, we can use that instead.
 
-## Routes
 
-Information about the trips that have been posted. The interface for this is defined in /firebase/Datainterfaces.tsx. I give an overview of the fields, with an explanation of the data types. I leave out the obvious ones.
+## trips
 
-- Routes (collection)
+Information about the trips that have been posted. The interface for this is defined in /firebase/Interfaces.tsx. I give an overview of the fields, with an explanation of the data types. I leave out the obvious ones.
+
+- trips (collection)
     * createdAt : timestamp from firebase
     * createdBy : the uid of creator
     * description
-    * duration
+    * duration : number?
     * price : number
     * title
     * locations : string[]
@@ -43,54 +42,35 @@ We need to store information about all users, outside of the auth object. The re
     * fullname
     * email
     * createdAt : timestamp from firebase
-    * profilepicture: ?
-    * posts: string[]
+    * profilepicture: string
+    * trips: string[]
     * likes: string[]
     * favorites: string[]
 
-**NOTE** posts/likes/favorites is not set up properly yet
 
-The idea is that posts/likes/favourites is an array, each element being the id of the post. 
+
+The idea is that trips/likes/favourites is an array, each element being the id of the trips. 
 
 ## Fetching data
 
 Each collection (like `users`) contains documents.
 Each document contains the data we store. For example, in the users collection, there is a document containing information about `user usersen`. Sometimes we want the whole collection (every user), and sometimes we want only one document (like `user usersen`).
 
-The function for reading data from firebase using react is very strange, and it does not make a lot of sense immediately. [This video](https://youtu.be/2hR-uWjBAgw) goes through the basics from the start, with authentication and data fetching. 
+I recommend using React Query to fetch data. [This video](https://www.youtube.com/watch?v=r8Dg0KVnfMA&t=2383s&ab_channel=WebDevSimplified) explains everything we need to know. It's long, and some things are not super well explained. I recommend experimenting to get used to it.
 
-### Fetching the whole collection
+In `firebase/asyncRequests` I have made a large number of useful functions for fetching data. Use these along with the react query hooks for easy life. Example to get every document in `trips`:
 
-Here is the basic function for fetching data:
+    const tripsQuery = useQuery({
+      queryKey: ["trips"],
+      queryFn: getAllTrips
+    })
+That's literally all you need. `getAllTrips` is one of those functions from `firebase/asyncRequests`. Swap this out to get other results. The queryKey is important to understand. Read up on it, and ask if unclear. Example to get a user:
 
-    ...
-    const [data, setData] = usestate<Data[]>([])
+    const uid = getUid();
+    const userQuery = useQuery({
+      queryKey: ["users", uid],
+      queryFn: () => getUserById(uid)
+    })
 
-    useEffect(() => {
-      console.log("fetching data from ", uid)
-      const fetchData = async () => {
-        try {
-          const data = await getDocs(collectionRef)
-          const filteredData = data.docs.map(d => ({...d.data(), id: d.id})) as Route[]
-          setData(filteredData)
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      fetchData()
-    }, [])
-What is going on here? A lot. I can't explain everything. The google docs are not sufficient, because they explain fetching in general, and not how we do it in react. When searching, make sure you look at explanations for firebase 9, the latest version.
+And there you go. In this case the queryKey is ["users", uid]. This means that everytime we need to fetch this exact user, the information is stored in cache. Makes life super good and nice. `getUserById` is also one of those functions defined in asyncRequests.
 
-I have created a hook that can fetch the whole collection. You can do that by doing this:
-
-    const { data: collectionData, loading, error } = useFirebaseCollection<Type>("collectionName");
-
-We are probably never going to use loading and error, so a simpler way is this:
-
-    const { data: collectionData} = useFirebaseCollection<Type>("collectionName");
-
-You also need to tell the function what kind of data you are fetching. That is what the _Type_ is. This is an interface. The most common interfaces will be defined in `firebase/DataInterfaces`. Ask if unclear.
-
-### Fetching a single document
-
-The function for this is very similar to fetching the whole collection. The main difference is that you have to specify the id of the document, and which collection you are getting the data from. An example can be found in `utils/FirebaseUtils.ts`, called `getUserInfo`. 
