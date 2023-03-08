@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import EditMode from "./EditMode";
 import { IconAdd, IconDelete, IconEdit } from "./Icons";
-import { Location } from "./interface";
+import { Location } from "../../firebase/Interfaces";
 
 interface LocationDsiplayProps {
   locations: Location[];

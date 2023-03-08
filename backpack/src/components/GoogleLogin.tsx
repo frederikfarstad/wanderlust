@@ -1,6 +1,6 @@
 import { getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebase-config";
-import { createUser, updateUser } from "../firebase/UserUtils";
+import { createUser, updateUser } from "../firebase/asyncRequests";
 
 export default function GoogleLoginButton() {
   const registerWithGoogle = async () => {
@@ -11,9 +11,10 @@ export default function GoogleLoginButton() {
 
       if (info?.isNewUser) {
         createUser({
-          uid: user.uid,
+          id: user.uid,
           email: user.email || "",
           username: user.displayName || "",
+          fullname: user.displayName || "",
           profilepicture: user.photoURL || "",
         });
       } else {
