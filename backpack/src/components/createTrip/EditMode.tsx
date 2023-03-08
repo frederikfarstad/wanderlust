@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Location } from "./interface";
+import { Location } from '../../firebase/Interfaces'
 
 interface EditProps {
   location: Location | null;
