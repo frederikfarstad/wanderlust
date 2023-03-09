@@ -12,7 +12,7 @@ import { getUid } from "../utils/FirebaseUtils";
 
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 
-export default function Trip({
+export default function TripPage({
   id,
   title,
   description,
@@ -45,11 +45,11 @@ export default function Trip({
   });
   const toggleLikedMutation = useMutation({
     mutationFn: toggleLiked,
-    onSuccess: () => queryClient.invalidateQueries(["trips"])
+    onSuccess: () => queryClient.invalidateQueries(["users", uid])
   })
   const toggleFavoritedMutation = useMutation({
     mutationFn: toggleFavourited,
-    onSuccess: () => queryClient.invalidateQueries(["trips"])
+    onSuccess: () => queryClient.invalidateQueries(["users", uid])
   })
 
   if (userQuery.isLoading || creatorQuery.isLoading)
@@ -65,13 +65,14 @@ export default function Trip({
   // to check if the current user has liked/favorited the trip, we check if the post exist in the likedArray or favoritedArray
   const isLiked = likedArray.includes(id);
   const isFavorited = likedArray.includes(id);
-
+  console.log(isFavorited, likedArray)
   // get info about the creator, to display on the post
   const { profilepicture, username } = creatorQuery.data;
 
   // When the favourite button is pressed: update the array to either remove the id (of this trip) or add it to the list. After that we send it to the database
   const handleToggleFavorite = () => {
     const favorited = favoritedArray.includes(id) ? favoritedArray.filter(f => f !== id) : [...favoritedArray, id]
+    console.log(favorited)
     toggleFavoritedMutation.mutate({uid, favorited})
   }
   const handleToggleLiked = () => {

@@ -99,6 +99,7 @@ export const toggleLiked = async ({uid, liked} : {uid: string, liked: string[]})
    })
 }
 export const toggleFavourited = async ({uid, favorited} : {uid: string, favorited: string[]}) => {
+  console.log("async", favorited)
    await updateDoc(doc(db, "users", uid), {
     favorited
    })
