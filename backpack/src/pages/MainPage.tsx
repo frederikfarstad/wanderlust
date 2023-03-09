@@ -4,45 +4,22 @@ import Post from "../components/Trip";
 import { getAllTrips } from "../firebase/asyncRequests";
 
 export default function MainPage() {
+
   const [sortedPosts, setPost] = useState<any>();
-  const [sort, setSort] = useState<string>("rating");
-
-  
-  function handleSort(type: string) {
-
-    if(type=="rating") {
-      setSort("rating")
-      //TODO: sort by rating
-      
-    } else if(type=="price") {
-      setSort("price")
-      trips.sort((a, b) => {
-        return parseInt(a.price) - parseInt(b.price)
-      })
-    } else if(type=="duration") {
-      setSort("duration")
-      trips.sort((a, b) => {
-        return parseInt(a.duration) - parseInt(b.duration)
-      })
-    }
-    console.log("here")
-    return trips;
-  }
-  
 
   const tripsQuery = useQuery({
     queryKey: ["trips"],
     queryFn: getAllTrips
   })
 
-  if (tripsQuery.isLoading) return <>Loading trips...</>
+  //if (tripsQuery.isLoading) return <>Loading trips...</> FØRTE TIL AT DEN I FØRSTE RENDER RETURNA Loading Trips... OG IKKE KJØRTE RESTERENDE HOOKS. FIKK DERFOR FEIL I KONSOLLEN
   if (tripsQuery.isError) throw new Error("failed to load trips from homepage")
 
 // challenge: display a post to be liked or not...
 // one solution is to fetch the liked list on each post. should be fine, will only be fetched once
 
-
-  const trips = tripsQuery.data.map((trip) => (
+  const trips = tripsQuery.data?.map((trip) => (
+    console.log(trip),
     {
       id: trip.id,
       title: trip.title,
@@ -56,17 +33,29 @@ export default function MainPage() {
     }
   ));
 
-
-  useEffect(() => {
-    const posts = handleSort(sort).map((trip) => (
+  function handleSort(type: string) {
+    if(type=="rating") {
+      //TODO: sort by rating
+      
+    } else if(type=="price") {
+      trips?.sort((a, b) => {
+        return parseInt(a.price) - parseInt(b.price)
+      })
+    } else if(type=="duration") {
+      trips?.sort((a, b) => {
+        return parseInt(a.duration) - parseInt(b.duration)
+      })
+    }
+    const posts = trips?.map((trip) => (
       <Post key={trip.title} {...trip} id={trip.id} />
     ));
-    console.log("there")
     setPost(posts);
-  }, [sort])
+  }
 
-
-
+  useEffect(() => {
+    handleSort("rating");
+  }, [tripsQuery.data])
+  
   return (
     <div className="flex flex-col justify-between bg-primary-300">
       <div className="grid grid-cols-3">
