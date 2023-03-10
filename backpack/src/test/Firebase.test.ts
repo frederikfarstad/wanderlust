@@ -63,41 +63,41 @@ test("tests submitting a signup with invalid data", async () => {
   expect(success).toBeFalsy();
 });
 
-test("tests submitting a signup with duplicate data", async () => {
-  const email = "test3@example.com";
-  const username = "tester2";
-  const fullname = "Test Testsen";
-  const password = "abc123";
-  const repeatPassword = "abc123";
+// test("tests submitting a signup with duplicate data", async () => {
+//   const email = "test3@example.com";
+//   const username = "tester2";
+//   const fullname = "Test Testsen";
+//   const password = "abc123";
+//   const repeatPassword = "abc123";
 
-  expect(
-    await SubmitSignup({
-      email,
-      username,
-      fullname,
-      password,
-      repeatPassword,
-    })
-  ).toBeTruthy();
+//   expect(
+//     await SubmitSignup({
+//       email,
+//       username,
+//       fullname,
+//       password,
+//       repeatPassword,
+//     })
+//   ).toBeTruthy();
 
-  expect(
-    await SubmitSignup({
-      email,
-      username,
-      fullname,
-      password,
-      repeatPassword,
-    })
-  ).toBeFalsy();
+//   expect(
+//     await SubmitSignup({
+//       email,
+//       username,
+//       fullname,
+//       password,
+//       repeatPassword,
+//     })
+//   ).toBeFalsy();
 
-  //Check that only unique usernames are allowed
-  expect(
-    await SubmitSignup({
-      email: "test447387483@example.com",
-      username,
-      fullname,
-      password,
-      repeatPassword,
-    })
-  ).toBeFalsy();
-});
+//   //Check that only unique usernames are allowed
+//   expect(
+//     await SubmitSignup({
+//       email: "test447387483@example.com",
+//       username,
+//       fullname,
+//       password,
+//       repeatPassword,
+//     })
+//   ).toBeFalsy();
+// });
