@@ -5,8 +5,10 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   setDoc,
   Timestamp,
+  where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db, auth } from "../firebase/firebase-config";
@@ -47,8 +49,6 @@ export const createUser = async (
   });
 };
 
-
-
 /**
  * When a user creates a post, we store it in the users collection.
  * Makes it easy to query all posts made by a user.
@@ -74,6 +74,15 @@ export const postTrip = async (uid: string, post: Trip) => {
 export const SubmitSignup = async (data: SignupData) => {
   const { email, username, fullname, password } = data;
 
+  const userCollection = collection(db, "users");
+  const usernameTakenQuery = query(
+    userCollection,
+    where("username", "==", username)
+  );
+  const usernameTakenSnapshot = await getDocs(usernameTakenQuery);
+
+  if (!usernameTakenSnapshot.empty) return false;
+
   const success = await createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredentials) => {
       const user = userCredentials.user;
@@ -89,8 +98,6 @@ export const SubmitSignup = async (data: SignupData) => {
     });
   return success;
 };
-
-
 
 // TODO : access profile picture (better)
 // TODO : handle not finding a user better
@@ -146,9 +153,12 @@ export const getUserCollection = (
     console.log("fetching data from ", uid);
     const fetchData = async () => {
       try {
-        const data = await getDocs(collectionRef)
-        const filteredData = data.docs.map(d => ({...d.data(), id: d.id})) as Trip[]
-        setData(filteredData)
+        const data = await getDocs(collectionRef);
+        const filteredData = data.docs.map((d) => ({
+          ...d.data(),
+          id: d.id,
+        })) as Trip[];
+        setData(filteredData);
       } catch (error) {
         console.log(error);
       }
@@ -163,7 +173,7 @@ export const getUserCollection = (
 
 export const getPostById = (postId: string) => {
   const [post, setPost] = useState<Trip>({} as Trip);
-  const [error, setError] = useState(true)
+  const [error, setError] = useState(true);
   const postRef = doc(db, "Routes", postId);
 
   useEffect(() => {
@@ -172,7 +182,7 @@ export const getPostById = (postId: string) => {
         const temp = await getDoc(postRef);
         const filteredData = { ...temp.data(), id: temp.id } as Trip;
         setPost(filteredData);
-        setError(false)
+        setError(false);
       } catch (error) {
         console.log("can't get post", error);
       }
@@ -180,5 +190,5 @@ export const getPostById = (postId: string) => {
     fetchData();
   }, []);
 
-  return {post, error}
+  return { post, error };
 };
