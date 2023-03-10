@@ -65,7 +65,7 @@ export const postTrip = async (uid: string, post: Trip) => {
 };
 
 /**
- * @returns boolean indicating success with signup
+ * @returns {success: boolean indicating success with signup, message: message indicating reason for failure}
  *
  * Creates a new user for the website.
  * Store signup details in firebase auth for login,
@@ -74,29 +74,29 @@ export const postTrip = async (uid: string, post: Trip) => {
 export const SubmitSignup = async (data: SignupData) => {
   const { email, username, fullname, password } = data;
 
-  const userCollection = collection(db, "users");
-  const usernameTakenQuery = query(
-    userCollection,
-    where("username", "==", username)
-  );
-  const usernameTakenSnapshot = await getDocs(usernameTakenQuery);
+  // const userCollection = collection(db, "users");
+  // const usernameTakenQuery = query(
+  //   userCollection,
+  //   where("username", "==", username)
+  // );
+  // const usernameTakenSnapshot = await getDocs(usernameTakenQuery);
 
-  if (!usernameTakenSnapshot.empty) return false;
+  // if (!usernameTakenSnapshot.empty)
+  //   return { success: false, message: "Username taken!" };
 
-  const success = await createUserWithEmailAndPassword(auth, email, password)
+  const response = await createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredentials) => {
       const user = userCredentials.user;
       await updateProfile(user, { displayName: username });
 
       createUser(user.uid, email, fullname, username, null);
 
-      return true;
+      return { success: true, message: "Success" };
     })
     .catch((err) => {
-      console.log(err);
-      return false;
+      return { success: false, message: err.message };
     });
-  return success;
+  return response;
 };
 
 // TODO : access profile picture (better)

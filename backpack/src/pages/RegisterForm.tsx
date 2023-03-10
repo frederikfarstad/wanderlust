@@ -6,6 +6,7 @@ import GoogleLoginButton from "../components/GoogleLogin";
 import { SubmitSignup } from "../utils/FirebaseUtils";
 import InputWithValidation from "../components/InputWithValidation";
 import useFirebaseCollection from "../hooks/useFirebaseData";
+import { ErrorPopup } from "../components/Popup";
 
 interface User {
   id: string;
@@ -15,26 +16,24 @@ interface User {
   email: string;
 }
 
-/* 
+/*
  * The register form will now find all users from the database, and store all the emails and usernames here. This is
  * to give live feedback to users, telling them if username is allowed or not. For large sites with millions of users, it is annoying to keep filling out the form every time
  * a username is taken.
- * 
+ *
  * Google login also works, and is very easy. No extra work required here.
  *
-*/
+ */
 
 export default function RegisterForm() {
-
-
-  const { data: users, loading, error } = useFirebaseCollection<User>("users", false);
-
-
+  const {
+    data: users,
+    loading,
+    error,
+  } = useFirebaseCollection<User>("users", false);
 
   const usernames = users?.map((u) => u.username);
   const emails = users?.map((u) => u.email);
-
-
 
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -42,18 +41,27 @@ export default function RegisterForm() {
   const [password, setPassword] = useState<string>("");
   const [repeatPassword, setRepeatPassword] = useState<string>("");
 
-  const onSignupSubmitted = async (e : any) => {
-    e.preventDefault()
-    try {    
-      return await SubmitSignup({
+  const [signupError, setSignupError] = useState<string>();
+
+  const onSignupSubmitted = async (e: any) => {
+    e.preventDefault();
+    try {
+      const { success, message } = await SubmitSignup({
         email,
         username,
         fullname,
         password,
         repeatPassword,
       });
-    } catch (error) {
-      console.log(error)
+      if (!success) {
+        setSignupError(message + `(${Date.now()})`);
+      } else {
+        setSignupError(undefined);
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setSignupError(err.message + `(${Date.now()})`);
+      }
     }
   };
 
@@ -67,9 +75,16 @@ export default function RegisterForm() {
     password.length > 5 &&
     fullname.length > 1;
 
-  const errorMessageForPassword = password.length < 6 ? "Password must be 6 characters or more" : "Passwords do not match";  
+  const errorMessageForPassword =
+    password.length < 6
+      ? "Password must be 6 characters or more"
+      : "Passwords do not match";
   return (
     <section className="bg-gradient-to-br from-primary-200 to-primary-500 h-screen">
+      <ErrorPopup
+        message={signupError || ""}
+        visible={signupError !== undefined}
+      />
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="flex items-center mb-6 text-2xl font-semibold text-gray-900">
           <img className="w-8, h-8 mr-2" src={logo} alt="logo" />
@@ -138,7 +153,10 @@ export default function RegisterForm() {
                     type="submit"
                     onClick={onSignupSubmitted}
                     disabled={
-                      !uniqueEmail || !uniqueUsername || !passwordMatch || !fieldsNotEmpty
+                      !uniqueEmail ||
+                      !uniqueUsername ||
+                      !passwordMatch ||
+                      !fieldsNotEmpty
                     }
                     className="w-full shadow-lg text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
                                disabled:bg-primary-300 disabled:shadow-inner"
