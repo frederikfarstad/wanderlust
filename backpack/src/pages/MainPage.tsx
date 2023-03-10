@@ -26,6 +26,7 @@ export default function MainPage() {
       description: trip.description,
       price: trip.price,
       duration: trip.duration,
+      //rating: trip.rating,
       locations: trip.locations,
       createdAt: trip.createdAt,
       createdBy: trip.createdBy,
@@ -35,7 +36,11 @@ export default function MainPage() {
 
   function handleSort(type: string) {
     if(type=="rating") {
-      //TODO: sort by rating
+      /*
+      trips?.sort((a, b) => {
+        return parseInt(a.rating) - parseInt(b.rating)
+      })
+      */
       
     } else if(type=="price") {
       trips?.sort((a, b) => {
@@ -65,15 +70,13 @@ export default function MainPage() {
 
         {/* Middle of page */}
         <div className="h-max flex flex-col items-center gap-20 py-20">
-          <div className="-translate-x-[14.6vw]">
-            <div className="bg-primary-50 drop-shadow-md rounded-md text-center text-sm flex justify-between">
-              <div className="relative inline-block dropdown">
-                <button className="bg-primary-50 p-[16px] text-[16px] dropbtn rounded-md">Sort By {"->"}</button>
-                <div className="hidden absolute top-1 bg-primary-100 min-w-[225px] z-[1] dropdown-content rounded-md duration-150 transition-all ease-in-out">
-                    <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("rating")}}>Rating</a>
-                    <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("price")}}>Price</a>
-                    <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("duration")}}>Duration</a>
-                </div>
+          <div className="bg-primary-50 drop-shadow-md rounded-md text-center text-sm flex justify-between">
+            <div className="flex dropdown">
+              <button className="bg-primary-200 p-[16px] text-[16px] rounded-md cursor-default">Sort By:</button>
+              <div className="z-[1] dropdown-content rounded-md m-auto">
+                  <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("rating")}}>Rating</a>
+                  <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("price")}}>Price</a>
+                  <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("duration")}}>Duration</a>
               </div>
             </div>
           </div>

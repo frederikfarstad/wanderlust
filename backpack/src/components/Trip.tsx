@@ -91,8 +91,8 @@ export default function TripPage({
       <div className="bg-gray-600 h-px"></div>
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-col">
-          <div>Price: {price}</div>
-          <div>Duration: {duration}</div>
+          <div>Price: {price + " €"}</div>
+          <div>Duration: {duration + " days"}</div>
         </div>
         <div className="flex flex-row">
           <IconFavorite  />

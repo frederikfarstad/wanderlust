@@ -123,8 +123,9 @@ export default function CreateTripPage() {
               Duration
               <input
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="How long did it take"
+                placeholder="How long did it take in days"
                 value={duration}
+                type="number"
                 onChange={(e) => setDuration(e.target.value)}
               />
             </label>
@@ -133,8 +134,9 @@ export default function CreateTripPage() {
               Price
               <input
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="How much did it cost"
+                placeholder="How much did it cost in EUR"
                 value={price}
+                type="number"
                 onChange={(e) => setPrice(e.target.value)}
               />
             </label>

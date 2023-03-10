@@ -25,11 +25,7 @@
     }
 }
 
-/* https://www.w3schools.com/howto/howto_css_dropdown.asp */
-.dropdown-content a:hover {background-color: #bfdbfe;}
-
-.dropdown:hover .dropdown-content {
-    display: inline-block; 
+.dropdown-content a:hover {
+    background-color: #bfdbfe;
+    cursor: pointer;
     }
-
-.dropdown:hover .dropbtn {background-color: #bfdbfe;}
