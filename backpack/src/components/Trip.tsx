@@ -12,6 +12,29 @@ import { getUid } from "../utils/FirebaseUtils";
 
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 
+/**
+ * THE GOAL:
+ * For each post we need to fetch two things from the database (with userQuery):
+ *  - the user that created the post
+ *  - the current user
+ * With this information, we can determine if the post was made by the current user, and give added functionality.
+ * 
+ * NOTE: because of React Query caching, we will not have two reads from firebase for each post. One read for current user accross all trips, and one read for each new creator
+ * This will save us a lot of reads compared to the old method
+ * 
+ * For each post we need to give the ability to write to the database (with useMutation):
+ *  - delete post 
+ *        Completed, will also invalidate cache, forcing refreshing of data. This means that the post will actually disapear when deleted.
+ *  - like/unlike 
+ *        Not completed. The lists of liked/favorited trips are updated properly, but the ui is not.
+ *        This could be solved with state. However it is more "safe" to display based on data from database. This will avoid data missmatch.
+ *        To solve this, fix issues in handleToggleFavorite. Update the toggleFavoriteMutation to invalidate the correct data. 
+ * 
+ * 
+ *  */ 
+
+
+
 export default function TripPage({
   id,
   title,
@@ -45,11 +68,11 @@ export default function TripPage({
   });
   const toggleLikedMutation = useMutation({
     mutationFn: toggleLiked,
-    onSuccess: () => queryClient.invalidateQueries(["users", uid])
+    onSuccess: () => queryClient.invalidateQueries(["trips"])
   })
   const toggleFavoritedMutation = useMutation({
     mutationFn: toggleFavourited,
-    onSuccess: () => queryClient.invalidateQueries(["users", uid])
+    onSuccess: () => queryClient.invalidateQueries(["trips"])
   })
 
   if (userQuery.isLoading || creatorQuery.isLoading)
