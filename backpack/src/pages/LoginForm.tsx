@@ -4,9 +4,13 @@ import { useState } from "react";
 import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  User,
 } from "firebase/auth";
 import { auth } from "../firebase/firebase-config";
 import GoogleLoginButton from "../components/GoogleLogin";
+import InputWithValidation from "../components/InputWithValidation";
+import { useQuery } from "@tanstack/react-query";
+import { getAllUsers } from "../firebase/asyncRequests";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -15,6 +19,20 @@ export default function LoginForm() {
   const loginWithEmail = async () => {
     const success = await signInWithEmailAndPassword(auth, email, password);
   };
+
+  const [emails, setEmails] = useState<string[]>([]);
+
+  const userQuery = useQuery({
+    queryKey: ["users"],
+    queryFn: getAllUsers,
+    onSuccess: (users) => {
+      setEmails(users.map((user) => user.email));
+    },
+  });
+
+  const registeredEmail = emails.includes(email);
+  const correctEmailFormat =
+    /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 
   return (
     <section className="bg-gradient-to-br from-primary-200 to-primary-500 h-screen">
@@ -32,31 +50,44 @@ export default function LoginForm() {
 
             <form className="space-y-4 md:space-y-6">
               <div>
-                <input
-                  onChange={(e) => setEmail(e.target.value)}
+                <InputWithValidation
+                  label="Email"
                   type="email"
-                  name="email"
-                  id="email"
-                  className="bg-primary-50 border border-primary-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="example@gmail.com"
-                  required
+                  placeholder="example@example.com"
+                  value={email}
+                  isValid={correctEmailFormat && registeredEmail}
+                  handleChange={setEmail}
+                  explanation={
+                    !correctEmailFormat && !registeredEmail
+                      ? "Must be like example@example.com"
+                      : "Enter valid user Email"
+                  }
                 />
               </div>
               <div>
+                <label className="block">
+                  <span className="block text-sm font-medium text-slate-700">
+                    {"Password"}
+                    <span className="text-red-300"> *</span>
+                  </span>
+                </label>
                 <input
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   name="password"
                   id="password"
-                  className="bg-primary-50 border border-primary-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  className="mt-1 block w-full px-3 py-2 bg-primary-50 border rounded-md text-sm shadow-sm placeholder-slate-400
+                  focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
                   placeholder="••••••••"
                   required
                 />
               </div>
               <button
                 onClick={loginWithEmail}
+                disabled={!correctEmailFormat || !password}
                 type="button"
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full shadow-lg text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
+                               disabled:bg-primary-300 disabled:shadow-inner"
               >
                 Log in
               </button>
