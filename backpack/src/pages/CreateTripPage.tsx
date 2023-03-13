@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Trip, Location } from "../components/createTrip/interface";
+import { Trip, Location } from "../firebase/Interfaces";
 import LocationDisplay from "../components/createTrip/LocationDisplay";
 import {
-  createNewTrip,
+  createTrip,
   getTripForEdit,
-  updateExistingTrip,
-} from "../firebase/PostUtils";
-
+  updateTrip,
+} from "../firebase/asyncRequests";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 /**
  * Can either be creating a new post, or editing an existing one.
  * Creating a new post is fairly straigh forward. Many input fields to fill
@@ -27,51 +27,52 @@ export default function CreateTripPage() {
   const [duration, setDuration] = useState("");
   const [price, setPrice] = useState("");
   const [locations, setLocations] = useState<Location[]>([]);
-  const [trip, setTrip] = useState<Trip | null>(null);
+  const [editing, setEditing] = useState(false);
 
   const { tripId } = useParams();
+  if (!tripId) throw new Error("invalid trip id");
 
-  useEffect(() => {
-    const getTrip = async () => {
-      setTrip(await getTripForEdit(tripId));
-    };
-    getTrip();
-  }, []);
-
-  useEffect(() => {
-    console.log("effect");
-    if (trip) {
-      console.log("trip");
-      // At this point we have confirmed that the post exists, and that the owner wants to edit it
-      setTitle(trip.title);
-      setDescription(trip.description);
-      setDuration(trip.duration);
-      setPrice(trip.price);
-      setLocations(trip.locations);
-      setPrice(trip.price);
-      console.log(locations);
+  const tripQuery = useQuery({
+    queryKey: ["trips", tripId],
+    queryFn: () => getTripForEdit(tripId),
+    onSuccess: trip => {
+      setEditing(trip !== null)
+      setTitle(trip?.title ?? "");
+      setDescription(trip?.description ?? "");
+      setDuration(trip?.duration ?? "");
+      setPrice(trip?.price ?? "");
+      setLocations(trip?.locations ?? []);
+    },
+  });
+  
+  const queryClient = useQueryClient()
+  const createTripMutation = useMutation({
+    mutationFn: createTrip,
+    onSuccess: data => {
+      queryClient.invalidateQueries(["trips"], { exact: true})
     }
-  }, [trip]);
-
-  if (!tripId) {
-    return <>trip id problem</>;
-  }
-
-  const editing = trip !== null;
-
-  const handleAddLocation = (locations: Location[]) => {
-    setLocations(locations);
-  };
-
-  const tripToPost = { title, description, duration, price, locations };
-
-  const handlePost = async () => {
+  })
+  const updateTripMutation = useMutation({
+    mutationFn: updateTrip,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["trips"])
+    }
+  })
+  
+  if (tripQuery.isLoading) return <>Loading trip ...</>;
+  if (tripQuery.isError) return <>{JSON.stringify(tripQuery.error)}</>;
+  
+  
+  const tripToPost = { id:tripId, title, description, duration, price, locations } as Trip;
+  
+  const handlePost = () => {
     if (editing) {
-      await updateExistingTrip(tripToPost, tripId);
+      updateTripMutation.mutate({tripId, tripData : tripToPost})
     } else {
-      await createNewTrip(tripToPost);
+      createTripMutation.mutate(tripToPost)
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-primary-300 py-4">
@@ -114,7 +115,7 @@ export default function CreateTripPage() {
             <div className="col-span-2 w-full">
               <LocationDisplay
                 locations={locations}
-                handleAddLocation={handleAddLocation}
+                handleAddLocation={(locations: Location[]) => setLocations(locations)}
               />
             </div>
 
