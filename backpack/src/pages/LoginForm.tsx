@@ -1,10 +1,7 @@
 import logo from "../public/mountain.png";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import {
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase-config";
 import GoogleLoginButton from "../components/GoogleLogin";
 
@@ -33,6 +30,7 @@ export default function LoginForm() {
             <form className="space-y-4 md:space-y-6">
               <div>
                 <input
+                  title="LoginEmailInput"
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
                   name="email"
@@ -44,6 +42,7 @@ export default function LoginForm() {
               </div>
               <div>
                 <input
+                  title="LoginPasswordInput"
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   name="password"
@@ -54,6 +53,7 @@ export default function LoginForm() {
                 />
               </div>
               <button
+                title="LoginButton"
                 onClick={loginWithEmail}
                 type="button"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
@@ -62,10 +62,7 @@ export default function LoginForm() {
               </button>
               <p className="text-sm font-light text-gray-500">
                 Don't have an account yet?{" "}
-                <Link
-                  to="/register"
-                  className="font-medium text-primary-600 hover:underline"
-                >
+                <Link to="/register" className="font-medium text-primary-600 hover:underline">
                   Sign up
                 </Link>
               </p>
@@ -78,9 +75,7 @@ export default function LoginForm() {
             </div>
             <GoogleLoginButton />
             <Link to="/recovery">
-              <button className="text-sm font-light text-gray-500 mt-4">
-                Forgot your password?
-              </button>
+              <button className="text-sm font-light text-gray-500 mt-4">Forgot your password?</button>
             </Link>
           </div>
         </div>

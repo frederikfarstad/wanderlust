@@ -69,13 +69,13 @@ export default function TripPage({
     onSuccess: () => queryClient.invalidateQueries(["trips"]),
   });
 
-  if (userQuery.isLoading || creatorQuery.isLoading) return <>Loading trip...</>;
-  if (userQuery.isError || creatorQuery.isError) return <>{JSON.stringify(userQuery.error)}</>;
-
   // Current user may have a list of favorited and liked trips. We store them here, if they exist.
   // Some users do not have favorited/liked trips yet. In that case we store an empty array
-  const [likedArray, setLikedArray] = useState(userQuery.data.liked || []);
-  const [favoritedArray, setFavoritedArray] = useState(userQuery.data.favorited || []);
+  const [likedArray, setLikedArray] = useState(userQuery.data ? userQuery.data.liked || [] : []);
+  const [favoritedArray, setFavoritedArray] = useState(userQuery.data ? userQuery.data.favorited || [] : []);
+
+  if (userQuery.isLoading || creatorQuery.isLoading) return <>Loading trip...</>;
+  if (userQuery.isError || creatorQuery.isError) return <>{JSON.stringify(userQuery.error)}</>;
 
   // to check if the current user has liked/favorited the trip, we check if the post exist in the likedArray or favoritedArray
   const isLiked = likedArray.includes(id);
@@ -100,7 +100,7 @@ export default function TripPage({
   const stopElements = locations.map((s, i) => <ListElement key={i} {...s} />);
 
   return (
-    <div className="bg-blue-100 rounded-xl p-4 w-full relative group">
+    <div className="bg-blue-100 rounded-xl p-4 w-full relative group" title="TripDiv">
       {owner && (
         <div className="flex flex-col gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100">
           <button onClick={() => deleteTripMutation.mutate(id)} className="text-sm font-light text-gray-500">
@@ -132,8 +132,12 @@ export default function TripPage({
           <div>Duration: {duration}</div>
         </div>
         <div className="flex flex-row">
-          <button onClick={handleToggleFavorite}>
-            {isFavorited ? <AiFillStar color="orange" /> : <AiOutlineStar />}
+          <button onClick={handleToggleFavorite} title="FavoriteTripButton">
+            {isFavorited ? (
+              <AiFillStar color="orange" title="FavoritedIcon" />
+            ) : (
+              <AiOutlineStar title="NonFavoritedIcon" />
+            )}
           </button>
           <IconLike liked={isLiked} />
         </div>
@@ -156,14 +160,6 @@ export function ListElement({ country, province, area }: Location) {
         {province}, {area}
       </p>
     </li>
-  );
-}
-
-function IconFavorite() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" height="1em" width="1em">
-      <path d="M21.919 10.127a1 1 0 00-.845-1.136l-5.651-.826-2.526-5.147a1.037 1.037 0 00-1.795.001L8.577 8.165l-5.651.826a1 1 0 00-.556 1.704l4.093 4.013-.966 5.664a1.002 1.002 0 001.453 1.052l5.05-2.67 5.049 2.669a1 1 0 001.454-1.05l-.966-5.665 4.094-4.014a1 1 0 00.288-.567zm-5.269 4.05a.502.502 0 00-.143.441l1.01 5.921-5.284-2.793a.505.505 0 00-.466 0L6.483 20.54l1.01-5.922a.502.502 0 00-.143-.441L3.07 9.98l5.912-.864a.503.503 0 00.377-.275L12 3.46l2.64 5.382a.503.503 0 00.378.275l5.913.863-4.28 4.197z" />
-    </svg>
   );
 }
 
