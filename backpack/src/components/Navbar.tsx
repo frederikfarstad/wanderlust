@@ -1,11 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
 import { signOut } from "firebase/auth";
 import { Link } from "react-router-dom";
+import { getUserById } from "../firebase/asyncRequests";
 import { auth } from "../firebase/firebase-config";
-import useUserInfo from "../hooks/useUserInfo";
+import { User } from "../firebase/Interfaces";
 import logo from "../public/mountain.png";
+import { getUid } from "../utils/FirebaseUtils";
 
 export default function Navbar() {
-  const { pfp, username, uid } = useUserInfo();
+  const uid = getUid();
+
+  const userQuery = useQuery({
+    queryKey: ["users", uid],
+    queryFn: () => getUserById(uid),
+  });
+
+  if (userQuery.isLoading) return <>Loading post...</>;
+  if (userQuery.isError) return <>{JSON.stringify(userQuery.error)}</>;
+
+  const pfp = userQuery.data.profilepicture;
   const profileLink = "profile/" + uid;
 
   return (

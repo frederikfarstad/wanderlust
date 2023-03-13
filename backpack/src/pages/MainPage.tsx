@@ -1,29 +1,26 @@
-import Post from "../components/Post";
-import { useEffect, useState } from "react";
-import { Trip } from "../components/createTrip/interface";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase/firebase-config";
+import { useQuery } from "@tanstack/react-query";
+import Post from "../components/Trip";
+import { getAllTrips } from "../firebase/asyncRequests";
 
 export default function MainPage() {
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const tripsQuery = useQuery({
+    queryKey: ["trips"],
+    queryFn: getAllTrips,
+  });
 
-  useEffect(() => {
-    const getTrips = async () => {
-      try {
-        const tripsSnap = await getDocs(collection(db, "trips"));
-        const data = tripsSnap.docs.map((doc, i) => ({
-          ...doc.data(),
-          id: doc.id,
-        })) as Trip[];
-        setTrips(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getTrips();
-  }, []);
+  if (tripsQuery.isLoading) return <>Loading trips...</>;
+  if (tripsQuery.isError) throw new Error("failed to load trips from homepage");
 
-  const posts = trips.map((trip) => (
+  // challenge: display a post to be liked or not...
+  // one solution is to fetch the liked list on each post. should be fine, will only be fetched once
+
+  if (tripsQuery.isLoading) return <>Loading trips...</>;
+  if (tripsQuery.isError) throw new Error("failed to load trips from homepage");
+
+  // challenge: display a post to be liked or not...
+  // one solution is to fetch the liked list on each post. should be fine, will only be fetched once
+
+  const trips = tripsQuery.data.map((trip) => (
     <Post key={trip.title} {...trip} id={trip.id} />
   ));
 
@@ -36,7 +33,7 @@ export default function MainPage() {
 
         {/* Middle of page */}
         <div className="h-max flex flex-col items-center gap-20 py-20">
-          {posts}
+          {trips}
         </div>
 
         {/* Right side of page */}

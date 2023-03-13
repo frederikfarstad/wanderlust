@@ -5,15 +5,9 @@ import { useState } from "react";
 import GoogleLoginButton from "../components/GoogleLogin";
 import { SubmitSignup } from "../utils/FirebaseUtils";
 import InputWithValidation from "../components/InputWithValidation";
-import useFirebaseCollection from "../hooks/useFirebaseData";
+import { getAllUsers } from "../firebase/asyncRequests";
+import { useQuery } from "@tanstack/react-query";
 
-interface User {
-  id: string;
-  bio: string;
-  fullname: string;
-  username: string;
-  email: string;
-}
 
 /* 
  * The register form will now find all users from the database, and store all the emails and usernames here. This is
@@ -26,14 +20,19 @@ interface User {
 
 export default function RegisterForm() {
 
+  const [emails, setEmails] = useState<string[]>([])
+  const [usernames, setUsernames] = useState<string[]>([])
 
-  const { data: users, loading, error } = useFirebaseCollection<User>("users", false);
+  const userQuery = useQuery({
+    queryKey: ["users"],
+    queryFn: getAllUsers,
+    onSuccess: users => {
+      setEmails(users.map(user => user.email))
+      setUsernames(users.map(user => user.username))
+    }
+  })
 
-
-
-  const usernames = users?.map((u) => u.username);
-  const emails = users?.map((u) => u.email);
-
+  const buttonText = userQuery.isSuccess ? "Create an account" : "Loading..."
 
 
   const [email, setEmail] = useState<string>("");
@@ -58,6 +57,7 @@ export default function RegisterForm() {
   };
 
   const uniqueEmail = !emails.includes(email);
+  const correctEmailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
   const uniqueUsername = !usernames.includes(username);
   const passwordMatch = password === repeatPassword && password.length > 5;
 
@@ -88,9 +88,9 @@ export default function RegisterForm() {
                   label="Email"
                   type="email"
                   value={email}
-                  isValid={uniqueEmail}
+                  isValid={uniqueEmail && correctEmailFormat}
                   handleChange={setEmail}
-                  explanation="Email is already in use"
+                  explanation={!correctEmailFormat ? "Must be like example@example.com" : "Email already in use"}
                 />
               </div>
               <div className="">
@@ -143,7 +143,7 @@ export default function RegisterForm() {
                     className="w-full shadow-lg text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
                                disabled:bg-primary-300 disabled:shadow-inner"
                   >
-                    Create an account
+                    {buttonText}
                   </button>
                 </Link>
               </div>

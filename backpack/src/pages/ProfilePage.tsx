@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { auth, db } from "../firebase/firebase-config";
 import defaultpfp from "../public/pfp.png";
 import { doc, getDoc } from "firebase/firestore";
-import { User } from "../firebase/UserUtils";
 import { useParams } from "react-router-dom";
+import { User } from "../firebase/Interfaces";
 
 function ProfilePage() {
   const uid = auth.currentUser?.uid;
