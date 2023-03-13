@@ -53,17 +53,19 @@ export default function Post({
   };
 
   return (
-    <div className="bg-blue-100 rounded-xl p-4 w-full relative group">
+    <div className="bg-primary-100 dark:bg-dark-100 rounded-xl p-4 w-full relative group">
       {owner && (
         <div className="flex flex-col gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100">
           <button
             onClick={handleDelete}
-            className="text-sm font-light text-gray-500"
+            className="text-sm font-light text-gray-500 dark:text-dark-900 "
           >
             Delete
           </button>
           <Link to={"/create/" + id}>
-            <button className="text-sm font-light text-gray-500">Edit</button>
+            <button className="text-sm font-light text-gray-500 dark:text-dark-900">
+              Edit
+            </button>
           </Link>
         </div>
       )}
@@ -78,7 +80,9 @@ export default function Post({
           </div>
         </div>
       </Link>
-      <div className="text-center text-xl font-semibold mt-4">{title}</div>
+      <div className="text-center text-xl font-semibold mt-4 dark:text-dark-900">
+        {title}
+      </div>
       <div className="py-2 px-4">
         <ol className="relative border-l border-gray-700">{stopElements}</ol>
       </div>
@@ -115,8 +119,10 @@ export function ListElement({ country, province, area }: Stop) {
   return (
     <li className="mb-6 ml-4">
       <div className="absolute w-3 h-3 bg-gray-700 rounded-full mt-1.5 -left-1.5 border border-white"></div>
-      <h3 className=" text-xs font-semibold text-gray-900">{country}</h3>
-      <p className="mb-4 text-xs  font-normal text-gray-500">
+      <h3 className=" text-xs font-semibold text-gray-900 dark:text-dark-900">
+        {country}
+      </h3>
+      <p className="mb-4 text-xs  font-normal text-gray-500 dark:text-dark-900">
         {province}, {area}
       </p>
     </li>

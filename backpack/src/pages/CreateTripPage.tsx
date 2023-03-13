@@ -74,8 +74,8 @@ export default function CreateTripPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-primary-300 py-4">
-      <div className="py-8 px-4 bg-primary-100 rounded-xl w-2/3">
+    <div className="flex justify-center items-center min-h-screen bg-primary-300 dark:bg-dark-300 dark:text-dark-900 py-4">
+      <div className="py-8 px-4 bg-primary-100 dark:bg-dark-100 rounded-xl w-2/3">
         <h2 className="mb-4 text-xl font-bold text-gray-900">
           {editing ? "Edit your trip!" : "Post your trip!"}
         </h2>

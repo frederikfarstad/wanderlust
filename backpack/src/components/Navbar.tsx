@@ -10,12 +10,12 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="h-20 bg-primary-100 border-gray-200 shadow-2xl w-full fixed z-10">
+      <nav className="h-20 bg-primary-100 dark:bg-dark-100 border-gray-200 shadow-2xl w-full fixed z-10">
         <div className="grid grid-cols-6 h-full">
           <div className="col-start-2 flex items-center">
             <Link to="/" className="inline-flex p-2 my-2 rounded-md">
               <img src={logo} className="h-12 min-w-max" />
-              <span className="text-xl font-semibold ml-2 hidden md:block self-center text-primary-details">
+              <span className="text-xl font-semibold ml-2 hidden md:block self-center dark:text-dark-900">
                 Wanderlust
               </span>
             </Link>
@@ -34,22 +34,22 @@ export default function Navbar() {
                   alt="user photo"
                 />
               </Link>
-              <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top-left">
-                <div className="bg-primary-100 grid grid-cols-1">
+              <div className="fixed top-20 :bg-primary-100 dark:bg-dark-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top-left">
+                <div className="bg-primary-100 dark:bg-dark-100 grid grid-cols-1">
                   <Link to={profileLink}>
-                    <div className="text-sm font-light text-primary-details hover:bg-gray-300 p-4">
+                    <div className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4">
                       Go to profile
                     </div>
                   </Link>
                   <Link to="/settings">
-                    <div className="text-sm font-light text-primary-details hover:bg-gray-300 p-4">
+                    <div className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4">
                       Settings
                     </div>
                   </Link>
                   <Link to="/" className="">
                     <button
                       onClick={() => signOut(auth)}
-                      className="text-sm font-light text-primary-details hover:bg-gray-300 p-4 w-full text-left"
+                      className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4 w-full text-left"
                     >
                       Log out
                     </button>
@@ -60,19 +60,32 @@ export default function Navbar() {
             <Link to="/create/new">
               <div className="group">
                 <IconAdd />
-                <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top">
-                  <button className="text-sm font-light text-primary-details hover:bg-gray-300 p-4">
+                <div className="fixed top-20 bg-primary-100 dark:bg-dark-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top">
+                  <button className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4">
                     Create route
                   </button>
                 </div>
               </div>
             </Link>
+            <button
+              className="bg-primary-400 dark:bg-dark-400 hover:bg-primary-500 dark:hover:bg-dark-50 text-white font-bold py-1 px-2 rounded"
+              onClick={ToggleDarkMode}
+            >
+              Dark mode
+            </button>
           </div>
         </div>
       </nav>
       <div className="h-20 w-full bg-transparent" />
     </>
   );
+}
+
+//function that toggles between light and dark mode
+function ToggleDarkMode() {
+  console.log("toggling darkmode");
+  const element = document.body;
+  element.classList.toggle("dark");
 }
 
 function IconAdd() {

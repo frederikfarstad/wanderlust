@@ -2,11 +2,11 @@ import logo from "../public/mountain.png";
 
 export default function Footer() {
   return (
-    <footer className="p-4 bg-primary-100 border-gray-200 rounded-t-md shadow-2xl md:px-6 md:py-8">
+    <footer className="p-4 bg-primary-100 dark:bg-dark-100 border-gray-200 rounded-t-md shadow-2xl md:px-6 md:py-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div className="flex items-center mb-4 sm:mb-0">
           <img src={logo} className="h-8 mr-3" alt="Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap">
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-dark-900">
             Wanderlust
           </span>
         </div>

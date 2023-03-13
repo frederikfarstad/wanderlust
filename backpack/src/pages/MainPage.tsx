@@ -13,7 +13,7 @@ export default function MainPage() {
         const tripsSnap = await getDocs(collection(db, "trips"));
         const data = tripsSnap.docs.map((doc, i) => ({
           ...doc.data(),
-          id: doc.id
+          id: doc.id,
         })) as Trip[];
         setTrips(data);
       } catch (error) {
@@ -28,7 +28,7 @@ export default function MainPage() {
   ));
 
   return (
-    <div className="flex flex-col justify-between bg-primary-300">
+    <div className="flex flex-col justify-between bg-primary-300 dark:bg-dark-300">
       <div className="grid grid-cols-3">
         {/* Left side of page */}
 
