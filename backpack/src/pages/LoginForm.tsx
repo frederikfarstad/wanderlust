@@ -57,7 +57,7 @@ export default function LoginForm() {
                   isValid={correctEmailFormat && registeredEmail}
                   handleChange={setEmail}
                   explanation={
-                    !correctEmailFormat
+                    !correctEmailFormat && !registeredEmail
                       ? "Must be like example@example.com"
                       : "Enter valid user Email"
                   }
@@ -83,7 +83,7 @@ export default function LoginForm() {
               </div>
               <button
                 onClick={loginWithEmail}
-                disabled={!correctEmailFormat || !password || !registeredEmail}
+                disabled={!correctEmailFormat || !password}
                 type="button"
                 className="w-full shadow-lg text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
                                disabled:bg-primary-300 disabled:shadow-inner"
