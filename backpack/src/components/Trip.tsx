@@ -80,10 +80,7 @@ export default function TripPage({
             src={profilepicture}
             className="h-8 w-8 bg-primary-600 rounded-full"
           />
-          <img
-            src={profilepicture}
-            className="h-8 w-8 bg-blue-600 rounded-full"
-          />
+
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
             <div className="text-xs text-gray-800 flex items-center">
