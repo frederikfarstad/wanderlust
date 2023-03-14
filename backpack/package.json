@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "set NODE_ENV=test&& firebase emulators:exec \"vite\" --import ./firebase_emulator_persistence --export-on-exit",
+    "dev": "firebase emulators:exec \"vite\" --import ./firebase_emulator_persistence --export-on-exit",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "set NODE_ENV=test&& firebase emulators:exec \"vitest --ui\"",
-    "simpletest": "set NODE_ENV=test&& firebase emulators:exec \"vitest run\"",
+    "test": "set NODE_ENV=test&& firebase emulators:exec \"vitest\" --import ./firebase_test_emulator_persistence",
+    "simpletest": "set NODE_ENV=test&& firebase emulators:exec \"vitest run\" --import ./firebase_test_emulator_persistence",
     "coverage": "set NODE_ENV=test&& firebase emulators:exec \"vitest run --coverage\""
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
     "react-router-dom": "^6.8.1",
     "sort-by": "^0.0.2"
   },

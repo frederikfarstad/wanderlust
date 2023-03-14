@@ -71,6 +71,7 @@ export default function LoginForm() {
                   </span>
                 </label>
                 <input
+                  title="LoginPasswordInput"
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   name="password"
@@ -82,6 +83,7 @@ export default function LoginForm() {
                 />
               </div>
               <button
+                title="LoginButton"
                 onClick={loginWithEmail}
                 disabled={!correctEmailFormat || !password}
                 type="button"
@@ -92,10 +94,7 @@ export default function LoginForm() {
               </button>
               <p className="text-sm font-light text-gray-500">
                 Don't have an account yet?{" "}
-                <Link
-                  to="/register"
-                  className="font-medium text-primary-600 hover:underline"
-                >
+                <Link to="/register" className="font-medium text-primary-600 hover:underline">
                   Sign up
                 </Link>
               </p>
@@ -108,9 +107,7 @@ export default function LoginForm() {
             </div>
             <GoogleLoginButton />
             <Link to="/recovery">
-              <button className="text-sm font-light text-gray-500 mt-4">
-                Forgot your password?
-              </button>
+              <button className="text-sm font-light text-gray-500 mt-4">Forgot your password?</button>
             </Link>
           </div>
         </div>
