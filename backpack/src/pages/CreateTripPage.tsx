@@ -8,6 +8,7 @@ import {
   updateTrip,
 } from "../firebase/asyncRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import InputWithValidation from "../components/InputWithValidation";
 /**
  * Can either be creating a new post, or editing an existing one.
  * Creating a new post is fairly straigh forward. Many input fields to fill
@@ -32,11 +33,28 @@ export default function CreateTripPage() {
   const { tripId } = useParams();
   if (!tripId) throw new Error("invalid trip id");
 
+  const validTitle = (title: string) => {
+    if (title.length != 0) return true;
+    else return false;
+  };
+
+  const validPrice = (price: string) => {
+    if (
+      price.endsWith("kr") ||
+      price.endsWith("£") ||
+      price.endsWith("€") ||
+      (price.endsWith("$") &&
+        !isNaN(Number(price.substring(0, price.length - 3))))
+    )
+      return true;
+    else return false;
+  };
+
   const tripQuery = useQuery({
     queryKey: ["trips", tripId],
     queryFn: () => getTripForEdit(tripId),
-    onSuccess: trip => {
-      setEditing(trip !== null)
+    onSuccess: (trip) => {
+      setEditing(trip !== null);
       setTitle(trip?.title ?? "");
       setDescription(trip?.description ?? "");
       setDuration(trip?.duration ?? "");
@@ -44,35 +62,40 @@ export default function CreateTripPage() {
       setLocations(trip?.locations ?? []);
     },
   });
-  
-  const queryClient = useQueryClient()
+
+  const queryClient = useQueryClient();
   const createTripMutation = useMutation({
     mutationFn: createTrip,
-    onSuccess: data => {
-      queryClient.invalidateQueries(["trips"], { exact: true})
-    }
-  })
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["trips"], { exact: true });
+    },
+  });
   const updateTripMutation = useMutation({
     mutationFn: updateTrip,
     onSuccess: () => {
-      queryClient.invalidateQueries(["trips"])
-    }
-  })
-  
+      queryClient.invalidateQueries(["trips"]);
+    },
+  });
+
   if (tripQuery.isLoading) return <>Loading trip ...</>;
   if (tripQuery.isError) return <>{JSON.stringify(tripQuery.error)}</>;
-  
-  
-  const tripToPost = { id:tripId, title, description, duration, price, locations } as Trip;
-  
+
+  const tripToPost = {
+    id: tripId,
+    title,
+    description,
+    duration,
+    price,
+    locations,
+  } as Trip;
+
   const handlePost = () => {
     if (editing) {
-      updateTripMutation.mutate({tripId, tripData : tripToPost})
+      updateTripMutation.mutate({ tripId, tripData: tripToPost });
     } else {
-      createTripMutation.mutate(tripToPost)
+      createTripMutation.mutate(tripToPost);
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-primary-300 py-4">
@@ -84,16 +107,19 @@ export default function CreateTripPage() {
         <div>
           <div className="grid grid-cols-2 gap-4">
             <label className="col-span-2">
-              Title
-              <input
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="Name of trip"
+              <InputWithValidation
+                label="Title"
+                type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                isValid={validTitle(title)}
+                handleChange={setTitle}
+                explanation={
+                  !validTitle(title) ? "Please enter a title for your trip" : ""
+                }
               />
             </label>
 
-            <label className="col-span-2">
+            <label className="col-span-2 block text-sm font-medium text-slate-700">
               Description
               <textarea
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
@@ -115,27 +141,39 @@ export default function CreateTripPage() {
             <div className="col-span-2 w-full">
               <LocationDisplay
                 locations={locations}
-                handleAddLocation={(locations: Location[]) => setLocations(locations)}
+                handleAddLocation={(locations: Location[]) =>
+                  setLocations(locations)
+                }
               />
             </div>
 
             <label>
-              Duration
-              <input
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="How long did it take"
+              <InputWithValidation
+                label="Duration"
+                type="text"
                 value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                isValid={duration.length != 0}
+                handleChange={setDuration}
+                explanation={
+                  duration.length == 0
+                    ? "Please enter the duration of your trip"
+                    : ""
+                }
               />
             </label>
 
             <label>
-              Price
-              <input
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="How much did it cost"
+              <InputWithValidation
+                label="Price"
+                type="text"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                isValid={validPrice(price)}
+                handleChange={setPrice}
+                explanation={
+                  !validPrice(price)
+                    ? "Please enter the price of the trip in kr, £, € or $"
+                    : ""
+                }
               />
             </label>
 
@@ -143,7 +181,12 @@ export default function CreateTripPage() {
               <Link to="/">
                 <button
                   onClick={handlePost}
-                  disabled={locations.length === 0}
+                  disabled={
+                    locations.length === 0 ||
+                    !validPrice(price) ||
+                    !validTitle(title) ||
+                    duration.length == 0
+                  }
                   type="submit"
                   className="inline-flex items-center justify-center col-span-2 px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 hover:bg-primary-800 disabled:bg-primary-400"
                 >
