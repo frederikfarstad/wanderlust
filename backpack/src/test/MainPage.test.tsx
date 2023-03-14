@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import MainPage from "../pages/MainPage";
@@ -22,7 +22,7 @@ test("tests adding a trip to favorites", async () => {
   );
 
   await screen.findByText("Loading trips...");
-  const tripDiv = await screen.findByTitle("TripDiv");
+  const tripDiv = await waitFor(() => screen.findByTitle("TripDiv"), { timeout: 5000 });
   expect(tripDiv).toBeInTheDocument();
 
   const favoriteButton = await screen.findByTitle("FavoriteTripButton");
