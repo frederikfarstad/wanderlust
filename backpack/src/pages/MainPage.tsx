@@ -17,11 +17,11 @@ export default function MainPage() {
 
   const [direction, setDirection] = useState<number>(1);
 
-  const sortByNew = (a: Trip, b: Trip) => direction * (a.createdAt.toMillis() - b.createdAt.toMillis())
-  const sortByPrice = (a: Trip, b: Trip) => direction * (parseInt(a.price) - parseInt(b.price))
-  const sortByDuration = (a: Trip, b: Trip) => direction * (parseInt(a.duration) - parseInt(b.duration))
+  const sortByNew = (a: Trip, b: Trip) => direction * (a.createdAt.toMillis() - b.createdAt.toMillis());
+  const sortByPrice = (a: Trip, b: Trip) => direction * (parseInt(a.price) - parseInt(b.price));
+  const sortByDuration = (a: Trip, b: Trip) => direction * (parseInt(a.duration) - parseInt(b.duration));
 
-  const [sortFunc, setSortFunc] = useState<SortFunction>(sortByNew);
+  const [sortFunc, setSortFunc] = useState<SortFunction>(sortByPrice);
 
   const onChangeSortFunc = (newSortFunc: SortFunction) => {
     if (sortFunc === newSortFunc) setDirection(-direction);
@@ -34,11 +34,10 @@ export default function MainPage() {
     queryFn: getAllTrips,
   });
 
-  if (tripsQuery.isError) throw new Error("failed to load trips from homepage")
-  
-  
+  if (tripsQuery.isError) throw new Error("failed to load trips from homepage")  
   
   const unsortedTrips = tripsQuery.isSuccess ? tripsQuery.data : []
+  console.log(unsortedTrips);
   const sortedTrips = unsortedTrips.sort(sortFunc);
   const posts = sortedTrips.map(trip => <Post {...trip} key={trip.id} id={trip.id}/>)
   
@@ -61,7 +60,7 @@ export default function MainPage() {
               </div>
             </div>
           </div>
-
+          {posts}
         </div>
 
         {/* Right side of page */}

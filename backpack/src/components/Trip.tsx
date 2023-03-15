@@ -29,7 +29,7 @@ import { useEffect, useState } from "react";
  *
  *  */
 
-export default function TripPage({
+export default function TripDisplay({
   id,
   title,
   description,
