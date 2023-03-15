@@ -1,65 +1,46 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Post from "../components/Trip";
 import { getAllTrips } from "../firebase/asyncRequests";
+import { Trip } from "../firebase/Interfaces";
+
+type SortFunction = (a: Trip, b: Trip) => number;
+type SelectSortFuncButtonProps = {
+  onChangeSortFunc: (newSortFunc: SortFunction) => void;
+  direction: number;
+  currentSortFunc: SortFunction;
+  attachedSortFunc: SortFunction;
+}
+
 
 export default function MainPage() {
 
-  const [sortedPosts, setPost] = useState<any>();
+  const [direction, setDirection] = useState<number>(1);
 
+  const sortByNew = (a: Trip, b: Trip) => direction * (a.createdAt.toMillis() - b.createdAt.toMillis())
+  const sortByPrice = (a: Trip, b: Trip) => direction * (parseInt(a.price) - parseInt(b.price))
+  const sortByDuration = (a: Trip, b: Trip) => direction * (parseInt(a.duration) - parseInt(b.duration))
+
+  const [sortFunc, setSortFunc] = useState<SortFunction>(sortByNew);
+
+  const onChangeSortFunc = (newSortFunc: SortFunction) => {
+    if (sortFunc === newSortFunc) setDirection(-direction);
+    setDirection(-1);
+    setSortFunc(newSortFunc);
+  }
+  
   const tripsQuery = useQuery({
     queryKey: ["trips"],
-    queryFn: getAllTrips
-  })
+    queryFn: getAllTrips,
+  });
 
-  //if (tripsQuery.isLoading) return <>Loading trips...</> FØRTE TIL AT DEN I FØRSTE RENDER RETURNA Loading Trips... OG IKKE KJØRTE RESTERENDE HOOKS. FIKK DERFOR FEIL I KONSOLLEN
   if (tripsQuery.isError) throw new Error("failed to load trips from homepage")
-
-// challenge: display a post to be liked or not...
-// one solution is to fetch the liked list on each post. should be fine, will only be fetched once
-
-  const trips = tripsQuery.data?.map((trip) => (
-    console.log(trip),
-    {
-      id: trip.id,
-      title: trip.title,
-      description: trip.description,
-      price: trip.price,
-      duration: trip.duration,
-      //rating: trip.rating,
-      locations: trip.locations,
-      createdAt: trip.createdAt,
-      createdBy: trip.createdBy,
-      edited: trip.edited,
-    }
-  ));
-
-  function handleSort(type: string) {
-    if(type=="rating") {
-      /*
-      trips?.sort((a, b) => {
-        return parseInt(a.rating) - parseInt(b.rating)
-      })
-      */
-      
-    } else if(type=="price") {
-      trips?.sort((a, b) => {
-        return parseInt(a.price) - parseInt(b.price)
-      })
-    } else if(type=="duration") {
-      trips?.sort((a, b) => {
-        return parseInt(a.duration) - parseInt(b.duration)
-      })
-    }
-    const posts = trips?.map((trip) => (
-      <Post key={trip.title} {...trip} id={trip.id} />
-    ));
-    setPost(posts);
-  }
-
-  useEffect(() => {
-    handleSort("rating");
-  }, [tripsQuery.data])
+  
+  
+  
+  const unsortedTrips = tripsQuery.isSuccess ? tripsQuery.data : []
+  const sortedTrips = unsortedTrips.sort(sortFunc);
+  const posts = sortedTrips.map(trip => <Post {...trip} key={trip.id} id={trip.id}/>)
   
   return (
     <div className="flex flex-col justify-between bg-primary-300">
@@ -72,15 +53,15 @@ export default function MainPage() {
         <div className="h-max flex flex-col items-center gap-20 py-20">
           <div className="bg-primary-50 drop-shadow-md rounded-md text-center text-sm flex justify-between">
             <div className="flex dropdown">
-              <button className="bg-primary-200 p-[16px] text-[16px] rounded-md cursor-default">Sort By:</button>
+              <p className="bg-primary-200 p-4 text-4 cursor-default rounded-l-md">Sort By:</p>
               <div className="z-[1] dropdown-content rounded-md m-auto">
-                  <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("rating")}}>Rating</a>
-                  <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("price")}}>Price</a>
-                  <a className="py-[12px] px-[16px] inline-block rounded-md" onClick={() => {handleSort("duration")}}>Duration</a>
+                  <SelectSortFuncButton attachedSortFunc={sortByNew} onChangeSortFunc={onChangeSortFunc} direction={direction} currentSortFunc={sortFunc}/>
+                  <SelectSortFuncButton attachedSortFunc={sortByDuration} onChangeSortFunc={onChangeSortFunc} direction={direction} currentSortFunc={sortFunc}/>
+                  <SelectSortFuncButton attachedSortFunc={sortByPrice} onChangeSortFunc={onChangeSortFunc} direction={direction} currentSortFunc={sortFunc}/>
               </div>
             </div>
           </div>
-          {sortedPosts}
+
         </div>
 
         {/* Right side of page */}
@@ -88,3 +69,10 @@ export default function MainPage() {
     </div>
   );
 }
+
+const SelectSortFuncButton = (props: SelectSortFuncButtonProps) => {
+  const {onChangeSortFunc, currentSortFunc, attachedSortFunc, direction} = props;
+  const directionIndication = (direction === 1 ? "v" : "^");
+
+  return <button onClick={() => onChangeSortFunc(attachedSortFunc)}>New {currentSortFunc === attachedSortFunc ? directionIndication : ""}</button>;
+};
