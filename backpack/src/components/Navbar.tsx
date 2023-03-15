@@ -15,8 +15,8 @@ export default function Navbar() {
     queryFn: () => getUserById(uid),
   });
 
-  if (userQuery.isLoading) return <>Loading post...</>;
-  if (userQuery.isError) return <>{JSON.stringify(userQuery.error)}</>;
+  if (userQuery.isLoading) return <>Loading user: {uid}... <button onClick={() => signOut(auth)}>Sign out</button></>
+  if (userQuery.isError) return <>{JSON.stringify(userQuery.error)}</>
 
   const pfp = userQuery.data.profilepicture;
   const profileLink = "profile/" + uid;
