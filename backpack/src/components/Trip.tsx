@@ -121,14 +121,14 @@ export default function TripPage({
 
   return (
     <div
-      className="bg-blue-100 rounded-xl p-4 w-full relative group"
+      className="bg-blue-100 dark:bg-dark-100  dark:text-dark-900 rounded-xl p-4 w-full relative group"
       title="TripDiv"
     >
       {owner && (
         <div className="flex flex-col gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100">
           <button
             onClick={() => deleteTripMutation.mutate(id)}
-            className="text-sm font-light text-gray-500"
+            className="text-sm font-light text-gray-500  dark:text-dark-900"
           >
             Delete
           </button>
