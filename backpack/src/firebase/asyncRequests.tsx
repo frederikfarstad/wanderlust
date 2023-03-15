@@ -1,5 +1,6 @@
 import {
   addDoc,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -12,8 +13,8 @@ import {
   where,
 } from "firebase/firestore";
 import { getUid } from "../utils/FirebaseUtils";
-import { auth, db } from "./firebase-config";
-import { Review, Trip, User } from "./Interfaces";
+import { db } from "./firebase-config";
+import { RatingInterface, Trip, User } from "./Interfaces";
 
 /**
  * TODO :
@@ -67,6 +68,13 @@ export const updateTrip = async ({tripData, tripId} : {tripData: Trip, tripId: s
   });
 };
 
+export const getTripById = async (tripId: string) => {
+  const tripSnap = await getDoc(doc(db, "trips", tripId))
+  if (!tripSnap.exists()) throw new Error("No trip with that name")
+  return {id: tripSnap.id, ...tripSnap.data()} as Trip
+
+} 
+
 export async function getTripsFromIdList(tripIds: string[]): Promise<Trip[]> {
   const q = query(collection(db, "trips"), where("__name__", "in", tripIds));
   const tripsSnap = await getDocs(q);
@@ -115,9 +123,9 @@ export const getAllUsers = async () => {
 }
 
 export const getUserById = async (id: string) : Promise<User> => {
-   const userSnap = await getDoc(doc(db, "users", id))
-   if (!userSnap.exists()) throw new Error(`invalid id (${id}), cannot find user`)
-   return userSnap.data() as User
+  const userSnap = await getDoc(doc(db, "users", id))
+  if (!userSnap.exists()) throw new Error(`invalid id (${id}), cannot find user`)
+  return userSnap.data() as User
 }
 
 export const createUser = async (userInfo: User) => {
@@ -133,3 +141,46 @@ export const updateUser = async (uid: string) => {
     lastLogin: Timestamp.fromDate(new Date()),
   });
 };
+
+/* ############## RATING FUNCTIONS ############## */
+
+interface RatingData {
+  createdBy: string;
+  tripId: string;
+  text: string;
+  rating: number;
+  ratingId?: string
+}
+
+/* 
+TODO : Need to update the rating of the trip after a review is created/edited
+*/
+
+export const createRating = async ({createdBy, tripId, text, rating, ratingId} : RatingData)  => {
+  await updateDoc(doc(db, "users", createdBy), {
+    ratings: arrayUnion(tripId)
+  })
+  const docref = await addDoc(collection(db, "trips", tripId, "ratings"), {
+    createdAt: Timestamp.fromDate(new Date()),
+    createdBy,
+    text,
+    rating
+  })
+  return docref.id
+}
+
+export const updateRating = async ({createdBy, tripId, text, rating, ratingId} : RatingData)  => {
+  if (!ratingId) throw new Error("tried to update rating, using invalid id")
+  await updateDoc(doc(db, "trips", tripId, "ratings", ratingId), {
+    text,
+    rating,
+    edited: Timestamp.fromDate(new Date())
+  })
+  return ratingId
+}
+
+export const getRatingsOnTrip = async (tripId : string) => {
+  const data = await getDocs(collection(db, "trips", tripId, "ratings"))
+  console.log(data)
+  return data.docs.map(t => ({id: t.id, ...t.data()})) as RatingInterface[]
+}
