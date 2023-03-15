@@ -27,4 +27,14 @@ test("tests adding a trip to favorites", async () => {
 
 describe("tests sorting by new and oldest", async () => {
   wrappedRender(<MainPage />);
+
+  it("tests sorting by newest to oldest", async () => {
+    const sortByNewButton = screen.getByTestId("SortingButton-New");
+    userEvent.click(sortByNewButton);
+    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"), { timeout: 5000 });
+
+    tripDivs.forEach((tripDiv) => {
+      // Check that previous trip div and this trip div is correctly sorted
+    });
+  });
 });

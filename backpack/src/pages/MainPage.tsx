@@ -3,6 +3,7 @@ import { useState } from "react";
 import Post from "../components/Trip";
 import { getAllTrips } from "../firebase/asyncRequests";
 import { Trip } from "../firebase/Interfaces";
+import { getRelevanceScore } from "../utils/SortingUtils";
 
 type SortFunction = (a: Trip, b: Trip) => number;
 type SelectSortFuncButtonProps = {
@@ -16,11 +17,12 @@ type SelectSortFuncButtonProps = {
 export default function MainPage() {
   const [direction, setDirection] = useState<number>(1);
 
+  const sortByRelevance = (a: Trip, b: Trip) => getRelevanceScore(b) - getRelevanceScore(a);
   const sortByNew = (a: Trip, b: Trip) => direction * (b.createdAt.toMillis() - a.createdAt.toMillis());
   const sortByPrice = (a: Trip, b: Trip) => direction * (parseInt(a.price) - parseInt(b.price));
   const sortByDuration = (a: Trip, b: Trip) => direction * (parseInt(a.duration) - parseInt(b.duration));
 
-  const sortFunctionList = [sortByNew, sortByPrice, sortByDuration];
+  const sortFunctionList = [sortByRelevance, sortByNew, sortByPrice, sortByDuration];
 
   const [sortFuncIndex, setSortFuncIndex] = useState<number>(0);
   const sortFunc = sortFunctionList[sortFuncIndex];
@@ -55,22 +57,29 @@ export default function MainPage() {
             <p className="bg-primary-200 p-4 cursor-default rounded-l-md whitespace-nowrap">Sort by:</p>
             <div className="z-[1] flex-1 whitespace-nowrap">
               <SelectSortFuncButton
-                text="New"
+                text="Relevance"
                 attachedSortFuncIndex={0}
                 onChangeSortFunc={onChangeSortFunc}
                 direction={direction}
                 currentSortFuncIndex={sortFuncIndex}
               />
               <SelectSortFuncButton
-                text="Price"
+                text="New"
                 attachedSortFuncIndex={1}
                 onChangeSortFunc={onChangeSortFunc}
                 direction={direction}
                 currentSortFuncIndex={sortFuncIndex}
               />
               <SelectSortFuncButton
-                text="Duration"
+                text="Price"
                 attachedSortFuncIndex={2}
+                onChangeSortFunc={onChangeSortFunc}
+                direction={direction}
+                currentSortFuncIndex={sortFuncIndex}
+              />
+              <SelectSortFuncButton
+                text="Duration"
+                attachedSortFuncIndex={3}
                 onChangeSortFunc={onChangeSortFunc}
                 direction={direction}
                 currentSortFuncIndex={sortFuncIndex}
@@ -94,7 +103,8 @@ const SelectSortFuncButton = (props: SelectSortFuncButtonProps) => {
   return (
     <button
       onClick={() => onChangeSortFunc(attachedSortFuncIndex)}
-      className={`h-full w-1/3 px-8 ${isSelected ? "bg-primary-50 shadow-inner" : ""}`}
+      className={`h-full w-1/4 px-8 ${isSelected ? "bg-primary-50 shadow-inner" : ""}`}
+      data-testid={`SortingButton-${text}`}
     >
       <div className="flex items-center justify-center">
         <p>
