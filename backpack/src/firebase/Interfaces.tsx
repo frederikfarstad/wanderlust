@@ -40,5 +40,14 @@ export interface User {
   trips?: string[];
   liked?: string[];
   favorited?: string[];
-  reviewed?: { postId: string; commentId: string }[];
+  rated?: string[]
+}
+
+export interface RatingInterface {
+  id: string;
+  createdBy: string;
+  createdAt: Timestamp;
+  edited: Timestamp;
+  text: string;
+  rating: number;
 }
