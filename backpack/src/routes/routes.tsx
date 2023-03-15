@@ -18,6 +18,7 @@ import Root from "../components/Root";
 import ErrorPageNotLoggedIn from "../pages/ErrorPageNotLoggedIn";
 import AccountRecoveryPage from "../pages/AccountRecovery";
 import CreatePostForm2 from "../pages/CreateTripPage";
+import TripPage from "../pages/TripPage";
 
 export const loggedInRoutes = [
   {
@@ -45,6 +46,11 @@ export const loggedInRoutes = [
         path: "/create/:tripId",
         element: <CreatePostForm2 />,
       },
+      {
+        path: "/trip/:tripId",
+        element: <TripPage />
+      }
+
     ],
   },
 ];
