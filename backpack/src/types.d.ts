@@ -249,7 +249,4 @@ type TravelLocation = {
   area: string;
 };
 
-type KeywordList = {
-  word: string;
-  frequency: number;
-}[];
+type KeywordMapping = Map<string, number>;

@@ -1,5 +1,13 @@
 import { Trip } from "../firebase/Interfaces";
-import { KeywordList } from "../types";
+import { KeywordMapping } from "../types";
+
+const splitRegex = / |,|\./;
+
+const getWordsFromTrip = (trip: Trip) => {
+  const titleWords = trip.title.split(splitRegex);
+  const descriptionWords = trip.description.split(splitRegex);
+  return [...titleWords, ...descriptionWords];
+};
 
 /**
  * Calculates the relevance of a trip based on a given list of keywords and their individual frequency
@@ -7,10 +15,28 @@ import { KeywordList } from "../types";
  * @param trip the trip to calculate the relevance score for
  * @returns a number 0-100 indicating how relevant a trip is
  */
-export const getRelevanceScore = (keywords: KeywordList, trip: Trip): number => {
-  return 0;
+export const getRelevanceScore = (keywords: KeywordMapping, trip: Trip): number => {
+  const words = getWordsFromTrip(trip);
+  var score = 0;
+  words.forEach((word) => {
+    const findScore = keywords.get(word.toLowerCase()) || 0;
+    score += findScore;
+  });
+  return score;
 };
 
-export const getKeywordsFromTrips = (trips: Trip[]): KeywordList => {
-  return [];
+export const getKeywordsFromTrips = (trips: Trip[]): KeywordMapping => {
+  var frequencyMapping = new Map<string, number>();
+  trips.forEach((trip) => {
+    const words = getWordsFromTrip(trip);
+
+    words.forEach((word) => {
+      word = word.toLowerCase();
+      if (frequencyMapping.has(word)) {
+        const prev = frequencyMapping.get(word) || 0;
+        frequencyMapping.set(word, prev + 1);
+      } else frequencyMapping.set(word, 1);
+    });
+  });
+  return frequencyMapping;
 };

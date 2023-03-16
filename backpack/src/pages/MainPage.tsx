@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Post from "../components/Trip";
-import { getAllTrips } from "../firebase/asyncRequests";
+import { getAllFavoritedTripsFromUserId, getAllTrips } from "../firebase/asyncRequests";
 import { Trip } from "../firebase/Interfaces";
-import { getRelevanceScore } from "../utils/SortingUtils";
+import { KeywordMapping } from "../types";
+import { getUid } from "../utils/FirebaseUtils";
+import { getKeywordsFromTrips, getRelevanceScore } from "../utils/SortingUtils";
 
 type SortFunction = (a: Trip, b: Trip) => number;
 type SelectSortFuncButtonProps = {
@@ -15,9 +17,17 @@ type SelectSortFuncButtonProps = {
 };
 
 export default function MainPage() {
+  const uid = getUid();
   const [direction, setDirection] = useState<number>(1);
+  const [relevanceKeywords, setRelevanceKeywords] = useState<KeywordMapping>(new Map<string, number>());
 
-  const sortByRelevance = (a: Trip, b: Trip) => getRelevanceScore([], b) - getRelevanceScore([], a);
+  const updateRelevanceKeywords = async () => {
+    const keywords = getKeywordsFromTrips(await getAllFavoritedTripsFromUserId(uid));
+    setRelevanceKeywords(keywords);
+  };
+
+  const sortByRelevance = (a: Trip, b: Trip) =>
+    direction * getRelevanceScore(relevanceKeywords, b) - getRelevanceScore(relevanceKeywords, a);
   const sortByNew = (a: Trip, b: Trip) => direction * (b.createdAt.toMillis() - a.createdAt.toMillis());
   const sortByPrice = (a: Trip, b: Trip) => direction * (parseInt(a.price) - parseInt(b.price));
   const sortByDuration = (a: Trip, b: Trip) => direction * (parseInt(a.duration) - parseInt(b.duration));
@@ -43,6 +53,10 @@ export default function MainPage() {
   const unsortedTrips = tripsQuery.isSuccess ? tripsQuery.data : [];
   const sortedTrips = unsortedTrips.sort(sortFunc);
   const posts = sortedTrips.map((trip) => <Post {...trip} key={trip.id} id={trip.id} />);
+
+  useEffect(() => {
+    updateRelevanceKeywords();
+  }, []);
 
   return (
     <div className="flex flex-col justify-between bg-primary-300">
