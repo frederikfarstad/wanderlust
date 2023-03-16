@@ -17,7 +17,7 @@ type SelectSortFuncButtonProps = {
 export default function MainPage() {
   const [direction, setDirection] = useState<number>(1);
 
-  const sortByRelevance = (a: Trip, b: Trip) => getRelevanceScore(b) - getRelevanceScore(a);
+  const sortByRelevance = (a: Trip, b: Trip) => getRelevanceScore([], b) - getRelevanceScore([], a);
   const sortByNew = (a: Trip, b: Trip) => direction * (b.createdAt.toMillis() - a.createdAt.toMillis());
   const sortByPrice = (a: Trip, b: Trip) => direction * (parseInt(a.price) - parseInt(b.price));
   const sortByDuration = (a: Trip, b: Trip) => direction * (parseInt(a.duration) - parseInt(b.duration));

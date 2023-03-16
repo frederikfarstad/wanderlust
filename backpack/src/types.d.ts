@@ -248,3 +248,8 @@ type TravelLocation = {
   province: string;
   area: string;
 };
+
+type KeywordList = {
+  word: string;
+  frequency: number;
+}[];
