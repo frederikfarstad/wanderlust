@@ -12,10 +12,8 @@ export default function RatingSection() {
   const [direction, setDirection] = useState(1);
   const [sortingIndex, setSortingIndex] = useState(0);
   const sortingOptions = [
-    (a: RatingInterface, b: RatingInterface) =>
-      direction * (b.createdAt.toMillis() - a.createdAt.toMillis()),
-    (a: RatingInterface, b: RatingInterface) =>
-      direction * (a.rating - b.rating),
+    (a: RatingInterface, b: RatingInterface) => direction * (b.createdAt.toMillis() - a.createdAt.toMillis()),
+    (a: RatingInterface, b: RatingInterface) => direction * (a.rating - b.rating),
   ];
 
   const ratingQuery = useQuery({
@@ -32,8 +30,8 @@ export default function RatingSection() {
   ));
 
   return (
-    <div className="flex flex-col border border-white">
-      <div className="border-b border-white p-2 flex flex-row items-center gap-4">
+    <div className="flex flex-col border-x border-white rounded-b-xl">
+      <div className="border-t border-white p-2 flex flex-row items-center gap-4">
         <div className="font-semibold">Sort by</div>
         <button onClick={() => setSortingIndex(0)} className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
           Age
@@ -47,7 +45,7 @@ export default function RatingSection() {
           } transition-all duration-300`}
           onClick={() => setDirection(-1 * direction)}
         >
-          <IconArrowDownCircle direction={direction} />
+          <IconArrowDownCircle />
         </button>
       </div>
       {ratingElements}
@@ -55,7 +53,7 @@ export default function RatingSection() {
   );
 }
 
-function IconArrowDownCircle({ direction }: { direction: number }) {
+function IconArrowDownCircle() {
   return (
     <svg
       className=""
