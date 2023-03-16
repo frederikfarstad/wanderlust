@@ -74,6 +74,7 @@ export const updateTrip = async ({ tripData, tripId }: { tripData: Trip; tripId:
 };
 
 export async function getTripsFromIdList(tripIds: string[]): Promise<Trip[]> {
+  if (tripIds.length <= 0) return [];
   const q = query(collection(db, "trips"), where("__name__", "in", tripIds));
   const tripsSnap = await getDocs(q);
   const tripsData = tripsSnap.docs.map((doc) => ({
