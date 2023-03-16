@@ -51,7 +51,7 @@ export default function RatingDisplay({
   }
 
   return (
-    <div className="relative group border-b border-white p-4">
+    <div className="relative group border-t last:border-b last:rounded-b-xl border-white p-4">
       <div className="flex flex-row items-center gap-4">
         <img src={profilepicture} className="w-12 h-12 rounded-full" />
         <div className="flex flex-col">
@@ -62,12 +62,12 @@ export default function RatingDisplay({
             </div>
 
             {edited !== undefined && (
-              <div className="font-light text-xs mx-4">-</div>
-            )}
-            {edited !== undefined && (
-              <div className="font-light text-xs">
-                edited {moment(edited.toDate()).fromNow()}
-              </div>
+              <>
+                <div className="font-light text-xs mx-2">-</div>
+                <div className="font-light text-xs">
+                  edited {moment(edited.toDate()).fromNow()}
+                </div>
+              </>
             )}
           </div>
           <div className="flex flex-row mt-2">
