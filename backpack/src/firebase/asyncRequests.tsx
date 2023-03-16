@@ -162,64 +162,74 @@ export const updateUser = async (uid: string) => {
 /* ############## RATING FUNCTIONS ############## */
 
 interface RatingData {
-  createdBy: string;
+  ratingId?: string;
   tripId: string;
+  createdBy: string;
   text: string;
   rating: number;
-  ratingId?: string;
 }
 
-/* 
-TODO : Need to update the rating of the trip after a review is created/edited
-*/
+export const getRatingsByTripId = async (tripId: string) => {
+  const q = query(collection(db, "ratings"), where("tripId", "==", tripId));
+  const ratingsSnap = await getDocs(q);
+  return ratingsSnap.docs.map((doc) => ({
+    ratingId: doc.id,
+    ...doc.data(),
+  })) as RatingInterface[];
+};
 
+/* Should this also find the trip? Idk, can be done on profile */
+export const getRatingsByCreator = async (uid: string) => {
+  const q = query(collection(db, "ratings"), where("createdBy", "==", uid));
+  const ratingsSnap = await getDocs(q);
+  return ratingsSnap.docs.map((doc) => ({
+    ratingId: doc.id,
+    ...doc.data(),
+  })) as RatingInterface[];
+};
+
+/* TODO : Need to update average rating */
+
+/* The reason ratingId is passed as prop, is so that the signature matches with update. We don't actually need it here */
 export const createRating = async ({
-  createdBy,
+  ratingId,
   tripId,
+  createdBy,
   text,
   rating,
-  ratingId,
 }: RatingData) => {
-  await updateDoc(doc(db, "users", createdBy), {
-    rated: arrayUnion(tripId),
-  });
-  const docref = await addDoc(collection(db, "trips", tripId, "ratings"), {
-    createdAt: Timestamp.fromDate(new Date()),
+  const ratingDocRef = await addDoc(collection(db, "ratings"), {
+    tripId,
     createdBy,
     text,
     rating,
+    createdAt: Timestamp.fromDate(new Date()),
   });
-  return docref.id;
+
+  /* Store information about the created rating in user ratings array */
+  await updateDoc(doc(db, "users", createdBy), {
+    ratings: arrayUnion({ tripId, ratingId: ratingDocRef.id }),
+  });
 };
 
 export const updateRating = async ({
-  createdBy,
+  ratingId,
   tripId,
+  createdBy,
   text,
   rating,
-  ratingId,
 }: RatingData) => {
-  if (!ratingId) throw new Error("tried to update rating, using invalid id");
-  await updateDoc(doc(db, "trips", tripId, "ratings", ratingId), {
+  if (!ratingId)
+    throw new Error("Tried to update a rating, using undefined id");
+  await updateDoc(doc(db, "ratings", ratingId), {
+    tripId,
+    createdBy,
     text,
     rating,
     edited: Timestamp.fromDate(new Date()),
   });
-  return ratingId;
 };
 
-export const getRatingsOnTrip = async (tripId: string) => {
-  const data = await getDocs(collection(db, "trips", tripId, "ratings"));
-  console.log(data);
-  return data.docs.map((t) => ({ id: t.id, ...t.data() })) as RatingInterface[];
-};
-
-
-/* 
-First remove the ratingId from user. The tripId is stored in an array to indicate that the user rated it. This might be a huge problem when admin deletes stuff. Might have to rework it then.
-Oh boy, admin stuff is going to be a mess
-
-*/
 export const deleteRating = async ({
   uid,
   tripId,
@@ -229,8 +239,8 @@ export const deleteRating = async ({
   tripId: string;
   ratingId: string;
 }) => {
+  await deleteDoc(doc(db, "ratings", ratingId));
   await updateDoc(doc(db, "users", uid), {
-    rated: arrayRemove(tripId)
-  })
-  return await deleteDoc(doc(db, "trips", tripId, "ratings", ratingId))
+    ratings: arrayRemove({ tripId, ratingId }),
+  });
 };

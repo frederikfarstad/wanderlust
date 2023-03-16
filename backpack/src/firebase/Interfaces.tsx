@@ -44,7 +44,8 @@ export interface User {
 }
 
 export interface RatingInterface {
-  id: string;
+  ratingId: string;
+  tripId: string;
   createdBy: string;
   createdAt: Timestamp;
   edited: Timestamp;

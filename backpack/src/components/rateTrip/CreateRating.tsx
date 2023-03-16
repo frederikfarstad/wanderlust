@@ -22,12 +22,12 @@ import {
 import { getUid } from "../../utils/FirebaseUtils";
 
 export default function CreateRating({
-  id,
+  ratingId,
   text,
   rating,
   handleCreate,
 }: {
-  id?: string;
+  ratingId?: string;
   text?: string;
   rating?: number;
   handleCreate: () => void
@@ -35,7 +35,7 @@ export default function CreateRating({
   const uid = getUid();
   const { tripId } = useParams();
   if (!tripId) throw new Error("navigated to invalid trip");
-  const editMode = id !== undefined;
+  const editMode = ratingId !== undefined;
 
   const [ratingText, setRatingText] = useState(text || "");
   const [ratingNumber, setRatingNumber] = useState(rating || 1);
@@ -50,11 +50,10 @@ export default function CreateRating({
     editMode ? updateRating : createRating,
     {
       onSuccess: (id) => {
-        queryClient.invalidateQueries(["trips", tripId]);
+        queryClient.invalidateQueries(["ratings", tripId]);
         queryClient.invalidateQueries(["users", uid]);
         setRatingNumber(1)
         setRatingText("")
-        console.log("we did something here")
         handleCreate()
       },
     }
@@ -97,13 +96,13 @@ export default function CreateRating({
               tripId,
               text: ratingText,
               rating: ratingNumber,
-              ratingId: id
+              ratingId
             })
           }
           disabled={ratingText === "" || postRatingMutation.isLoading}
           className="col-start-1 text-white bg-blue-700 hover:bg-blue-800 disabled:bg-blue-400 disabled:hover:bg-blue-400 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         >
-          {postRatingMutation.isSuccess ? "Post rating" : "Success!"}
+          Post rating
         </button>
       </div>
   );
