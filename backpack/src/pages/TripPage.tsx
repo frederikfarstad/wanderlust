@@ -5,7 +5,7 @@ export default function TripPage() {
   return (
     <div className="grid grid-cols-6 min-h-screen bg-primary-300 pt-20 gap-8">
       <div className="col-start-2 col-span-4">
-        <CreateRating />
+        <CreateRating handleCreate={() => {}} />
       </div>
       <div className="col-start-2 col-span-4">
         <RatingSection />
