@@ -9,11 +9,12 @@ import { IconDelete, IconEdit } from "../createTrip/Icons";
 import CreateRating, { IconStar } from "./CreateRating";
 
 export default function RatingDisplay({
-  id,
+  ratingId,
   createdBy,
   createdAt,
   text,
   rating,
+  edited,
 }: RatingInterface) {
   const uid = getUid();
   const { tripId } = useParams();
@@ -30,7 +31,7 @@ export default function RatingDisplay({
   const deleteRatingMutation = useMutation(deleteRating, {
     onSuccess: () => {
       queryClient.invalidateQueries(["users", uid]);
-      queryClient.invalidateQueries(["trips", tripId]);
+      queryClient.invalidateQueries(["ratings", tripId]);
     },
   });
 
@@ -38,38 +39,55 @@ export default function RatingDisplay({
 
   const { username, profilepicture } = creatorQuery.data;
 
-
   if (editing) {
-    return <CreateRating id={id} text={text} rating={rating} handleCreate={() => setEditing(false)} />
+    return (
+      <CreateRating
+        ratingId={ratingId}
+        text={text}
+        rating={rating}
+        handleCreate={() => setEditing(false)}
+      />
+    );
   }
 
   return (
-    <div className="border border-black relative group">
-      <div className="flex justify-between items-center  p-2">
-        <div className="flex flex-row items-center">
-          <img src={profilepicture} className="w-8 h-8 rounded-full" />
-          <div className="flex flex-col px-2">
-            <div className="font-semibold">{username}</div>
+    <div className="relative group border-x border-t last:border-b p-4">
+      <div className="flex flex-row items-center gap-4">
+        <img src={profilepicture} className="w-12 h-12 rounded-full" />
+        <div className="flex flex-col">
+          <div className="font-semibold">{username}</div>
+          <div className="flex flex-row items-center">
             <div className="font-light text-xs">
               {moment(createdAt.toDate()).fromNow()}
             </div>
+
+            {edited !== undefined && (
+              <div className="font-light text-xs mx-4">-</div>
+            )}
+            {edited !== undefined && (
+              <div className="font-light text-xs">
+                edited {moment(edited.toDate()).fromNow()}
+              </div>
+            )}
+          </div>
+          <div className="flex flex-row mt-2">
+            <IconStar size={"1.1em"} yellow={true} />
+            <IconStar size={"1em"} yellow={1 < rating} />
+            <IconStar size={"1em"} yellow={2 < rating} />
+            <IconStar size={"1em"} yellow={3 < rating} />
+            <IconStar size={"1em"} yellow={4 < rating} />
           </div>
         </div>
-        <div className="flex flex-row">
-          <IconStar size={"1.5em"} yellow={true} />
-          <IconStar size={"1.5em"} yellow={1 < rating} />
-          <IconStar size={"1.5em"} yellow={2 < rating} />
-          <IconStar size={"1.5em"} yellow={3 < rating} />
-          <IconStar size={"1.5em"} yellow={4 < rating} />
-        </div>
       </div>
-      <div className="h-px border border-black"></div>
       <div className="p-2">{text}</div>
+
       <div className="absolute right-2 bottom-2 scale-0 group-hover:scale-100 flex flex-row gap-2">
         <button onClick={() => setEditing(true)}>
           <IconEdit />
         </button>
-        <button onClick={() => deleteRatingMutation.mutate({uid, tripId, ratingId: id})}>
+        <button
+          onClick={() => deleteRatingMutation.mutate({ uid, tripId, ratingId })}
+        >
           <IconDelete />
         </button>
       </div>
