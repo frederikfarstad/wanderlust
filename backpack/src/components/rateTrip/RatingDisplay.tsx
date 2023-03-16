@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { getUserById } from "../../firebase/asyncRequests";
+import { deleteRating, getUserById } from "../../firebase/asyncRequests";
 import { RatingInterface } from "../../firebase/Interfaces";
 import { getUid } from "../../utils/FirebaseUtils";
 import { IconDelete, IconEdit } from "../createTrip/Icons";
-import { IconStar } from "./CreateRating";
+import CreateRating, { IconStar } from "./CreateRating";
 
 export default function RatingDisplay({
   id,
@@ -26,9 +26,22 @@ export default function RatingDisplay({
     queryFn: () => getUserById(createdBy),
   });
 
+  const queryClient = useQueryClient();
+  const deleteRatingMutation = useMutation(deleteRating, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users", uid]);
+      queryClient.invalidateQueries(["trips", tripId]);
+    },
+  });
+
   if (!creatorQuery.isSuccess) return <div>Loading...</div>;
 
-  const {username, profilepicture} = creatorQuery.data
+  const { username, profilepicture } = creatorQuery.data;
+
+
+  if (editing) {
+    return <CreateRating id={id} text={text} rating={rating} handleCreate={() => setEditing(false)} />
+  }
 
   return (
     <div className="border border-black relative group">
@@ -53,10 +66,10 @@ export default function RatingDisplay({
       <div className="h-px border border-black"></div>
       <div className="p-2">{text}</div>
       <div className="absolute right-2 bottom-2 scale-0 group-hover:scale-100 flex flex-row gap-2">
-        <button>
+        <button onClick={() => setEditing(true)}>
           <IconEdit />
         </button>
-        <button>
+        <button onClick={() => deleteRatingMutation.mutate({uid, tripId, ratingId: id})}>
           <IconDelete />
         </button>
       </div>
