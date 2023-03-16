@@ -7,6 +7,7 @@ import { getUid } from "../utils/FirebaseUtils";
 
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 import { useEffect, useState } from "react";
+import { IconBxComment } from "./createTrip/Icons";
 
 /**
  * THE GOAL:
@@ -131,7 +132,7 @@ export default function TripPage({
           <div>Price: {price}</div>
           <div>Duration: {duration}</div>
         </div>
-        <div className="flex flex-row">
+        <div className="flex flex-row gap-4">
           <button onClick={handleToggleFavorite} title="FavoriteTripButton">
             {isFavorited ? (
               <AiFillStar color="orange" title="FavoritedIcon" />
@@ -140,6 +141,10 @@ export default function TripPage({
             )}
           </button>
           <IconLike liked={isLiked} />
+          <Link to={"/trip/"+id}>
+
+          <IconBxComment />
+          </Link>
         </div>
       </div>
       {edited ? (
