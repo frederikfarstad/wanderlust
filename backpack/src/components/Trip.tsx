@@ -122,7 +122,9 @@ export default function TripDisplay({
           </div>
         </div>
       </Link>
-      <div className="text-center text-xl font-semibold mt-4">{title}</div>
+      <div className="text-center text-xl font-semibold mt-4" title="TripPostTitle">
+        {title}
+      </div>
       <div className="py-2 px-4">
         <ol className="relative border-l border-gray-700">{stopElements}</ol>
       </div>

@@ -6,10 +6,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase-config";
 import { searchForChildElementWithQuery, wrappedRender } from "./testUtils";
 
-beforeAll(async () => {
-  await signInWithEmailAndPassword(auth, "test@example.com", "abc123");
-});
-
 beforeEach(() => {
   act(() => wrappedRender(<MainPage />));
 });
@@ -19,6 +15,10 @@ const waitForTripDivs = () => {
 };
 
 describe("MainPage", () => {
+  beforeAll(async () => {
+    await signInWithEmailAndPassword(auth, "test@example.com", "abc123");
+  });
+
   it("should allow adding trips to and removing trips from favorites", async () => {
     const tripDivs = await waitForTripDivs();
     expect(tripDivs.length).toBeGreaterThan(0);
@@ -179,5 +179,19 @@ describe("MainPage", () => {
         prevLifetime = thisLifetime;
       }
     });
+  });
+});
+
+describe("MainPage for user Test2", () => {
+  beforeAll(async () => {
+    await signInWithEmailAndPassword(auth, "test2@example.com", "abc123");
+  });
+
+  it("should show most relevant trips first", async () => {
+    const tripTitles = await screen.findAllByTitle("TripPostTitle");
+
+    expect(tripTitles[0]).toHaveTextContent("Trip to Paris");
+    expect(tripTitles[1]).toHaveTextContent("Southeast Asia Trip 2023");
+    expect(tripTitles[2]).toHaveTextContent("Trip to Brussels");
   });
 });
