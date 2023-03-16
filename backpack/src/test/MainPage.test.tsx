@@ -14,9 +14,13 @@ beforeEach(() => {
   act(() => wrappedRender(<MainPage />));
 });
 
+const waitForTripDivs = () => {
+  return waitFor(() => screen.findAllByTitle("TripDiv"), { timeout: 5000 });
+};
+
 describe("MainPage", () => {
   it("should allow adding trips to and removing trips from favorites", async () => {
-    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"));
+    const tripDivs = await waitForTripDivs();
     expect(tripDivs.length).toBeGreaterThan(0);
 
     const tripDiv = tripDivs[0];
@@ -34,7 +38,7 @@ describe("MainPage", () => {
   it("should sort correctly from newest to oldest", async () => {
     const sortByNewButton = screen.getByTestId("SortingButton-New");
     await userEvent.click(sortByNewButton);
-    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"));
+    const tripDivs = await waitForTripDivs();
 
     var prevLifetime = 0;
     tripDivs.forEach((tripDiv) => {
@@ -55,7 +59,7 @@ describe("MainPage", () => {
     const sortByNewButton = screen.getByTestId("SortingButton-New");
     await userEvent.click(sortByNewButton);
     await userEvent.click(sortByNewButton);
-    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"));
+    const tripDivs = await waitForTripDivs();
 
     var prevLifetime = Infinity;
     tripDivs.forEach((tripDiv) => {
@@ -75,7 +79,7 @@ describe("MainPage", () => {
   it("should sort correctly from least to most expensive", async () => {
     const sortButton = screen.getByTestId("SortingButton-Price");
     await userEvent.click(sortButton);
-    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"));
+    const tripDivs = await waitForTripDivs();
 
     var prevPrice = 0;
     tripDivs.forEach((tripDiv, index) => {
@@ -96,7 +100,7 @@ describe("MainPage", () => {
     const sortButton = screen.getByTestId("SortingButton-Price");
     await userEvent.click(sortButton);
     await userEvent.click(sortButton);
-    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"));
+    const tripDivs = await waitForTripDivs();
 
     var prevPrice = Infinity;
     tripDivs.forEach((tripDiv) => {
@@ -116,7 +120,7 @@ describe("MainPage", () => {
   it("should sort trips correctly from shortest to longest", async () => {
     const sortButton = screen.getByTestId("SortingButton-Duration");
     await userEvent.click(sortButton);
-    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"));
+    const tripDivs = await waitForTripDivs();
 
     var prevDuration = 0;
     tripDivs.forEach((tripDiv, index) => {
@@ -137,7 +141,7 @@ describe("MainPage", () => {
     const sortButton = screen.getByTestId("SortingButton-Duration");
     await userEvent.click(sortButton);
     await userEvent.click(sortButton);
-    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"));
+    const tripDivs = await waitForTripDivs();
 
     var prevDuration = Infinity;
     tripDivs.forEach((tripDiv, index) => {
@@ -160,7 +164,7 @@ describe("MainPage", () => {
     await userEvent.click(sortByPriceButton);
     await userEvent.click(sortByPriceButton);
     await userEvent.click(sortByNewButton);
-    const tripDivs = await waitFor(() => screen.findAllByTitle("TripDiv"));
+    const tripDivs = await waitForTripDivs();
 
     var prevLifetime = 0;
     tripDivs.forEach((tripDiv) => {
