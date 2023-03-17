@@ -29,13 +29,15 @@ const testFirebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(
-  NODE_ENV === "test" ? testFirebaseConfig : firebaseConfig
+  NODE_ENV === "test" || NODE_ENV === "development"
+    ? testFirebaseConfig
+    : firebaseConfig
 );
 
 const f_db = getFirestore(app);
 const f_auth = getAuth(app);
 
-if (NODE_ENV === "test") {
+if (NODE_ENV === "test" || NODE_ENV === "development") {
   connectFirestoreEmulator(
     f_db,
     IP_ADDRESS,
