@@ -147,7 +147,7 @@ export default function TripPage({
           />
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
-            <div className="text-xs text-gray-800 flex items-center">
+            <div className="text-xs text-gray-800 flex items-center  dark:text-dark-900">
               {moment(createdAt?.toDate()).fromNow()}
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function TripPage({
         </div>
       </div>
       {edited ? (
-        <div className="text-xs text-gray-800 flex items-center">
+        <div className="text-xs text-gray-800 flex items-center  dark:text-dark-900">
           edited: {moment(edited.toDate()).fromNow()}
         </div>
       ) : (
