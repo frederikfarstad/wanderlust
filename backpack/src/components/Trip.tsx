@@ -100,7 +100,11 @@ export default function TripDisplay({
   const stopElements = locations.map((s, i) => <ListElement key={i} {...s} />);
 
   return (
-    <div className="bg-blue-100 rounded-xl p-4 w-full relative group" title="TripDiv">
+    <div
+      className="bg-blue-100 rounded-xl p-4 w-full relative group"
+      title="TripDiv"
+      data-createdAt={createdAt.seconds}
+    >
       {owner && (
         <div className="flex flex-col gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100">
           <button onClick={() => deleteTripMutation.mutate(id)} className="text-sm font-light text-gray-500">
@@ -116,13 +120,13 @@ export default function TripDisplay({
           <img src={profilepicture} className="h-8 w-8 bg-blue-600 rounded-full" />
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
-            <div className="text-xs text-gray-800 flex items-center" title="PostLifetimeInfoContainer">
-              {moment(createdAt?.toDate()).fromNow()}
-            </div>
+            <div className="text-xs text-gray-800 flex items-center">{moment(createdAt?.toDate()).fromNow()}</div>
           </div>
         </div>
       </Link>
-      <div className="text-center text-xl font-semibold mt-4">{title}</div>
+      <div className="text-center text-xl font-semibold mt-4" title="TripPostTitle">
+        {title}
+      </div>
       <div className="py-2 px-4">
         <ol className="relative border-l border-gray-700">{stopElements}</ol>
       </div>

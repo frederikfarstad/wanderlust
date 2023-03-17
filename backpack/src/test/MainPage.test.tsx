@@ -6,10 +6,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase-config";
 import { searchForChildElementWithQuery, wrappedRender } from "./testUtils";
 
-beforeAll(async () => {
-  await signInWithEmailAndPassword(auth, "test@example.com", "abc123");
-});
-
 beforeEach(() => {
   act(() => wrappedRender(<MainPage />));
 });
@@ -19,6 +15,10 @@ const waitForTripDivs = () => {
 };
 
 describe("MainPage", () => {
+  beforeAll(async () => {
+    await signInWithEmailAndPassword(auth, "test@example.com", "abc123");
+  });
+
   it("should allow adding trips to and removing trips from favorites", async () => {
     const tripDivs = await waitForTripDivs();
     expect(tripDivs.length).toBeGreaterThan(0);
@@ -40,18 +40,14 @@ describe("MainPage", () => {
     await userEvent.click(sortByNewButton);
     const tripDivs = await waitForTripDivs();
 
-    var prevLifetime = 0;
+    var prevCreationTime = Infinity;
     tripDivs.forEach((tripDiv) => {
-      const postLifetimeInfoContainer = tripDiv.querySelector("[title='PostLifetimeInfoContainer']");
-      if (postLifetimeInfoContainer !== null) {
-        // Check that previous trip div and this trip div is correctly sorted
-        const thisLifetime = parseInt(postLifetimeInfoContainer.innerHTML);
-        if (isNaN(thisLifetime)) return;
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdAt") || "");
+      if (isNaN(thisCreationTime)) return;
+      // Check that previous trip div and this trip div is correctly sorted
+      expect(thisCreationTime).toBeLessThanOrEqual(prevCreationTime);
 
-        expect(thisLifetime).toBeGreaterThanOrEqual(prevLifetime);
-
-        prevLifetime = thisLifetime;
-      }
+      prevCreationTime = thisCreationTime;
     });
   });
 
@@ -61,18 +57,14 @@ describe("MainPage", () => {
     await userEvent.click(sortByNewButton);
     const tripDivs = await waitForTripDivs();
 
-    var prevLifetime = Infinity;
+    var prevCreationTime = 0;
     tripDivs.forEach((tripDiv) => {
-      const postLifetimeInfoContainer = tripDiv.querySelector("[title='PostLifetimeInfoContainer']");
-      if (postLifetimeInfoContainer !== null) {
-        // Check that previous trip div and this trip div is correctly sorted
-        const thisLifetime = parseInt(postLifetimeInfoContainer.innerHTML);
-        if (isNaN(thisLifetime)) return;
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdAt") || "");
+      if (isNaN(thisCreationTime)) return;
+      // Check that previous trip div and this trip div is correctly sorted
+      expect(thisCreationTime).toBeGreaterThanOrEqual(prevCreationTime);
 
-        expect(thisLifetime).toBeLessThanOrEqual(prevLifetime);
-
-        prevLifetime = thisLifetime;
-      }
+      prevCreationTime = thisCreationTime;
     });
   });
 
@@ -166,18 +158,28 @@ describe("MainPage", () => {
     await userEvent.click(sortByNewButton);
     const tripDivs = await waitForTripDivs();
 
-    var prevLifetime = 0;
+    var prevCreationTime = Infinity;
     tripDivs.forEach((tripDiv) => {
-      const postLifetimeInfoContainer = tripDiv.querySelector("[title='PostLifetimeInfoContainer']");
-      if (postLifetimeInfoContainer !== null) {
-        // Check that previous trip div and this trip div is correctly sorted
-        const thisLifetime = parseInt(postLifetimeInfoContainer.innerHTML);
-        if (isNaN(thisLifetime)) return;
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdAt") || "");
+      if (isNaN(thisCreationTime)) return;
+      // Check that previous trip div and this trip div is correctly sorted
+      expect(thisCreationTime).toBeLessThanOrEqual(prevCreationTime);
 
-        expect(thisLifetime).toBeGreaterThanOrEqual(prevLifetime);
-
-        prevLifetime = thisLifetime;
-      }
+      prevCreationTime = thisCreationTime;
     });
+  });
+});
+
+describe("MainPage for user Test2", () => {
+  beforeAll(async () => {
+    await signInWithEmailAndPassword(auth, "test2@example.com", "abc123");
+  });
+
+  it("should show most relevant trips first", async () => {
+    const tripTitles = await screen.findAllByTitle("TripPostTitle");
+
+    expect(tripTitles[0]).toHaveTextContent("Trip to Paris");
+    expect(tripTitles[1]).toHaveTextContent("Southeast Asia Trip 2023");
+    expect(tripTitles[2]).toHaveTextContent("Trip to Brussels");
   });
 });

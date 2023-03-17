@@ -49,6 +49,12 @@ export const getAllTrips = async (): Promise<Trip[]> => {
   return tripData;
 };
 
+export const getAllFavoritedTripsFromUserId = async (uid: string) => {
+  const userData = await getUserById(uid);
+  const favorited = userData.favorited;
+  return favorited === undefined ? [] : getTripsFromIdList(favorited);
+};
+
 export const createTrip = async (trip: Trip) => {
   return await addDoc(collection(db, "trips"), {
     ...trip,
@@ -60,7 +66,7 @@ export const deleteTrip = async (tripId: string) => {
   await deleteDoc(doc(db, "trips", tripId));
 };
 
-export const updateTrip = async ({tripData, tripId} : {tripData: Trip, tripId: string} ) => {
+export const updateTrip = async ({ tripData, tripId }: { tripData: Trip; tripId: string }) => {
   await updateDoc(doc(db, "trips", tripId), {
     ...tripData,
     edited: Timestamp.fromDate(new Date()),
@@ -68,6 +74,7 @@ export const updateTrip = async ({tripData, tripId} : {tripData: Trip, tripId: s
 };
 
 export async function getTripsFromIdList(tripIds: string[]): Promise<Trip[]> {
+  if (tripIds.length <= 0) return [];
   const q = query(collection(db, "trips"), where("__name__", "in", tripIds));
   const tripsSnap = await getDocs(q);
   const tripsData = tripsSnap.docs.map((doc) => ({
@@ -93,32 +100,30 @@ export const getTripForEdit = async (tripId: string | undefined) => {
   return null;
 };
 
-export const toggleLiked = async ({uid, liked} : {uid: string, liked: string[]}) => {
-   await updateDoc(doc(db, "users", uid), {
-    liked
-   })
-}
-export const toggleFavourited = async ({uid, favorited} : {uid: string, favorited: string[]}) => {
-  console.log("async", favorited)
-   await updateDoc(doc(db, "users", uid), {
-    favorited
-   })
-}
-
-
+export const toggleLiked = async ({ uid, liked }: { uid: string; liked: string[] }) => {
+  await updateDoc(doc(db, "users", uid), {
+    liked,
+  });
+};
+export const toggleFavourited = async ({ uid, favorited }: { uid: string; favorited: string[] }) => {
+  console.log("async", favorited);
+  await updateDoc(doc(db, "users", uid), {
+    favorited,
+  });
+};
 
 /* ############## USER FUNCTIONS ############## */
 
 export const getAllUsers = async () => {
-  const usersSnap = await getDocs(collection(db, "users"))
-  return usersSnap.docs.map(doc => ({...doc.data(), id: doc.id})) as User[]
-}
+  const usersSnap = await getDocs(collection(db, "users"));
+  return usersSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as User[];
+};
 
-export const getUserById = async (id: string) : Promise<User> => {
-   const userSnap = await getDoc(doc(db, "users", id))
-   if (!userSnap.exists()) throw new Error(`invalid id (${id}), cannot find user`)
-   return userSnap.data() as User
-}
+export const getUserById = async (id: string): Promise<User> => {
+  const userSnap = await getDoc(doc(db, "users", id));
+  if (!userSnap.exists()) throw new Error(`invalid id (${id}), cannot find user`);
+  return userSnap.data() as User;
+};
 
 export const createUser = async (userInfo: User) => {
   if (!userInfo.id) throw new Error("invalid id, cannot create user");
