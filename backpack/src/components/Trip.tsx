@@ -100,7 +100,11 @@ export default function TripDisplay({
   const stopElements = locations.map((s, i) => <ListElement key={i} {...s} />);
 
   return (
-    <div className="bg-blue-100 rounded-xl p-4 w-full relative group" title="TripDiv" data-testid={createdAt.seconds}>
+    <div
+      className="bg-blue-100 rounded-xl p-4 w-full relative group"
+      title="TripDiv"
+      data-createdAt={createdAt.seconds}
+    >
       {owner && (
         <div className="flex flex-col gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100">
           <button onClick={() => deleteTripMutation.mutate(id)} className="text-sm font-light text-gray-500">
