@@ -16,7 +16,7 @@ import { Location, Trip } from "../firebase/Interfaces";
 import { getUid } from "../utils/FirebaseUtils";
 
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 /**
  * THE GOAL:
@@ -39,7 +39,7 @@ import { useEffect, useState } from "react";
  *
  *  */
 
-export default function TripPage({
+export default function TripDisplay({
   id,
   title,
   description,
@@ -147,7 +147,10 @@ export default function TripPage({
           />
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
-            <div className="text-xs text-gray-800 flex items-center  dark:text-dark-900">
+            <div
+              className="text-xs text-gray-800 flex items-center  dark:text-dark-900"
+              title="PostLifetimeInfoContainer"
+            >
               {moment(createdAt?.toDate()).fromNow()}
             </div>
           </div>
@@ -163,15 +166,23 @@ export default function TripPage({
       <div className="bg-gray-600 h-px"></div>
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-col">
-          <div>Price: {price}</div>
-          <div>Duration: {duration}</div>
+          <div className="flex gap-1">
+            Price: <p title="PostPriceInfoContainer">{price}</p> €
+          </div>
+          <div className="flex gap-1">
+            Duration: <p title="PostDurationInfoContainer">{duration}</p> days
+          </div>
         </div>
         <div className="flex flex-row">
           <button onClick={handleToggleFavorite} title="FavoriteTripButton">
             {isFavorited ? (
-              <AiFillStar color="orange" title="FavoritedIcon" />
+              <div title="FavoritedIcon">
+                <AiFillStar color="orange" />
+              </div>
             ) : (
-              <AiOutlineStar title="NonFavoritedIcon" />
+              <div title="NonFavoritedIcon">
+                <AiOutlineStar />
+              </div>
             )}
           </button>
           <IconLike liked={isLiked} />

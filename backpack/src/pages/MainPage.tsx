@@ -1,18 +1,58 @@
 import { useQuery } from "@tanstack/react-query";
-import Trip from "../components/Trip";
+import { useState } from "react";
+import Post from "../components/Trip";
 import { getAllTrips } from "../firebase/asyncRequests";
+import { Trip } from "../firebase/Interfaces";
+import { getRelevanceScore } from "../utils/SortingUtils";
+
+type SortFunction = (a: Trip, b: Trip) => number;
+type SelectSortFuncButtonProps = {
+  text: string;
+  onChangeSortFunc: (newSortFuncIndex: number) => void;
+  direction: number;
+  currentSortFuncIndex: number;
+  attachedSortFuncIndex: number;
+};
 
 export default function MainPage() {
+  const [direction, setDirection] = useState<number>(1);
+
+  const sortByRelevance = (a: Trip, b: Trip) =>
+    getRelevanceScore(b) - getRelevanceScore(a);
+  const sortByNew = (a: Trip, b: Trip) =>
+    direction * (b.createdAt.toMillis() - a.createdAt.toMillis());
+  const sortByPrice = (a: Trip, b: Trip) =>
+    direction * (parseInt(a.price) - parseInt(b.price));
+  const sortByDuration = (a: Trip, b: Trip) =>
+    direction * (parseInt(a.duration) - parseInt(b.duration));
+
+  const sortFunctionList = [
+    sortByRelevance,
+    sortByNew,
+    sortByPrice,
+    sortByDuration,
+  ];
+
+  const [sortFuncIndex, setSortFuncIndex] = useState<number>(0);
+  const sortFunc = sortFunctionList[sortFuncIndex];
+
+  const onChangeSortFunc = (newSortFuncIndex: number) => {
+    if (sortFuncIndex === newSortFuncIndex) return setDirection(-direction);
+    setDirection(1);
+    setSortFuncIndex(newSortFuncIndex);
+  };
+
   const tripsQuery = useQuery({
     queryKey: ["trips"],
     queryFn: getAllTrips,
   });
 
-  if (tripsQuery.isLoading) return <p>Loading trips...</p>;
   if (tripsQuery.isError) throw new Error("failed to load trips from homepage");
 
-  const trips = tripsQuery.data.map((trip) => (
-    <Trip key={trip.title} {...trip} id={trip.id} />
+  const unsortedTrips = tripsQuery.isSuccess ? tripsQuery.data : [];
+  const sortedTrips = unsortedTrips.sort(sortFunc);
+  const posts = sortedTrips.map((trip) => (
+    <Post {...trip} key={trip.id} id={trip.id} />
   ));
 
   return (
@@ -24,7 +64,42 @@ export default function MainPage() {
 
         {/* Middle of page */}
         <div className="h-max flex flex-col items-center gap-20 py-20">
-          {trips}
+          <div className="bg-primary-100 drop-shadow-md rounded-md text-center text-sm flex overflow-clip">
+            <p className="bg-primary-200 p-4 cursor-default rounded-l-md whitespace-nowrap">
+              Sort by:
+            </p>
+            <div className="z-[1] flex-1 whitespace-nowrap">
+              <SelectSortFuncButton
+                text="Relevance"
+                attachedSortFuncIndex={0}
+                onChangeSortFunc={onChangeSortFunc}
+                direction={direction}
+                currentSortFuncIndex={sortFuncIndex}
+              />
+              <SelectSortFuncButton
+                text="New"
+                attachedSortFuncIndex={1}
+                onChangeSortFunc={onChangeSortFunc}
+                direction={direction}
+                currentSortFuncIndex={sortFuncIndex}
+              />
+              <SelectSortFuncButton
+                text="Price"
+                attachedSortFuncIndex={2}
+                onChangeSortFunc={onChangeSortFunc}
+                direction={direction}
+                currentSortFuncIndex={sortFuncIndex}
+              />
+              <SelectSortFuncButton
+                text="Duration"
+                attachedSortFuncIndex={3}
+                onChangeSortFunc={onChangeSortFunc}
+                direction={direction}
+                currentSortFuncIndex={sortFuncIndex}
+              />
+            </div>
+          </div>
+          {posts}
         </div>
 
         {/* Right side of page */}
@@ -32,3 +107,31 @@ export default function MainPage() {
     </div>
   );
 }
+
+const SelectSortFuncButton = (props: SelectSortFuncButtonProps) => {
+  const {
+    text,
+    onChangeSortFunc,
+    currentSortFuncIndex,
+    attachedSortFuncIndex,
+    direction,
+  } = props;
+  const directionIndication = direction === 1 ? "v" : "^";
+  const isSelected = currentSortFuncIndex === attachedSortFuncIndex;
+
+  return (
+    <button
+      onClick={() => onChangeSortFunc(attachedSortFuncIndex)}
+      className={`h-full w-1/4 px-8 ${
+        isSelected ? "bg-primary-50 shadow-inner" : ""
+      }`}
+      data-testid={`SortingButton-${text}`}
+    >
+      <div className="flex items-center justify-center">
+        <p>
+          {text} {isSelected ? directionIndication : ""}
+        </p>
+      </div>
+    </button>
+  );
+};

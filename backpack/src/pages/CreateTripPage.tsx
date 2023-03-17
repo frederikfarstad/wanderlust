@@ -35,8 +35,8 @@ export default function CreateTripPage() {
   const tripQuery = useQuery({
     queryKey: ["trips", tripId],
     queryFn: () => getTripForEdit(tripId),
-    onSuccess: trip => {
-      setEditing(trip !== null)
+    onSuccess: (trip) => {
+      setEditing(trip !== null);
       setTitle(trip?.title ?? "");
       setDescription(trip?.description ?? "");
       setDuration(trip?.duration ?? "");
@@ -44,35 +44,40 @@ export default function CreateTripPage() {
       setLocations(trip?.locations ?? []);
     },
   });
-  
-  const queryClient = useQueryClient()
+
+  const queryClient = useQueryClient();
   const createTripMutation = useMutation({
     mutationFn: createTrip,
-    onSuccess: data => {
-      queryClient.invalidateQueries(["trips"], { exact: true})
-    }
-  })
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["trips"], { exact: true });
+    },
+  });
   const updateTripMutation = useMutation({
     mutationFn: updateTrip,
     onSuccess: () => {
-      queryClient.invalidateQueries(["trips"])
-    }
-  })
-  
+      queryClient.invalidateQueries(["trips"]);
+    },
+  });
+
   if (tripQuery.isLoading) return <>Loading trip ...</>;
   if (tripQuery.isError) return <>{JSON.stringify(tripQuery.error)}</>;
-  
-  
-  const tripToPost = { id:tripId, title, description, duration, price, locations } as Trip;
-  
+
+  const tripToPost = {
+    id: tripId,
+    title,
+    description,
+    duration,
+    price,
+    locations,
+  } as Trip;
+
   const handlePost = () => {
     if (editing) {
-      updateTripMutation.mutate({tripId, tripData : tripToPost})
+      updateTripMutation.mutate({ tripId, tripData: tripToPost });
     } else {
-      createTripMutation.mutate(tripToPost)
+      createTripMutation.mutate(tripToPost);
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-primary-300 dark:bg-dark-300 dark:text-dark-900 py-4">
@@ -115,7 +120,9 @@ export default function CreateTripPage() {
             <div className="col-span-2 w-full">
               <LocationDisplay
                 locations={locations}
-                handleAddLocation={(locations: Location[]) => setLocations(locations)}
+                handleAddLocation={(locations: Location[]) =>
+                  setLocations(locations)
+                }
               />
             </div>
 
@@ -123,8 +130,9 @@ export default function CreateTripPage() {
               Duration
               <input
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="How long did it take"
+                placeholder="How long did it take in days"
                 value={duration}
+                type="number"
                 onChange={(e) => setDuration(e.target.value)}
               />
             </label>
@@ -133,8 +141,9 @@ export default function CreateTripPage() {
               Price
               <input
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="How much did it cost"
+                placeholder="How much did it cost in EUR"
                 value={price}
+                type="number"
                 onChange={(e) => setPrice(e.target.value)}
               />
             </label>
