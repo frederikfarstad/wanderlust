@@ -123,6 +123,7 @@ export default function TripDisplay({
     <div
       className="bg-blue-100 dark:bg-dark-100  dark:text-dark-900 rounded-xl p-4 w-full relative group"
       title="TripDiv"
+      data-createdAt={createdAt.seconds}
     >
       {owner && (
         <div className="flex flex-col gap-2 absolute top-4 right-4 opacity-0 group-hover:opacity-100">
@@ -147,16 +148,16 @@ export default function TripDisplay({
           />
           <div className="px-2">
             <div className="self-center text-sm font-semibold">{username}</div>
-            <div
-              className="text-xs text-gray-800 flex items-center  dark:text-dark-900"
-              title="PostLifetimeInfoContainer"
-            >
+            <div className="text-xs text-gray-800 flex items-center  dark:text-dark-900">
               {moment(createdAt?.toDate()).fromNow()}
             </div>
           </div>
         </div>
       </Link>
-      <div className="text-center text-xl font-semibold mt-4 dark:text-dark-900">
+      <div
+        className="text-center text-xl font-semibold mt-4 dark:text-dark-900"
+        title="TripPostTitle"
+      >
         {title}
       </div>
       <div className="py-2 px-4">
