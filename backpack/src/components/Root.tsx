@@ -8,11 +8,11 @@ import Footer from "./Footer";
 
 function Root() {
   return (
-    <>
+    <div className="bg-primary-300 dark:bg-dark-300 min-h-screen flex flex-col">
       <Navbar />
       <Outlet />
       <Footer />
-    </>
+    </div>
   );
 }
 

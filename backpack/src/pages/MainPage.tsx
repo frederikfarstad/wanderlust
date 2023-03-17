@@ -77,16 +77,16 @@ export default function MainPage() {
   }, []);
 
   return (
-    <div className="flex flex-col justify-between bg-primary-300 dark:bg-dark-300">
+    <div className="flex flex-col justify-between">
       <div className="grid grid-cols-3">
         {/* Left side of page */}
 
         <div></div>
 
         {/* Middle of page */}
-        <div className="h-max flex flex-col items-center gap-20 py-20">
-          <div className="bg-primary-100 drop-shadow-md rounded-md text-center text-sm flex overflow-clip">
-            <p className="bg-primary-200 p-4 cursor-default rounded-l-md whitespace-nowrap">
+        <div className="h-max flex flex-col items-center gap-20 py-20 dark:text-white">
+          <div className="bg-primary-100 dark:bg-dark-100 drop-shadow-md rounded-md text-center text-sm flex overflow-clip">
+            <p className="bg-primary-200 dark:bg-dark-50 p-4 cursor-default rounded-l-md whitespace-nowrap">
               Sort by:
             </p>
             <div className="z-[1] flex-1 whitespace-nowrap">
@@ -144,7 +144,7 @@ const SelectSortFuncButton = (props: SelectSortFuncButtonProps) => {
     <button
       onClick={() => onChangeSortFunc(attachedSortFuncIndex)}
       className={`h-full w-1/4 px-8 ${
-        isSelected ? "bg-primary-50 shadow-inner" : ""
+        isSelected ? "bg-primary-50 dark:bg-dark-200 shadow-inner" : ""
       }`}
       data-testid={`SortingButton-${text}`}
     >
