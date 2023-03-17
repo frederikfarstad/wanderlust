@@ -40,18 +40,14 @@ describe("MainPage", () => {
     await userEvent.click(sortByNewButton);
     const tripDivs = await waitForTripDivs();
 
-    var prevLifetime = 0;
+    var prevCreationTime = Infinity;
     tripDivs.forEach((tripDiv) => {
-      const postLifetimeInfoContainer = tripDiv.querySelector("[title='PostLifetimeInfoContainer']");
-      if (postLifetimeInfoContainer !== null) {
-        // Check that previous trip div and this trip div is correctly sorted
-        const thisLifetime = parseInt(postLifetimeInfoContainer.innerHTML);
-        if (isNaN(thisLifetime)) return;
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-testid") || "");
+      if (isNaN(thisCreationTime)) return;
+      // Check that previous trip div and this trip div is correctly sorted
+      expect(thisCreationTime).toBeLessThanOrEqual(prevCreationTime);
 
-        expect(thisLifetime).toBeGreaterThanOrEqual(prevLifetime);
-
-        prevLifetime = thisLifetime;
-      }
+      prevCreationTime = thisCreationTime;
     });
   });
 
@@ -61,18 +57,14 @@ describe("MainPage", () => {
     await userEvent.click(sortByNewButton);
     const tripDivs = await waitForTripDivs();
 
-    var prevLifetime = Infinity;
+    var prevCreationTime = 0;
     tripDivs.forEach((tripDiv) => {
-      const postLifetimeInfoContainer = tripDiv.querySelector("[title='PostLifetimeInfoContainer']");
-      if (postLifetimeInfoContainer !== null) {
-        // Check that previous trip div and this trip div is correctly sorted
-        const thisLifetime = parseInt(postLifetimeInfoContainer.innerHTML);
-        if (isNaN(thisLifetime)) return;
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-testid") || "");
+      if (isNaN(thisCreationTime)) return;
+      // Check that previous trip div and this trip div is correctly sorted
+      expect(thisCreationTime).toBeGreaterThanOrEqual(prevCreationTime);
 
-        expect(thisLifetime).toBeLessThanOrEqual(prevLifetime);
-
-        prevLifetime = thisLifetime;
-      }
+      prevCreationTime = thisCreationTime;
     });
   });
 
@@ -166,18 +158,14 @@ describe("MainPage", () => {
     await userEvent.click(sortByNewButton);
     const tripDivs = await waitForTripDivs();
 
-    var prevLifetime = 0;
+    var prevCreationTime = Infinity;
     tripDivs.forEach((tripDiv) => {
-      const postLifetimeInfoContainer = tripDiv.querySelector("[title='PostLifetimeInfoContainer']");
-      if (postLifetimeInfoContainer !== null) {
-        // Check that previous trip div and this trip div is correctly sorted
-        const thisLifetime = parseInt(postLifetimeInfoContainer.innerHTML);
-        if (isNaN(thisLifetime)) return;
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-testid") || "");
+      if (isNaN(thisCreationTime)) return;
+      // Check that previous trip div and this trip div is correctly sorted
+      expect(thisCreationTime).toBeLessThanOrEqual(prevCreationTime);
 
-        expect(thisLifetime).toBeGreaterThanOrEqual(prevLifetime);
-
-        prevLifetime = thisLifetime;
-      }
+      prevCreationTime = thisCreationTime;
     });
   });
 });
