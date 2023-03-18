@@ -1,11 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { signOut } from "firebase/auth";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import Cookies from "universal-cookie";
 import { getUserById } from "../firebase/asyncRequests";
 import { auth } from "../firebase/firebase-config";
 import { User } from "../firebase/Interfaces";
 import logo from "../public/mountain.png";
 import { getUid } from "../utils/FirebaseUtils";
+
+const cookies = new Cookies();
+var isDarkMode: boolean = cookies.get("using_dark_mode") === "t" || false;
 
 export default function Navbar() {
   const uid = getUid();
@@ -15,8 +20,23 @@ export default function Navbar() {
     queryFn: () => getUserById(uid),
   });
 
-  if (userQuery.isLoading) return <>Loading user: {uid}... <button onClick={() => signOut(auth)}>Sign out</button></>
-  if (userQuery.isError) return <>{JSON.stringify(userQuery.error)}</>
+  const isFirstRender = useRef(true);
+  useLayoutEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    SetDarkModeStyling(isDarkMode);
+  });
+
+  if (userQuery.isLoading)
+    return (
+      <>
+        Loading user: {uid}...{" "}
+        <button onClick={() => signOut(auth)}>Sign out</button>
+      </>
+    );
+  if (userQuery.isError) return <>{JSON.stringify(userQuery.error)}</>;
 
   const pfp = userQuery.data.profilepicture;
   const profileLink = "profile/" + uid;
@@ -94,11 +114,20 @@ export default function Navbar() {
   );
 }
 
+function SetDarkModeStyling(val: boolean) {
+  const element = document.body;
+  if (val === true) {
+    element.classList.add("dark");
+  } else {
+    element.classList.remove("dark");
+  }
+}
+
 //function that toggles between light and dark mode
 function ToggleDarkMode() {
-  console.log("toggling darkmode");
-  const element = document.body;
-  element.classList.toggle("dark");
+  isDarkMode = !isDarkMode;
+  SetDarkModeStyling(isDarkMode);
+  cookies.set("using_dark_mode", isDarkMode ? "t" : "f");
 }
 
 function IconAdd() {
