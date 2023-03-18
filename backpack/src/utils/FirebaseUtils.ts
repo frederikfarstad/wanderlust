@@ -21,7 +21,7 @@ type SignupData = {
   repeatPassword: string;
 };
 
-export const getUid = () => {
+export const getUid = () : string => {
   const uid = auth.currentUser?.uid
   if (!uid) throw new Error("cannot find uid")
   return uid
