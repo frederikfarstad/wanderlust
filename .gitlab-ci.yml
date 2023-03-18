@@ -1,19 +1,19 @@
 image: ubuntu:latest
 
 before_script:
- - echo "Before script section"
- - echo "Installing Java..."
- - apt-get update && apt-get -y install openjdk-11-jdk  && apt-get -y install ant
- - echo "Java installed!"
- - echo "Installing NodeJS..."
- - apt-get -y install curl
- - curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
- - bash nodesource_setup.sh
- - apt-get -y install nodejs
- - echo "NodeJS installed!"
+  - echo "Before script section"
+  - echo "Installing Java..."
+  - apt-get update && apt-get -y install openjdk-11-jdk  && apt-get -y install ant
+  - echo "Java installed!"
+  - echo "Installing NodeJS..."
+  - apt-get -y install curl
+  - curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
+  - bash nodesource_setup.sh
+  - apt-get -y install nodejs
+  - echo "NodeJS installed!"
 
-stages:          # List of stages for jobs, and their order of execution
-# - build
+stages: # List of stages for jobs, and their order of execution
+  # - build
   - test
 
 #build:       # This job runs in the build stage, which runs first.
@@ -27,16 +27,17 @@ stages:          # List of stages for jobs, and their order of execution
 #    - npm run build
 #    - echo "built successfully"
 
-test:   # This job runs in the test stage.
+test: # This job runs in the test stage.
   only:
     - merge_requests
-  stage: test    # It only starts when the job in the build stage completes successfully.
+  stage: test # It only starts when the job in the build stage completes successfully.
   script:
     - echo "testing..."
     - cd backpack
     - npm install
     - npm install -g firebase-tools
-    - npm run simpletest
+    - npm run coverage
     - echo "testing successfully"
-
-
+  artifacts:
+    reports:
+      vitest_coverage: coverage/clover.xml
