@@ -31,7 +31,7 @@ export const SubmitButton = (props: SubmitButtonProps) => {
         onClick={onSubmit}
         className={
           `text-white font-semibold drop-shadow-md rounded-md p-2 ${
-            isLoading ? "bg-blue-400" : "hover:bg-blue-400 bg-blue-500"
+            isLoading ? "bg-primary-400" : "hover:bg-primary-400 bg-primary-500"
           }` + ` ${className !== undefined ? className : ""}`
         }
         title={title || "SubmitButton"}
