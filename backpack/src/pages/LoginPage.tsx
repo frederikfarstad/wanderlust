@@ -128,7 +128,7 @@ export const LoginSection = (props: {
         submitFunction={onLoginSubmitted}
       />
       <a
-        className="mt-5 underline text-blue-500 hover:cursor-pointer"
+        className="mt-5 underline text-primary-500 hover:cursor-pointer"
         onClick={onPasswordForgottenClicked}
         title="ForgotPasswordLink"
       >
@@ -149,9 +149,7 @@ export const SignupSection = (props: {
   const [error, setError] = useState<string>();
   const { setSelectedForm } = props;
 
-  const onSignupSubmitted = async () => {
-
-  };
+  const onSignupSubmitted = async () => {};
 
   return (
     <div title="SignupSection" className="flex flex-col items-center p-10">
@@ -227,11 +225,7 @@ export const SignupSection = (props: {
         <p className="text-red-600 text-left text-sm mt-2">* Required</p>
       </div>
       <br />
-      <SubmitButton
-        text="Sign up"
-    
-        title="SignupButton"
-      />
+      <SubmitButton text="Sign up" title="SignupButton" />
       {error !== undefined && (
         <p className="text-red-300" title="signupErrorDisplay">
           {error}
@@ -241,7 +235,7 @@ export const SignupSection = (props: {
         onClick={() => {
           setSelectedForm("login");
         }}
-        className="mt-5 underline text-blue-500 hover:cursor-pointer"
+        className="mt-5 underline text-primary-500 hover:cursor-pointer"
       >
         Already have an account?
       </a>

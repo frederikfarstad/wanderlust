@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Trip, Location } from "../firebase/Interfaces";
 import LocationDisplay from "../components/createTrip/LocationDisplay";
-import { createTrip, getTripForEdit, updateTrip } from "../firebase/asyncRequests";
+import {
+  createTrip,
+  getTripForEdit,
+  updateTrip,
+} from "../firebase/asyncRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 /**
  * Can either be creating a new post, or editing an existing one.
@@ -58,7 +62,14 @@ export default function CreateTripPage() {
   if (tripQuery.isLoading) return <>Loading trip ...</>;
   if (tripQuery.isError) return <>{JSON.stringify(tripQuery.error)}</>;
 
-  const tripToPost = { id: tripId, title, description, duration, price, locations } as Trip;
+  const tripToPost = {
+    id: tripId,
+    title,
+    description,
+    duration,
+    price,
+    locations,
+  } as Trip;
 
   const handlePost = () => {
     if (editing) {
@@ -69,9 +80,11 @@ export default function CreateTripPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-primary-300 py-4">
-      <div className="py-8 px-4 bg-primary-100 rounded-xl w-2/3">
-        <h2 className="mb-4 text-xl font-bold text-gray-900">{editing ? "Edit your trip!" : "Post your trip!"}</h2>
+    <div className="flex justify-center items-center min-h-screen bg-primary-300 dark:bg-dark-300 dark:text-dark-900 py-4">
+      <div className="py-8 px-4 bg-primary-100 dark:bg-dark-100 rounded-xl w-2/3">
+        <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+          {editing ? "Edit your trip!" : "Post your trip!"}
+        </h2>
 
         <div>
           <div className="grid grid-cols-2 gap-4">
@@ -97,7 +110,9 @@ export default function CreateTripPage() {
 
             <div className="col-span-2 flex flex-row items-center">
               <div className="flex-1 h-px bg-gray-300"></div>
-              <div className="text-sm font-light text-gray-500 px-4">Add a stop to your trip</div>
+              <div className="text-sm font-light text-gray-500 px-4">
+                Add a stop to your trip
+              </div>
               <div className="flex-1 h-px bg-gray-300"></div>
               <div></div>
             </div>
@@ -105,7 +120,9 @@ export default function CreateTripPage() {
             <div className="col-span-2 w-full">
               <LocationDisplay
                 locations={locations}
-                handleAddLocation={(locations: Location[]) => setLocations(locations)}
+                handleAddLocation={(locations: Location[]) =>
+                  setLocations(locations)
+                }
               />
             </div>
 
