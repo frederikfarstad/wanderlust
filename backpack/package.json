@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "set NODE_ENV=test&& firebase emulators:exec \"vitest\" --import ./firebase_test_emulator_persistence",
     "simpletest": "set NODE_ENV=test&& firebase emulators:exec \"vitest run\" --import ./firebase_test_emulator_persistence",
-    "coverage": "set NODE_ENV=test&& firebase emulators:exec \"vitest run --coverage\""
+    "coverage": "set NODE_ENV=test&& firebase emulators:exec \"vitest run --coverage\" --import ./firebase_test_emulator_persistence"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.26.1",
