@@ -1,38 +1,54 @@
 import { useQuery } from "@tanstack/react-query";
 import { signOut } from "firebase/auth";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import Cookies from "universal-cookie";
 import { getUserById } from "../firebase/asyncRequests";
 import { auth } from "../firebase/firebase-config";
 import { User } from "../firebase/Interfaces";
-import logo from "../public/mountain.png"
+import logo from "../public/mountain.png";
 import { getUid } from "../utils/FirebaseUtils";
 
+const cookies = new Cookies();
+var isDarkMode: boolean = cookies.get("using_dark_mode") === "t" || false;
 
 export default function Navbar() {
-  const uid = getUid()
+  const uid = getUid();
 
   const userQuery = useQuery({
     queryKey: ["users", uid],
-    queryFn: () => getUserById(uid)
-  })
+    queryFn: () => getUserById(uid),
+  });
 
-  if (userQuery.isLoading) return <>Loading user: {uid}... <button onClick={() => signOut(auth)}>Sign out</button></>
-  if (userQuery.isError) return <>{JSON.stringify(userQuery.error)}</>
+  const isFirstRender = useRef(true);
+  useLayoutEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    SetDarkModeStyling(isDarkMode);
+  });
 
-  const pfp = userQuery.data.profilepicture
-  const profileLink = "profile/" + uid
+  if (userQuery.isLoading)
+    return (
+      <>
+        Loading user: {uid}...{" "}
+        <button onClick={() => signOut(auth)}>Sign out</button>
+      </>
+    );
+  if (userQuery.isError) return <>{JSON.stringify(userQuery.error)}</>;
+
+  const pfp = userQuery.data.profilepicture;
+  const profileLink = "profile/" + uid;
 
   return (
     <>
-      <nav className="h-20 bg-primary-100 border-gray-200 shadow-2xl w-full fixed z-10">
+      <nav className="h-20 bg-primary-100 dark:bg-dark-100 border-gray-200 shadow-2xl w-full fixed z-10">
         <div className="grid grid-cols-6 h-full">
           <div className="col-start-2 flex items-center">
-            <Link
-              to="/"
-              className="inline-flex p-2 my-2 rounded-md"
-            >
+            <Link to="/" className="inline-flex p-2 my-2 rounded-md">
               <img src={logo} className="h-12 min-w-max" />
-              <span className="text-xl font-semibold ml-2 hidden md:block self-center">
+              <span className="text-xl font-semibold ml-2 hidden md:block self-center dark:text-dark-900">
                 Wanderlust
               </span>
             </Link>
@@ -51,22 +67,22 @@ export default function Navbar() {
                   alt="user photo"
                 />
               </Link>
-              <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top-left">
-                <div className="bg-primary-100 grid grid-cols-1">
+              <div className="fixed top-20 :bg-primary-100 dark:bg-dark-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top-left">
+                <div className="bg-primary-100 dark:bg-dark-100 grid grid-cols-1">
                   <Link to={profileLink}>
-                    <div className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                    <div className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4">
                       Go to profile
                     </div>
                   </Link>
                   <Link to="/settings">
-                    <div className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                    <div className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4">
                       Settings
                     </div>
                   </Link>
                   <Link to="/" className="">
                     <button
                       onClick={() => signOut(auth)}
-                      className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4 w-full text-left"
+                      className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4 w-full text-left"
                     >
                       Log out
                     </button>
@@ -77,13 +93,19 @@ export default function Navbar() {
             <Link to="/create/new">
               <div className="group">
                 <IconAdd />
-                <div className="fixed top-20 bg-primary-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top">
-                  <button className="text-sm font-light text-gray-500 hover:bg-gray-300 p-4">
+                <div className="fixed top-20 bg-primary-100 dark:bg-dark-100 border scale-x-100 scale-y-0 group-hover:scale-y-100 transition-all duration-300 origin-top">
+                  <button className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4">
                     Create route
                   </button>
                 </div>
               </div>
             </Link>
+            <button
+              className="bg-primary-400 dark:bg-dark-400 hover:bg-primary-500 dark:hover:bg-dark-50 text-white font-bold py-1 px-2 rounded"
+              onClick={ToggleDarkMode}
+            >
+              Dark mode
+            </button>
           </div>
         </div>
       </nav>
@@ -92,12 +114,28 @@ export default function Navbar() {
   );
 }
 
+function SetDarkModeStyling(val: boolean) {
+  const element = document.body;
+  if (val === true) {
+    element.classList.add("dark");
+  } else {
+    element.classList.remove("dark");
+  }
+}
+
+//function that toggles between light and dark mode
+function ToggleDarkMode() {
+  isDarkMode = !isDarkMode;
+  SetDarkModeStyling(isDarkMode);
+  cookies.set("using_dark_mode", isDarkMode ? "t" : "f");
+}
+
 function IconAdd() {
   return (
     <svg
       fill="none"
       viewBox="0 0 24 24"
-      className="h-12 text-green-500 hover:bg-green-500 hover:text-blue-100 rounded-full hover:rotate-45 transition-all duration-100"
+      className="h-12 text-green-500 hover:bg-green-500 hover:text-primary-100 rounded-full hover:rotate-45 transition-all duration-100"
     >
       <path
         fill="currentColor"

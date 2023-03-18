@@ -24,3 +24,8 @@
         opacity: 0;
     }
 }
+
+.dropdown-content a:hover {
+    background-color: #bfdbfe;
+    cursor: pointer;
+    }

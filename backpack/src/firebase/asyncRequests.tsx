@@ -51,6 +51,12 @@ export const getAllTrips = async (): Promise<Trip[]> => {
   return tripData;
 };
 
+export const getAllFavoritedTripsFromUserId = async (uid: string) => {
+  const userData = await getUserById(uid);
+  const favorited = userData.favorited;
+  return favorited === undefined ? [] : getTripsFromIdList(favorited);
+};
+
 export const createTrip = async (trip: Trip) => {
   return await addDoc(collection(db, "trips"), {
     ...trip,
@@ -82,6 +88,7 @@ export const getTripById = async (tripId: string) => {
 };
 
 export async function getTripsFromIdList(tripIds: string[]): Promise<Trip[]> {
+  if (tripIds.length <= 0) return [];
   const q = query(collection(db, "trips"), where("__name__", "in", tripIds));
   const tripsSnap = await getDocs(q);
   const tripsData = tripsSnap.docs.map((doc) => ({
@@ -140,8 +147,7 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id: string): Promise<User> => {
   const userSnap = await getDoc(doc(db, "users", id));
-  if (!userSnap.exists())
-    throw new Error(`invalid id (${id}), cannot find user`);
+  if (!userSnap.exists()) throw new Error(`invalid id (${id}), cannot find user`);
   return userSnap.data() as User;
 };
 

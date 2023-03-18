@@ -248,3 +248,5 @@ type TravelLocation = {
   province: string;
   area: string;
 };
+
+type KeywordMapping = Map<string, number>;
