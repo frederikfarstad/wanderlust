@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   query,
   setDoc,
   Timestamp,
@@ -16,29 +17,6 @@ import {
 import { getUid } from "../utils/FirebaseUtils";
 import { db } from "./firebase-config";
 import { RatingInterface, Trip, User } from "./Interfaces";
-
-/**
- * TODO :
- *
- * - get all trips x
- *
- * - get user (uid) x
- *
- * - get trip (pid) x
- * - create trip x
- * - update trip (pid)
- * - delete trip (pid)
- *
- * For profile
- * - get all trips by user (uid, pid[]) x
- * - get all likeds trip by user (uid, pid[]) x
- * - get all review on post ()
- *
- *
- * MainPage : get some trips, with slight filtering. Check if post is liked or not ... oh boy
- *
- * ProfilePage : get trips by user, get liked trips, get trips with review by user
- */
 
 /* ############## TRIP FUNCTIONS ############## */
 
@@ -114,27 +92,21 @@ export const getTripForEdit = async (tripId: string | undefined) => {
   return null;
 };
 
-export const toggleLiked = async ({
+export const toggleFavorite = async ({
   uid,
-  liked,
+  tripId,
+  isFavorited,
 }: {
   uid: string;
-  liked: string[];
+  tripId: string;
+  isFavorited: boolean;
 }) => {
   await updateDoc(doc(db, "users", uid), {
-    liked,
+    favorited: isFavorited ? arrayRemove(tripId) : arrayUnion(tripId),
   });
-};
-export const toggleFavourited = async ({
-  uid,
-  favorited,
-}: {
-  uid: string;
-  favorited: string[];
-}) => {
-  console.log("async", favorited);
-  await updateDoc(doc(db, "users", uid), {
-    favorited,
+  const change = isFavorited ? -1 : 1;
+  await updateDoc(doc(db, "trips", tripId), {
+    numberOfFavorites: increment(change),
   });
 };
 
@@ -147,7 +119,8 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id: string): Promise<User> => {
   const userSnap = await getDoc(doc(db, "users", id));
-  if (!userSnap.exists()) throw new Error(`invalid id (${id}), cannot find user`);
+  if (!userSnap.exists())
+    throw new Error(`invalid id (${id}), cannot find user`);
   return userSnap.data() as User;
 };
 
@@ -204,6 +177,24 @@ export const createRating = async ({
   text,
   rating,
 }: RatingData) => {
+  const tripSnap = await getDoc(doc(db, "trips", tripId));
+  if (!tripSnap.exists())
+    throw new Error("tried to fetch invalid trip while creating rating");
+  const { averageRating: oldAvg, numberOfRatings: oldNumberOfRatings } =
+    tripSnap.data();
+
+  const newNumberOfRatings = oldNumberOfRatings + 1;
+  const newAverageRating =
+    (rating + oldNumberOfRatings * oldAvg) / newNumberOfRatings;
+
+  /* Update the trip with new average rating and rating count */
+  await updateDoc(doc(db, "trips", tripId), {
+    averageRating: newAverageRating,
+    numberOfRatings: newNumberOfRatings,
+  });
+
+  /* Create the rating in collection */
+  console.log("creating")
   const ratingDocRef = await addDoc(collection(db, "ratings"), {
     tripId,
     createdBy,
@@ -227,6 +218,24 @@ export const updateRating = async ({
 }: RatingData) => {
   if (!ratingId)
     throw new Error("Tried to update a rating, using undefined id");
+  const tripSnap = await getDoc(doc(db, "trips", tripId));
+
+  if (!tripSnap.exists())
+    throw new Error("tried to fetch invalid trip while creating rating");
+
+  const { averageRating: oldAvg, numberOfRatings: oldNumberOfRatings } =
+    tripSnap.data();
+  const newNumberOfRatings = oldNumberOfRatings + 1;
+  const newAverageRating =
+    (rating + oldNumberOfRatings * oldAvg) / newNumberOfRatings;
+
+  /* Update the trip with new average rating and rating count */
+  await updateDoc(doc(db, "trips", tripId), {
+    averageRating: newAverageRating,
+    numberOfRatings: newNumberOfRatings,
+  });
+
+  /* Update the rating with new info */
   await updateDoc(doc(db, "ratings", ratingId), {
     tripId,
     createdBy,
@@ -240,11 +249,31 @@ export const deleteRating = async ({
   uid,
   tripId,
   ratingId,
+  rating,
 }: {
   uid: string;
   tripId: string;
   ratingId: string;
+  rating: number;
 }) => {
+  const tripSnap = await getDoc(doc(db, "trips", tripId));
+
+  if (!tripSnap.exists())
+    throw new Error("tried to fetch invalid trip while creating rating");
+
+  const { averageRating: oldAvg, numberOfRatings: oldNumberOfRatings } =
+    tripSnap.data();
+  const newNumberOfRatings = oldNumberOfRatings - 1;
+  
+  const newAverageRating = newNumberOfRatings > 0 ?
+    (oldNumberOfRatings * oldAvg - rating) / newNumberOfRatings : 0;
+
+  /* Update the trip with new average rating and rating count */
+  await updateDoc(doc(db, "trips", tripId), {
+    averageRating: newAverageRating,
+    numberOfRatings: newNumberOfRatings,
+  });
+
   await deleteDoc(doc(db, "ratings", ratingId));
   await updateDoc(doc(db, "users", uid), {
     ratings: arrayRemove({ tripId, ratingId }),
