@@ -19,28 +19,29 @@ export default function TripFooter({
   numberOfFavorites = 0,
 }: TripFooterProps) {
   const uid = getUid();
+
+
   const creatorQuery = useQuery({
     queryKey: ["users", uid],
     queryFn: () => getUserById(uid),
-    onSuccess: (data) => {
-      setIsFavorited(data.favorited?.includes(tripId) || false);
-    },
   });
 
-  const [isFavorited, setIsFavorited] = useState(false);
+  const isFavorited = creatorQuery.isSuccess ? creatorQuery.data.favorited?.includes(tripId) || false : false
 
   const queryClient = useQueryClient();
   const favoriteMutation = useMutation(toggleFavorite, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["trips"]);
-      queryClient.invalidateQueries(["users"]);
+      console.log("togle")
+      queryClient.invalidateQueries(["trips", tripId]);
+      queryClient.invalidateQueries(["users", uid]);
+      console.log("togle2")
     },
   });
 
   return (
     <div className="flex flex-row items-center justify-center gap-20">
       <div className="flex flex-row items-center gap-2">
-        <Link to={"trip/" + tripId}>
+        <Link to={"/trip/" + tripId}>
           <button className="w-8 h-8 rounded-full bg-opacity-0 flex items-center justify-center">
             <IconComment className="group-hover:bg-sky-300" />
           </button>
