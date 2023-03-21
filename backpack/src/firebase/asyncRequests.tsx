@@ -219,20 +219,21 @@ export const updateRating = async ({
   if (!ratingId)
     throw new Error("Tried to update a rating, using undefined id");
   const tripSnap = await getDoc(doc(db, "trips", tripId));
+  const ratingSnap = await getDoc(doc(db, "ratings", ratingId))
 
-  if (!tripSnap.exists())
+  if (!tripSnap.exists() || !ratingSnap.exists())
     throw new Error("tried to fetch invalid trip while creating rating");
 
-  const { averageRating: oldAvg, numberOfRatings: oldNumberOfRatings } =
+  const { averageRating, numberOfRatings } =
     tripSnap.data();
-  const newNumberOfRatings = oldNumberOfRatings + 1;
-  const newAverageRating =
-    (rating + oldNumberOfRatings * oldAvg) / newNumberOfRatings;
+  const {rating: oldRating} = ratingSnap.data() 
 
-  /* Update the trip with new average rating and rating count */
+  
+  const newAverageRating = (averageRating * numberOfRatings - oldRating + rating) / numberOfRatings
+
+  /* Update the trip with new average rating */
   await updateDoc(doc(db, "trips", tripId), {
     averageRating: newAverageRating,
-    numberOfRatings: newNumberOfRatings,
   });
 
   /* Update the rating with new info */
