@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import Post from "../components/Trip";
+import Post from "../components/trip/TripLayout";
 import {
   getAllFavoritedTripsFromUserId,
   getAllTrips,
@@ -69,7 +69,7 @@ export default function MainPage() {
   const unsortedTrips = tripsQuery.isSuccess ? tripsQuery.data : [];
   const sortedTrips = unsortedTrips.sort(sortFunc);
   const posts = sortedTrips.map((trip) => (
-    <Post {...trip} key={trip.id} id={trip.id} />
+    <Post key={trip.id} tripId={trip.id} />
   ));
 
   useEffect(() => {
@@ -78,13 +78,13 @@ export default function MainPage() {
 
   return (
     <div className="flex flex-col justify-between">
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-6">
         {/* Left side of page */}
 
         <div></div>
 
         {/* Middle of page */}
-        <div className="h-max flex flex-col items-center gap-20 py-20 dark:text-white">
+        <div className="h-max col-start-2 col-span-4 flex flex-col items-center gap-20 py-20 dark:text-white">
           <div className="bg-primary-100 dark:bg-dark-100 drop-shadow-md rounded-md text-center text-sm flex overflow-clip">
             <p className="bg-primary-200 dark:bg-dark-50 p-4 cursor-default rounded-l-md whitespace-nowrap">
               Sort by:
@@ -120,7 +120,10 @@ export default function MainPage() {
               />
             </div>
           </div>
+          <div className="w-full flex flex-col gap-20">
+
           {posts}
+          </div>
         </div>
 
         {/* Right side of page */}
