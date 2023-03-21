@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { getTripById, getUserById } from "../../firebase/asyncRequests";
 import { getUid } from "../../utils/FirebaseUtils";
 import { IconEdit, IconDelete } from "../createTrip/Icons";
-import { ListElement } from "../trip/Trip";
+import { ListElement } from "../trip/LocationListElement";
 import TripFooter from "../trip/TripFooter";
 
 /* 

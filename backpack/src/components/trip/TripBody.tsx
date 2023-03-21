@@ -1,5 +1,5 @@
 import { Location } from "../../firebase/Interfaces";
-import { ListElement } from "./Trip";
+import { ListElement } from "./LocationListElement";
 
 interface TripBodyProps {
   title: string;
