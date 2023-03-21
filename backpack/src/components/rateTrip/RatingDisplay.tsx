@@ -32,6 +32,7 @@ export default function RatingDisplay({
     onSuccess: () => {
       queryClient.invalidateQueries(["users", uid]);
       queryClient.invalidateQueries(["ratings", tripId]);
+      queryClient.invalidateQueries(["trips", tripId]);
     },
   });
 
@@ -86,7 +87,7 @@ export default function RatingDisplay({
           <IconEdit />
         </button>
         <button
-          onClick={() => deleteRatingMutation.mutate({ uid, tripId, ratingId })}
+          onClick={() => deleteRatingMutation.mutate({ uid, tripId, ratingId, rating })}
         >
           <IconDelete />
         </button>

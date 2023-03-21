@@ -1,3 +1,13 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+  createRating,
+  getUserById,
+  updateRating,
+} from "../../firebase/asyncRequests";
+import { getUid } from "../../utils/FirebaseUtils";
+
 /* 
 We have two cases: 
 - prop id is undefined, meaning current user is creating a new rating
@@ -11,15 +21,6 @@ Could be a setstate function for edit, and for the standard one, we pass in an e
 
 */
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import {
-  createRating,
-  getUserById,
-  updateRating,
-} from "../../firebase/asyncRequests";
-import { getUid } from "../../utils/FirebaseUtils";
 
 export default function CreateRating({
   ratingId,
@@ -52,6 +53,7 @@ export default function CreateRating({
       onSuccess: (id) => {
         queryClient.invalidateQueries(["ratings", tripId]);
         queryClient.invalidateQueries(["users", uid]);
+        queryClient.invalidateQueries(["trips", tripId]);
         setRatingNumber(1)
         setRatingText("")
         handleCreate()
