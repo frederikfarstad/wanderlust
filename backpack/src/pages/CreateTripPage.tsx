@@ -38,17 +38,19 @@ export default function CreateTripPage() {
     else return false;
   };
 
-  const validPrice = (price: string) => {
-    if (
-      price.endsWith("kr") ||
-      price.endsWith("£") ||
-      price.endsWith("€") ||
-      (price.endsWith("$") &&
-        !isNaN(Number(price.substring(0, price.length - 3))))
-    )
-      return true;
-    else return false;
-  };
+  // const validPrice = (price: string) => {
+  //   if (
+  //     price.endsWith("kr") ||
+  //     price.endsWith("£") ||
+  //     price.endsWith("€") ||
+  //     (price.endsWith("$") &&
+  //       !isNaN(Number(price.substring(0, price.length - 3))))
+  //   )
+  //     return true;
+  //   else return false;
+  // };
+
+  const validPrice = /^\d+\.?\d*$/.test(price);
 
   const tripQuery = useQuery({
     queryKey: ["trips", tripId],
@@ -167,12 +169,10 @@ export default function CreateTripPage() {
                 label="Price"
                 type="text"
                 value={price}
-                isValid={validPrice(price)}
+                isValid={validPrice}
                 handleChange={setPrice}
                 explanation={
-                  !validPrice(price)
-                    ? "Please enter the price of the trip in kr, £, € or $"
-                    : ""
+                  !validPrice ? "Please enter the price of the trip" : ""
                 }
               />
             </label>
@@ -183,7 +183,7 @@ export default function CreateTripPage() {
                   onClick={handlePost}
                   disabled={
                     locations.length === 0 ||
-                    !validPrice(price) ||
+                    !validPrice ||
                     !validTitle(title) ||
                     duration.length == 0
                   }

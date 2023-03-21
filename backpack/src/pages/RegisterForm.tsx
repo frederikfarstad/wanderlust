@@ -6,7 +6,7 @@ import GoogleLoginButton from "../components/GoogleLogin";
 import { SubmitSignup } from "../utils/FirebaseUtils";
 import InputWithValidation from "../components/InputWithValidation";
 import { getAllUsers } from "../firebase/asyncRequests";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorPopup } from "../components/Popup";
 
 /*
@@ -19,6 +19,7 @@ import { ErrorPopup } from "../components/Popup";
  */
 
 export default function RegisterForm() {
+  const queryClient = useQueryClient();
   const [emails, setEmails] = useState<string[]>([]);
   const [usernames, setUsernames] = useState<string[]>([]);
 
@@ -44,6 +45,7 @@ export default function RegisterForm() {
   const onSignupSubmitted = async (e: any) => {
     e.preventDefault();
     try {
+      queryClient.invalidateQueries(["users"]);
       const { success, message } = await SubmitSignup({
         email,
         username,

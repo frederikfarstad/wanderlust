@@ -1,3 +1,4 @@
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   addDoc,
