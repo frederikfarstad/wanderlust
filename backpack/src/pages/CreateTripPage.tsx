@@ -4,10 +4,12 @@ import { Trip, Location } from "../firebase/Interfaces";
 import LocationDisplay from "../components/createTrip/LocationDisplay";
 import {
   createTrip,
+  getTripById,
   getTripForEdit,
   updateTrip,
 } from "../firebase/asyncRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUid } from "../utils/FirebaseUtils";
 /**
  * Can either be creating a new post, or editing an existing one.
  * Creating a new post is fairly straigh forward. Many input fields to fill
@@ -35,15 +37,18 @@ export default function CreateTripPage() {
   const tripQuery = useQuery({
     queryKey: ["trips", tripId],
     queryFn: () => getTripForEdit(tripId),
-    onSuccess: (trip) => {
-      setEditing(trip !== null);
-      setTitle(trip?.title ?? "");
-      setDescription(trip?.description ?? "");
-      setDuration(trip?.duration ?? "");
-      setPrice(trip?.price ?? "");
-      setLocations(trip?.locations ?? []);
-    },
   });
+
+  useEffect(() => {
+    if (tripQuery.isSuccess && tripQuery.data.createdBy === getUid()) {
+      setEditing(true)
+      setTitle(tripQuery.data.title || "");
+      setDescription(tripQuery.data.description || "");
+      setDuration(tripQuery.data.duration || "");
+      setPrice(tripQuery.data.price || "");
+      setLocations(tripQuery.data.locations || []);
+    }
+  }, [tripQuery.isSuccess, tripQuery.data]);
 
   const queryClient = useQueryClient();
   const createTripMutation = useMutation({

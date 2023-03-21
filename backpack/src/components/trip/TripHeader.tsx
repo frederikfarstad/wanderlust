@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Timestamp } from "firebase/firestore";
 import moment from "moment";
+import { Link } from "react-router-dom";
 import { getUserById } from "../../firebase/asyncRequests";
 import { getUid } from "../../utils/FirebaseUtils";
 import { IconDelete, IconEdit } from "../createTrip/Icons";
@@ -39,11 +40,8 @@ export default function TripHeader({
     4. make sure the page is switched to mainpage, if on tripPage
     Probably need a bunch of mutations for this, we'll see
     */
-  }
+  };
 
-  const handleEdit = () => {
-    /* set editmode using prop. We don't even need this function for that, but might be good for clarity */
-  }
 
   return (
     <div className="flex flex-row items-center gap-4 relative">
@@ -67,9 +65,11 @@ export default function TripHeader({
       </div>
       {owner && (
         <div className="absolute right-4 top-4 flex flex-row gap-2">
-          <button onClick={handleEdit}>
-            <IconEdit />
-          </button>
+          <Link to={"/create/" + tripId}>
+            <button>
+              <IconEdit />
+            </button>
+          </Link>
           <button onClick={handleDelete}>
             <IconDelete />
           </button>

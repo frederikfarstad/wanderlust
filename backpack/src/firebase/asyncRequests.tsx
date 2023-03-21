@@ -76,20 +76,28 @@ export async function getTripsFromIdList(tripIds: string[]): Promise<Trip[]> {
   return tripsData;
 }
 
-export const getTripForEdit = async (tripId: string | undefined) => {
-  if (!tripId || tripId === "new") {
-    return null;
-  }
+const emptyTrip: Trip = {
+  title: "", description: "", duration: "", price: "", locations: [],
+  id: "",
+  createdAt: Timestamp.fromDate(new Date()),
+  edited: Timestamp.fromDate(new Date()),
+  createdBy: "",
+  numberOfRatings: 0,
+  averageRating: 0,
+  numberOfFavorites: 0
+}
 
-  try {
+export const getTripForEdit = async (tripId: string) => {
+  if (tripId === "new") 
+    return emptyTrip
     const tripSnap = await getDoc(doc(db, "trips", tripId));
     if (tripSnap.exists()) {
       return { ...tripSnap.data(), id: tripSnap.id } as Trip;
+    } else {
+      return emptyTrip
     }
-  } catch (error) {
-    console.error(error);
-  }
-  return null;
+
+
 };
 
 export const toggleFavorite = async ({
