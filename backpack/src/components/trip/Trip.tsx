@@ -9,15 +9,14 @@ import { Link } from "react-router-dom";
 import {
   deleteTrip,
   getUserById,
-  toggleFavourited,
-  toggleLiked,
-} from "../firebase/asyncRequests";
-import { Location, Trip } from "../firebase/Interfaces";
-import { getUid } from "../utils/FirebaseUtils";
+  toggleFavorite
+} from "../../firebase/asyncRequests";
+import { Location, Trip } from "../../firebase/Interfaces";
+import { getUid } from "../../utils/FirebaseUtils";
 
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 import { useEffect, useState } from "react";
-import { IconBxComment } from "./createTrip/Icons";
+import { IconBxComment } from "../createTrip/Icons";
 
 /**
  * THE GOAL:
@@ -71,20 +70,15 @@ export default function TripDisplay({
     mutationFn: deleteTrip,
     onSuccess: () => queryClient.invalidateQueries(["trips"]),
   });
-  const toggleLikedMutation = useMutation({
-    mutationFn: toggleLiked,
-    onSuccess: () => queryClient.invalidateQueries(["trips"]),
-  });
+
   const toggleFavoritedMutation = useMutation({
-    mutationFn: toggleFavourited,
+    mutationFn: toggleFavorite,
     onSuccess: () => queryClient.invalidateQueries(["trips"]),
   });
 
   // Current user may have a list of favorited and liked trips. We store them here, if they exist.
   // Some users do not have favorited/liked trips yet. In that case we store an empty array
-  const [likedArray, setLikedArray] = useState(
-    userQuery.data ? userQuery.data.liked || [] : []
-  );
+
   const [favoritedArray, setFavoritedArray] = useState(
     userQuery.data ? userQuery.data.favorited || [] : []
   );
@@ -95,7 +89,7 @@ export default function TripDisplay({
     return <>{JSON.stringify(userQuery.error)}</>;
 
   // to check if the current user has liked/favorited the trip, we check if the post exist in the likedArray or favoritedArray
-  const isLiked = likedArray.includes(id);
+
   const isFavorited = favoritedArray.includes(id);
 
   // get info about the creator, to display on the post
@@ -106,15 +100,7 @@ export default function TripDisplay({
     const favorited = favoritedArray.includes(id)
       ? favoritedArray.filter((f) => f !== id)
       : [...favoritedArray, id];
-    toggleFavoritedMutation.mutate({ uid, favorited });
     setFavoritedArray(favorited);
-  };
-  const handleToggleLiked = () => {
-    const liked = likedArray.includes(id)
-      ? likedArray.filter((l) => l !== id)
-      : [...likedArray, id];
-    toggleLikedMutation.mutate({ uid, liked });
-    setLikedArray(liked);
   };
 
   const owner = createdBy === uid;
@@ -187,7 +173,6 @@ export default function TripDisplay({
               </div>
             )}
           </button>
-          <IconLike liked={isLiked} />
           <Link to={"/trip/"+id}>
 
           <IconBxComment />

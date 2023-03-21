@@ -4,8 +4,27 @@ import { useParams } from "react-router-dom";
 import { getTripById, getUserById } from "../../firebase/asyncRequests";
 import { getUid } from "../../utils/FirebaseUtils";
 import { IconEdit, IconDelete } from "../createTrip/Icons";
-import { ListElement } from "../Trip";
-import TripFooter from "../TripFooter";
+import { ListElement } from "../trip/Trip";
+import TripFooter from "../trip/TripFooter";
+
+/* 
+Goal: this should handle layout only. Logic should be moved to separate components.
+
+Header and footer?
+
+Header needs to fetch creator info (can aslo handle delete/edit)
+
+Footer handles info about comments/likes/etc
+
+
+DELETE THIS?
+
+TODO : delet dis
+
+
+*/
+
+
 
 export default function TripDisplay() {
   const { tripId } = useParams();
