@@ -32,7 +32,7 @@ export default function TripLayout({tripId} : {tripId: string}) {
   if (editmode) return (<div>Editmode with details, only the things that can change, title,locations, price, duration, desc. The rest will remain unchanged</div>);
 
   return (
-    <div className="border border-white rounded-t-xl p-4 bg-primary-100">
+    <div title="TripDiv" className="border border-white rounded-t-xl p-4 bg-primary-100">
       <TripHeader tripId={tripId} {...tripQuery.data} />
       <TripBody {...tripQuery.data} />
       <TripFooter tripId={tripId} {...tripQuery.data} />
