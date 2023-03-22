@@ -29,6 +29,17 @@ export const getAllTrips = async (): Promise<Trip[]> => {
   return tripData;
 };
 
+export const getAllTripsByUserId = async (uid: string) => {
+  const tripsRef = collection(db, "trips");
+  const tripsQuery = query(tripsRef, where("createdBy", "==", uid));
+  const tripsSnap = await getDocs(tripsQuery);
+  const tripData = tripsSnap.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  })) as Trip[];
+  return tripData;
+};
+
 export const getAllFavoritedTripsFromUserId = async (uid: string) => {
   const userData = await getUserById(uid);
   const favorited = userData.favorited;
@@ -77,27 +88,28 @@ export async function getTripsFromIdList(tripIds: string[]): Promise<Trip[]> {
 }
 
 const emptyTrip: Trip = {
-  title: "", description: "", duration: "", price: "", locations: [],
+  title: "",
+  description: "",
+  duration: "",
+  price: "",
+  locations: [],
   id: "",
   createdAt: Timestamp.fromDate(new Date()),
   edited: Timestamp.fromDate(new Date()),
   createdBy: "",
   numberOfRatings: 0,
   averageRating: 0,
-  numberOfFavorites: 0
-}
+  numberOfFavorites: 0,
+};
 
 export const getTripForEdit = async (tripId: string) => {
-  if (tripId === "new") 
-    return emptyTrip
-    const tripSnap = await getDoc(doc(db, "trips", tripId));
-    if (tripSnap.exists()) {
-      return { ...tripSnap.data(), id: tripSnap.id } as Trip;
-    } else {
-      return emptyTrip
-    }
-
-
+  if (tripId === "new") return emptyTrip;
+  const tripSnap = await getDoc(doc(db, "trips", tripId));
+  if (tripSnap.exists()) {
+    return { ...tripSnap.data(), id: tripSnap.id } as Trip;
+  } else {
+    return emptyTrip;
+  }
 };
 
 export const toggleFavorite = async ({
@@ -202,7 +214,7 @@ export const createRating = async ({
   });
 
   /* Create the rating in collection */
-  console.log("creating")
+  console.log("creating");
   const ratingDocRef = await addDoc(collection(db, "ratings"), {
     tripId,
     createdBy,
@@ -227,17 +239,16 @@ export const updateRating = async ({
   if (!ratingId)
     throw new Error("Tried to update a rating, using undefined id");
   const tripSnap = await getDoc(doc(db, "trips", tripId));
-  const ratingSnap = await getDoc(doc(db, "ratings", ratingId))
+  const ratingSnap = await getDoc(doc(db, "ratings", ratingId));
 
   if (!tripSnap.exists() || !ratingSnap.exists())
     throw new Error("tried to fetch invalid trip while creating rating");
 
-  const { averageRating, numberOfRatings } =
-    tripSnap.data();
-  const {rating: oldRating} = ratingSnap.data() 
+  const { averageRating, numberOfRatings } = tripSnap.data();
+  const { rating: oldRating } = ratingSnap.data();
 
-  
-  const newAverageRating = (averageRating * numberOfRatings - oldRating + rating) / numberOfRatings
+  const newAverageRating =
+    (averageRating * numberOfRatings - oldRating + rating) / numberOfRatings;
 
   /* Update the trip with new average rating */
   await updateDoc(doc(db, "trips", tripId), {
@@ -273,9 +284,11 @@ export const deleteRating = async ({
   const { averageRating: oldAvg, numberOfRatings: oldNumberOfRatings } =
     tripSnap.data();
   const newNumberOfRatings = oldNumberOfRatings - 1;
-  
-  const newAverageRating = newNumberOfRatings > 0 ?
-    (oldNumberOfRatings * oldAvg - rating) / newNumberOfRatings : 0;
+
+  const newAverageRating =
+    newNumberOfRatings > 0
+      ? (oldNumberOfRatings * oldAvg - rating) / newNumberOfRatings
+      : 0;
 
   /* Update the trip with new average rating and rating count */
   await updateDoc(doc(db, "trips", tripId), {
@@ -286,5 +299,11 @@ export const deleteRating = async ({
   await deleteDoc(doc(db, "ratings", ratingId));
   await updateDoc(doc(db, "users", uid), {
     ratings: arrayRemove({ tripId, ratingId }),
+  });
+};
+
+export const setUserProfilePicture = async (uid: string, imageUrl: string) => {
+  await updateDoc(doc(db, "users", uid), {
+    profilepicture: imageUrl,
   });
 };
