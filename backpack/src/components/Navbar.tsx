@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { signOut } from "firebase/auth";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { getUserById } from "../firebase/asyncRequests";
@@ -8,6 +9,7 @@ import { auth } from "../firebase/firebase-config";
 import { User } from "../firebase/Interfaces";
 import logo from "../public/mountain.png";
 import { getUid } from "../utils/FirebaseUtils";
+import defaultpfp from "../public/pfp.png";
 
 const cookies = new Cookies();
 var isDarkMode: boolean = cookies.get("using_dark_mode") === "t" || false;
@@ -32,8 +34,7 @@ export default function Navbar() {
   if (userQuery.isLoading)
     return (
       <>
-        Loading user: {uid}...{" "}
-        <button onClick={() => signOut(auth)}>Sign out</button>
+        Loading user: {uid}... <button onClick={() => signOut(auth)}>Sign out</button>
       </>
     );
   if (userQuery.isError) return <>{JSON.stringify(userQuery.error)}</>;
@@ -62,8 +63,8 @@ export default function Navbar() {
             <div className="group">
               <Link to={profileLink}>
                 <img
-                  className="h-8 min-w-max rounded-full bg-gray-500 ring-2 ring-gray-500 hover:ring-gray-900 hover:ring-4 transition-all"
-                  src={pfp}
+                  className="h-8 min-w-max rounded-full bg-gray-500 ring-2 ring-gray-500 hover:ring-gray-900 hover:ring-4 transition-all aspect-square"
+                  src={pfp || defaultpfp}
                   alt="user photo"
                 />
               </Link>
@@ -75,9 +76,7 @@ export default function Navbar() {
                     </div>
                   </Link>
                   <Link to="/settings">
-                    <div className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4">
-                      Settings
-                    </div>
+                    <div className="text-sm font-light dark:text-primary-details hover:bg-gray-300 p-4">Settings</div>
                   </Link>
                   <Link to="/" className="">
                     <button
