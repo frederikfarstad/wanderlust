@@ -52,7 +52,6 @@ export default function LoginForm() {
               <div>
                 <InputWithValidation
                   label="Email"
-                  title="LoginEmailInput"
                   type="email"
                   value={email}
                   isValid={correctEmailFormat && registeredEmail}
