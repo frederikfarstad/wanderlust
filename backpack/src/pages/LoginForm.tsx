@@ -20,17 +20,16 @@ export default function LoginForm() {
     const success = await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const [emails, setEmails] = useState<string[]>([]);
 
   const userQuery = useQuery({
     queryKey: ["users"],
     queryFn: getAllUsers,
-    onSuccess: (users) => {
-      setEmails(users.map((user) => user.email));
-    },
   });
 
+  const emails = userQuery.isSuccess ? userQuery.data.map(user => user.email) : []
+
   const registeredEmail = emails.includes(email);
+  console.log(registeredEmail)
   const correctEmailFormat =
     /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 
@@ -52,7 +51,6 @@ export default function LoginForm() {
               <div>
                 <InputWithValidation
                   label="Email"
-                  title="LoginEmailInput"
                   type="email"
                   value={email}
                   isValid={correctEmailFormat && registeredEmail}
@@ -60,7 +58,7 @@ export default function LoginForm() {
                   explanation={
                     !correctEmailFormat && !registeredEmail
                       ? "Must be like example@example.com"
-                      : "Enter valid user Email"
+                      : "Email is not registered"
                   }
                 />
               </div>
