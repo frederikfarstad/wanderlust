@@ -126,7 +126,9 @@ export default function TripDisplay({
         <div className="flex flex-wrap items-center">
           <img src={creatorPfpUrl || defaultpfp} className="h-8 w-8 bg-blue-600 rounded-full" />
           <div className="px-2">
-            <div className="self-center text-sm font-semibold">{username}</div>
+            <div className="self-center text-sm font-semibold" title="TripCreatorUsernameLabel">
+              {username}
+            </div>
             <div className="text-xs text-gray-800 flex items-center  dark:text-dark-900">
               {moment(createdAt?.toDate()).fromNow()}
             </div>

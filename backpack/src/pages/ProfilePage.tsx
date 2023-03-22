@@ -51,8 +51,8 @@ function ProfilePage() {
       }
     };
 
-    getImage();
     getUser();
+    getImage();
   }, [uid, urlID]);
 
   const onChange = (imageList: any) => {
@@ -120,7 +120,9 @@ function ProfilePage() {
             </div>
           )}
         </ImageUploading>
-        <div className="self-center text-xl font-semibold dark:text-white">{username}</div>
+        <div className="self-center text-xl font-semibold dark:text-white" title="ProfileUsernameLabel">
+          {username}
+        </div>
         <button
           onClick={() => setType("posts")}
           type="button"
