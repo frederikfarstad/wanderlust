@@ -31,10 +31,8 @@ export default function TripFooter({
   const queryClient = useQueryClient();
   const favoriteMutation = useMutation(toggleFavorite, {
     onSuccess: () => {
-      console.log("togle")
       queryClient.invalidateQueries(["trips", tripId]);
       queryClient.invalidateQueries(["users", uid]);
-      console.log("togle2")
     },
   });
 
@@ -51,6 +49,7 @@ export default function TripFooter({
 
       <div className="flex flex-row items-center gap-2">
         <button
+        disabled={favoriteMutation.isLoading}
           onClick={() => favoriteMutation.mutate({ uid, tripId, isFavorited })}
           className="w-8 h-8 rounded-full flex items-center justify-center"
         >
