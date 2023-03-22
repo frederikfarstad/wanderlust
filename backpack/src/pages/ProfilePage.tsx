@@ -8,7 +8,7 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import ImageUploading from "react-images-uploading";
 import { Trip, User } from "../firebase/Interfaces";
 import { getAllFavoritedTripsFromUserId, getAllTripsByUserId, setUserProfilePicture } from "../firebase/asyncRequests";
-import TripDisplay from "../components/Trip";
+import TripLayout from "../components/trip/TripLayout";
 
 function ProfilePage() {
   const uid = auth.currentUser?.uid;
@@ -88,7 +88,7 @@ function ProfilePage() {
 
   const updatePosts = () => {
     getTrips.then((trips) => {
-      const newPosts = trips.map((trip) => <TripDisplay key={trip.id} {...trip} id={trip.id}></TripDisplay>);
+      const newPosts = trips.map((trip) => <TripLayout key={trip.id} tripId={trip.id} />);
       setPosts(newPosts);
     });
   };
