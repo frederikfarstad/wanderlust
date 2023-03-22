@@ -116,7 +116,7 @@ export default function CreateTripPage() {
               />
             </label>
 
-            <label className="col-span-2 block text-sm font-medium text-slate-700">
+            <label className="col-span-2 block text-sm font-medium text-slate-700 dark:text-white">
               Description
               <textarea
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"

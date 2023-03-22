@@ -20,7 +20,7 @@ const InputWithValidation = ({
   isAffectedByDarkMode,
 }: Props) => {
   const inputClassname = `mt-1 block w-full px-3 py-2 bg-primary-50 border rounded-md text-sm shadow-sm placeholder-slate-400
-    focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500
+    focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-slate-700
     ${isValid ? "" : "border-pink-500 text-pink-600 focus:border-pink-500 focus:ring-pink-500"}`;
 
   const explanationClassname =
