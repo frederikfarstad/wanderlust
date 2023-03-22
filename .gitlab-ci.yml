@@ -40,4 +40,6 @@ test: # This job runs in the test stage.
     - echo "testing successfully"
   artifacts:
     reports:
-      vitest_coverage: coverage/clover.xml
+      coverage_report:
+        coverage_format: clover
+        path: coverage/clover.xml
