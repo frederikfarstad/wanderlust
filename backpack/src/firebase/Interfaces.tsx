@@ -27,6 +27,7 @@ export interface Trip {
   price: string;
   createdBy: string;
   locations: Location[];
+  relevanceScore?: number;
 }
 
 export interface User {
@@ -39,5 +40,6 @@ export interface User {
   profilepicture: string;
   trips?: string[];
   liked?: string[];
+  favorited?: string[];
   reviewed?: { postId: string; commentId: string }[];
 }

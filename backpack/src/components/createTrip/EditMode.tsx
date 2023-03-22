@@ -3,7 +3,7 @@ import { Location } from '../../firebase/Interfaces'
 
 interface EditProps {
   location: Location | null;
-  goBack: (e: any, location : Location | null) => void;
+  goBack: (e: any, location: Location | null) => void;
 }
 
 export default function EditMode({ location, goBack }: EditProps) {
@@ -11,10 +11,10 @@ export default function EditMode({ location, goBack }: EditProps) {
   const [province, setProvince] = useState(location?.province || "");
   const [area, setArea] = useState(location?.area || "");
 
-  const newLocation = {country, province, area} as Location
+  const newLocation = { country, province, area } as Location;
 
   return (
-    <div className="border-2 border-black p-4 rounded-xl">
+    <div className="border-2 border-black p-4 rounded-xl dark:text-primary-details">
       <div className="grid grid-cols-3 gap-2">
         <label>
           Country
@@ -41,9 +41,16 @@ export default function EditMode({ location, goBack }: EditProps) {
           />
         </label>
         <div className="col-span-3 flex justify-between">
-        <button disabled={area === ""} onClick={e => goBack(e, newLocation)}><IconCheck /></button>
-        <button onClick={e => goBack(e, location)}><IconDelete /></button>
-      </div>
+          <button
+            disabled={area === ""}
+            onClick={(e) => goBack(e, newLocation)}
+          >
+            <IconCheck />
+          </button>
+          <button onClick={(e) => goBack(e, location)}>
+            <IconDelete />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -66,9 +73,14 @@ function IconDelete() {
 
 function IconCheck() {
   return (
-    <svg className="text-green-500 hover:border rounded-full border-gray-500" viewBox="0 0 1024 1024" fill="currentColor" height="2em" width="2em">
+    <svg
+      className="text-green-500 hover:border rounded-full border-gray-500"
+      viewBox="0 0 1024 1024"
+      fill="currentColor"
+      height="2em"
+      width="2em"
+    >
       <path d="M912 190h-69.9c-9.8 0-19.1 4.5-25.1 12.2L404.7 724.5 207 474a32 32 0 00-25.1-12.2H112c-6.7 0-10.4 7.7-6.3 12.9l273.9 347c12.8 16.2 37.4 16.2 50.3 0l488.4-618.9c4.1-5.1.4-12.8-6.3-12.8z" />
     </svg>
   );
 }
-

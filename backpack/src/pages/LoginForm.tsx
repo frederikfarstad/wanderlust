@@ -52,6 +52,7 @@ export default function LoginForm() {
               <div>
                 <InputWithValidation
                   label="Email"
+                  title="LoginEmailInput"
                   type="email"
                   value={email}
                   isValid={correctEmailFormat && registeredEmail}
@@ -71,6 +72,7 @@ export default function LoginForm() {
                   </span>
                 </label>
                 <input
+                  title="LoginPasswordInput"
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
                   name="password"
@@ -82,6 +84,7 @@ export default function LoginForm() {
                 />
               </div>
               <button
+                title="LoginButton"
                 onClick={loginWithEmail}
                 disabled={!correctEmailFormat || !password}
                 type="button"
