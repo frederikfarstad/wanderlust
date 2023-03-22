@@ -12,7 +12,6 @@
     "coverage": "set NODE_ENV=test&& firebase emulators:exec \"vitest run --coverage\" --import ./firebase_test_emulator_persistence"
   },
   "dependencies": {
-    "@esbuild/win32-x64": "^0.17.12",
     "@tanstack/react-query": "^4.26.1",
     "@tanstack/react-query-devtools": "^4.26.1",
     "firebase": "^9.17.1",
