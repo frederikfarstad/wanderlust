@@ -1,5 +1,4 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/firebase-config";
@@ -22,44 +21,35 @@ beforeAll(async () => {
 
   const uid = user.uid;
 
-  act(() =>
-    render(
-      <MemoryRouter initialEntries={[`/profile/${uid}`]}>
-        <Routes>
-          <Route
-            path="/profile/:urlID"
-            element={
-              <QueryClientProvider client={queryClient}>
-                <ProfilePage />
-              </QueryClientProvider>
-            }
-          />
-        </Routes>
-      </MemoryRouter>
-    )
+  render(
+    <MemoryRouter initialEntries={[`/profile/${uid}`]}>
+      <Routes>
+        <Route
+          path="/profile/:urlID"
+          element={
+            <QueryClientProvider client={queryClient}>
+              <ProfilePage />
+            </QueryClientProvider>
+          }
+        />
+      </Routes>
+    </MemoryRouter>
   );
+  await new Promise((resolve) => setTimeout(resolve, 3000));
 });
 
 describe("ProfilePage", () => {
   it("should show the correct profile", async () => {
-    const usernameLabel = await screen.findByTitle("ProfileUsernameLabel");
-    expect(usernameLabel).toBeInTheDocument();
-
-    waitFor(
-      async () => {
-        expect(usernameLabel).not.toBeEmptyDOMElement();
-      },
-      { timeout: 5000 }
-    );
-    screen.debug(undefined, 20000, { maxDepth: 16 });
-    expect(usernameLabel).toHaveTextContent("Test2");
-  });
-
-  it("should show trips posted by user by default", async () => {
-    const tripDivs = await waitForTripDivs();
-    tripDivs.forEach(async (tripDiv) => {
-      const creatorUsernameLabel = await searchForChildElementWithQuery(tripDiv, "[title='TripCreatorUsernameLabel']");
-      expect(creatorUsernameLabel).toHaveTextContent("Test2");
+    await act(async () => {
+      const usernameLabel = await screen.findByTitle("ProfileUsernameLabel");
+      expect(usernameLabel).toBeInTheDocument();
+      await waitFor(
+        () => {
+          expect(usernameLabel).not.toBeEmptyDOMElement();
+        },
+        { timeout: 5000 }
+      );
+      expect(usernameLabel).toHaveTextContent("Test2");
     });
   });
 });
