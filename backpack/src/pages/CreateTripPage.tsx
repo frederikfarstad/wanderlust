@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Trip, Location } from "../firebase/Interfaces";
 import LocationDisplay from "../components/createTrip/LocationDisplay";
-import {
-  createTrip,
-  getTripForEdit,
-  updateTrip,
-} from "../firebase/asyncRequests";
+import { createTrip, getTripForEdit, updateTrip } from "../firebase/asyncRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import InputWithValidation from "../components/InputWithValidation";
 /**
@@ -115,9 +111,8 @@ export default function CreateTripPage() {
                 value={title}
                 isValid={validTitle(title)}
                 handleChange={setTitle}
-                explanation={
-                  !validTitle(title) ? "Please enter a title for your trip" : ""
-                }
+                explanation={!validTitle(title) ? "Please enter a title for your trip" : ""}
+                isAffectedByDarkMode
               />
             </label>
 
@@ -133,9 +128,7 @@ export default function CreateTripPage() {
 
             <div className="col-span-2 flex flex-row items-center">
               <div className="flex-1 h-px bg-gray-300"></div>
-              <div className="text-sm font-light text-gray-500 px-4">
-                Add a stop to your trip
-              </div>
+              <div className="text-sm font-light text-gray-500 px-4">Add a stop to your trip</div>
               <div className="flex-1 h-px bg-gray-300"></div>
               <div></div>
             </div>
@@ -143,9 +136,7 @@ export default function CreateTripPage() {
             <div className="col-span-2 w-full">
               <LocationDisplay
                 locations={locations}
-                handleAddLocation={(locations: Location[]) =>
-                  setLocations(locations)
-                }
+                handleAddLocation={(locations: Location[]) => setLocations(locations)}
               />
             </div>
 
@@ -156,11 +147,8 @@ export default function CreateTripPage() {
                 value={duration}
                 isValid={duration.length != 0}
                 handleChange={setDuration}
-                explanation={
-                  duration.length == 0
-                    ? "Please enter the duration of your trip in days"
-                    : ""
-                }
+                explanation={duration.length == 0 ? "Please enter the duration of your trip in days" : ""}
+                isAffectedByDarkMode
               />
             </label>
 
@@ -171,9 +159,8 @@ export default function CreateTripPage() {
                 value={price}
                 isValid={validPrice}
                 handleChange={setPrice}
-                explanation={
-                  !validPrice ? "Please enter the price of the trip in EUR" : ""
-                }
+                explanation={!validPrice ? "Please enter the price of the trip in EUR" : ""}
+                isAffectedByDarkMode
               />
             </label>
 
@@ -181,12 +168,7 @@ export default function CreateTripPage() {
               <Link to="/">
                 <button
                   onClick={handlePost}
-                  disabled={
-                    locations.length === 0 ||
-                    !validPrice ||
-                    !validTitle(title) ||
-                    duration.length == 0
-                  }
+                  disabled={locations.length === 0 || !validPrice || !validTitle(title) || duration.length == 0}
                   type="submit"
                   className="inline-flex items-center justify-center col-span-2 px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 hover:bg-primary-800 disabled:bg-primary-400"
                 >
