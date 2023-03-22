@@ -49,6 +49,17 @@ export const getAllTrips = async (): Promise<Trip[]> => {
   return tripData;
 };
 
+export const getAllTripsByUserId = async (uid: string) => {
+  const tripsRef = collection(db, "trips");
+  const tripsQuery = query(tripsRef, where("createdBy", "==", uid));
+  const tripsSnap = await getDocs(tripsQuery);
+  const tripData = tripsSnap.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  })) as Trip[];
+  return tripData;
+};
+
 export const getAllFavoritedTripsFromUserId = async (uid: string) => {
   const userData = await getUserById(uid);
   const favorited = userData.favorited;
@@ -136,5 +147,11 @@ export const createUser = async (userInfo: User) => {
 export const updateUser = async (uid: string) => {
   await updateDoc(doc(db, "users", uid), {
     lastLogin: Timestamp.fromDate(new Date()),
+  });
+};
+
+export const setUserProfilePicture = async (uid: string, imageUrl: string) => {
+  await updateDoc(doc(db, "users", uid), {
+    profilepicture: imageUrl,
   });
 };

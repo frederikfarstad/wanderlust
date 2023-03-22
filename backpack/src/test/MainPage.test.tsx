@@ -42,7 +42,7 @@ describe("MainPage", () => {
 
     var prevCreationTime = Infinity;
     tripDivs.forEach((tripDiv) => {
-      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdAt") || "");
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdat") || "");
       if (isNaN(thisCreationTime)) return;
       // Check that previous trip div and this trip div is correctly sorted
       expect(thisCreationTime).toBeLessThanOrEqual(prevCreationTime);
@@ -59,7 +59,7 @@ describe("MainPage", () => {
 
     var prevCreationTime = 0;
     tripDivs.forEach((tripDiv) => {
-      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdAt") || "");
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdat") || "");
       if (isNaN(thisCreationTime)) return;
       // Check that previous trip div and this trip div is correctly sorted
       expect(thisCreationTime).toBeGreaterThanOrEqual(prevCreationTime);
@@ -160,7 +160,7 @@ describe("MainPage", () => {
 
     var prevCreationTime = Infinity;
     tripDivs.forEach((tripDiv) => {
-      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdAt") || "");
+      const thisCreationTime = parseInt(tripDiv.getAttribute("data-createdat") || "");
       if (isNaN(thisCreationTime)) return;
       // Check that previous trip div and this trip div is correctly sorted
       expect(thisCreationTime).toBeLessThanOrEqual(prevCreationTime);

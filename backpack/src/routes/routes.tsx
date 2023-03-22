@@ -34,7 +34,7 @@ export const loggedInRoutes = [
         element: <WelcomeUserPage />,
       },
       {
-        path: "/profile/:id",
+        path: "/profile/:urlID",
         element: <ProfilePage />,
       },
       {
