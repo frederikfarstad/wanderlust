@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Location } from '../../firebase/Interfaces'
+import { Location } from "../../firebase/Interfaces";
+import { Country } from "../../types";
+import { countries } from "../../utils/Validation";
 
 interface EditProps {
   location: Location | null;
@@ -7,7 +9,7 @@ interface EditProps {
 }
 
 export default function EditMode({ location, goBack }: EditProps) {
-  const [country, setCountry] = useState(location?.country || "");
+  const [country, setCountry] = useState<Country>((location?.country as Country) || undefined);
   const [province, setProvince] = useState(location?.province || "");
   const [area, setArea] = useState(location?.area || "");
 
@@ -18,11 +20,19 @@ export default function EditMode({ location, goBack }: EditProps) {
       <div className="grid grid-cols-3 gap-2">
         <label>
           Country
-          <input
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+          <select
+            onChange={(e) => setCountry(e.target.value as Country)}
             value={country}
-            onChange={(e) => setCountry(e.target.value)}
-          />
+            defaultValue={undefined}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+          >
+            <option value={undefined} disabled selected>
+              Select a country
+            </option>
+            {countries.map((country) => (
+              <option value={country}>{country}</option>
+            ))}
+          </select>
         </label>
         <label>
           Province
@@ -43,7 +53,9 @@ export default function EditMode({ location, goBack }: EditProps) {
         <div className="col-span-3 flex justify-between">
           <button
             disabled={area === ""}
-            onClick={(e) => goBack(e, newLocation)}
+            onClick={(e) => {
+              if (country !== undefined) goBack(e, newLocation);
+            }}
           >
             <IconCheck />
           </button>

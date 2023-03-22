@@ -26,4 +26,4 @@ dist-ssr
 coverage
 coverage/*
 /firebase_emulator_persistence
-firebase-export-[0-9]*.json
+/firebase-export-[0-9]*[a-zA-Z]*

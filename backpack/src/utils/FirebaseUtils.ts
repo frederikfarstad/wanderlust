@@ -1,3 +1,4 @@
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   addDoc,
@@ -5,8 +6,10 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   setDoc,
   Timestamp,
+  where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db, auth } from "../firebase/firebase-config";
@@ -22,10 +25,10 @@ type SignupData = {
 };
 
 export const getUid = () => {
-  const uid = auth.currentUser?.uid
-  if (!uid) throw new Error("cannot find uid")
-  return uid
-}
+  const uid = auth.currentUser?.uid;
+  if (!uid) throw new Error("cannot find uid");
+  return uid;
+};
 
 /**
  * After registering a user with firebase auth, we need to store the user in a separate users table aswell.
@@ -50,8 +53,6 @@ export const createUser = async (
   });
 };
 
-
-
 /**
  * When a user creates a post, we store it in the users collection.
  * Makes it easy to query all trips made by a user.
@@ -68,7 +69,7 @@ export const postTrip = async (uid: string, post: Trip) => {
 }; */
 
 /**
- * @returns boolean indicating success with signup
+ * @returns {success: boolean indicating success with signup, message: message indicating reason for failure}
  *
  * Creates a new user for the website.
  * Store signup details in firebase auth for login,
@@ -77,21 +78,27 @@ export const postTrip = async (uid: string, post: Trip) => {
 export const SubmitSignup = async (data: SignupData) => {
   const { email, username, fullname, password } = data;
 
-  const success = await createUserWithEmailAndPassword(auth, email, password)
+  // const userCollection = collection(db, "users");
+  // const usernameTakenQuery = query(
+  //   userCollection,
+  //   where("username", "==", username)
+  // );
+  // const usernameTakenSnapshot = await getDocs(usernameTakenQuery);
+
+  // if (!usernameTakenSnapshot.empty)
+  //   return { success: false, message: "Username taken!" };
+
+  const response = await createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredentials) => {
       const user = userCredentials.user;
       await updateProfile(user, { displayName: username });
 
       createUser(user.uid, email, fullname, username, null);
 
-      return true;
+      return { success: true, message: "Success" };
     })
     .catch((err) => {
-      console.log(err);
-      return false;
+      return { success: false, message: err.message };
     });
-  return success;
+  return response;
 };
-
-
-

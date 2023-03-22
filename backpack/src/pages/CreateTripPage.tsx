@@ -2,12 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Trip, Location } from "../firebase/Interfaces";
 import LocationDisplay from "../components/createTrip/LocationDisplay";
-import {
-  createTrip,
-  getTripForEdit,
-  updateTrip,
-} from "../firebase/asyncRequests";
+import { createTrip, getTripForEdit, updateTrip } from "../firebase/asyncRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import InputWithValidation from "../components/InputWithValidation";
 /**
  * Can either be creating a new post, or editing an existing one.
  * Creating a new post is fairly straigh forward. Many input fields to fill
@@ -31,6 +28,25 @@ export default function CreateTripPage() {
 
   const { tripId } = useParams();
   if (!tripId) throw new Error("invalid trip id");
+
+  const validTitle = (title: string) => {
+    if (title.length != 0) return true;
+    else return false;
+  };
+
+  // const validPrice = (price: string) => {
+  //   if (
+  //     price.endsWith("kr") ||
+  //     price.endsWith("£") ||
+  //     price.endsWith("€") ||
+  //     (price.endsWith("$") &&
+  //       !isNaN(Number(price.substring(0, price.length - 3))))
+  //   )
+  //     return true;
+  //   else return false;
+  // };
+
+  const validPrice = /^\d+\.?\d*$/.test(price);
 
   const tripQuery = useQuery({
     queryKey: ["trips", tripId],
@@ -89,16 +105,18 @@ export default function CreateTripPage() {
         <div>
           <div className="grid grid-cols-2 gap-4">
             <label className="col-span-2">
-              Title
-              <input
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="Name of trip"
+              <InputWithValidation
+                label="Title"
+                type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                isValid={validTitle(title)}
+                handleChange={setTitle}
+                explanation={!validTitle(title) ? "Please enter a title for your trip" : ""}
+                isAffectedByDarkMode
               />
             </label>
 
-            <label className="col-span-2">
+            <label className="col-span-2 block text-sm font-medium text-slate-700 dark:text-white">
               Description
               <textarea
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
@@ -110,9 +128,7 @@ export default function CreateTripPage() {
 
             <div className="col-span-2 flex flex-row items-center">
               <div className="flex-1 h-px bg-gray-300"></div>
-              <div className="text-sm font-light text-gray-500 px-4">
-                Add a stop to your trip
-              </div>
+              <div className="text-sm font-light text-gray-500 px-4">Add a stop to your trip</div>
               <div className="flex-1 h-px bg-gray-300"></div>
               <div></div>
             </div>
@@ -120,31 +136,31 @@ export default function CreateTripPage() {
             <div className="col-span-2 w-full">
               <LocationDisplay
                 locations={locations}
-                handleAddLocation={(locations: Location[]) =>
-                  setLocations(locations)
-                }
+                handleAddLocation={(locations: Location[]) => setLocations(locations)}
               />
             </div>
 
             <label>
-              Duration
-              <input
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="How long did it take in days"
-                value={duration}
+              <InputWithValidation
+                label="Duration"
                 type="number"
-                onChange={(e) => setDuration(e.target.value)}
+                value={duration}
+                isValid={duration.length != 0}
+                handleChange={setDuration}
+                explanation={duration.length == 0 ? "Please enter the duration of your trip in days" : ""}
+                isAffectedByDarkMode
               />
             </label>
 
             <label>
-              Price
-              <input
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="How much did it cost in EUR"
-                value={price}
+              <InputWithValidation
+                label="Price"
                 type="number"
-                onChange={(e) => setPrice(e.target.value)}
+                value={price}
+                isValid={validPrice}
+                handleChange={setPrice}
+                explanation={!validPrice ? "Please enter the price of the trip in EUR" : ""}
+                isAffectedByDarkMode
               />
             </label>
 
@@ -152,7 +168,7 @@ export default function CreateTripPage() {
               <Link to="/">
                 <button
                   onClick={handlePost}
-                  disabled={locations.length === 0}
+                  disabled={locations.length === 0 || !validPrice || !validTitle(title) || duration.length == 0}
                   type="submit"
                   className="inline-flex items-center justify-center col-span-2 px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 hover:bg-primary-800 disabled:bg-primary-400"
                 >
