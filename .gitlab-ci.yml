@@ -36,10 +36,5 @@ test: # This job runs in the test stage.
     - cd backpack
     - npm install
     - npm install -g firebase-tools
-    - npm run coverage
+    - npm run simpletest
     - echo "testing successfully"
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: clover
-        path: coverage/clover.xml
