@@ -52,7 +52,7 @@ export default function RatingDisplay({
   }
 
   return (
-    <div className="relative group border-t last:border-b last:rounded-b-xl border-white p-4">
+    <div className="relative group border-t last:border-b last:rounded-b-xl border-white p-4 dark:text-dark-900">
       <div className="flex flex-row items-center gap-4">
         <img src={profilepicture} className="w-12 h-12 rounded-full" />
         <div className="flex flex-col">

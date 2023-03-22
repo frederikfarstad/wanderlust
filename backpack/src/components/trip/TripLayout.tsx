@@ -19,7 +19,6 @@ import TripHeader from "./TripHeader";
 
 export default function TripLayout({tripId} : {tripId: string}) {
 
-  const [editmode, setEditmode] = useState(false);
 
   const tripQuery = useQuery({
     queryKey: ["trips", tripId],
@@ -28,11 +27,9 @@ export default function TripLayout({tripId} : {tripId: string}) {
 
   if (!tripQuery.isSuccess) return <div>Loading trip...</div>;
 
-  /*  TODO : fix edit mode */
-  if (editmode) return (<div>Editmode with details, only the things that can change, title,locations, price, duration, desc. The rest will remain unchanged</div>);
 
   return (
-    <div title="TripDiv" className="border border-white rounded-t-xl p-4 bg-primary-100">
+    <div title="TripDiv" className="border border-white rounded-t-xl p-4 bg-primary-100 dark:bg-dark-100 dark:border-dark-200">
       <TripHeader tripId={tripId} {...tripQuery.data} />
       <TripBody {...tripQuery.data} />
       <TripFooter tripId={tripId} {...tripQuery.data} />

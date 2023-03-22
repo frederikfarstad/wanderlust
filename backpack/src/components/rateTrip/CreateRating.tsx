@@ -64,11 +64,11 @@ export default function CreateRating({
   const username = currentUserQuery?.data?.username || "loading user...";
 
   return (
-      <div className="border border-white p-4 grid grid-cols-4 gap-4">
+      <div className="border border-white dark:border-dark-700 p-4 grid grid-cols-4 gap-4 dark:text-dark-900">
         <div className="col-span-4">Review as {username}</div>
         <textarea
           rows={4}
-          className="col-span-4 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 mb-10"
+          className="col-span-4 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 mb-10"
           placeholder="what are your thoughts"
           value={ratingText}
           onChange={(e) => setRatingText(e.target.value)}

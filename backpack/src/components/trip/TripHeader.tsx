@@ -44,7 +44,7 @@ export default function TripHeader({
 
 
   return (
-    <div className="flex flex-row items-center gap-4 relative">
+    <div className="flex flex-row items-center gap-4 relative dark:text-dark-900">
       <img src={profilepicture} className="w-12 h-12 rounded-full" />
       <div className="flex flex-col">
         <div className="font-semibold">{username}</div>

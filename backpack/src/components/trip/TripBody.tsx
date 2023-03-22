@@ -21,12 +21,12 @@ export default function TripBody({
   ));
 
   return (
-    <div>
+    <div className="dark:text-dark-900">
       <div className="flex items-center justify-center font-bold text-3xl">
         {title}
       </div>
       <div className="flex justify-between">
-        <ol className="relative border-l border-gray-700">
+        <ol className="relative border-l border-gray-700 dark:border-gray-400">
           {locationElements}
         </ol>
         <div className="flex flex-col">

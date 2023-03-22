@@ -15,7 +15,7 @@ export default function WelcomeUserPage() {
   const username = userQuery.isSuccess ? userQuery.data.username : "to Wanderlust"
   
   return (
-    <div className="flex items-center justify-center h-screen flex-col">
+    <div className="flex items-center justify-center h-screen flex-col dark:text-dark-900">
       <p className="text-3xl">
         Welcome {username}
       </p>

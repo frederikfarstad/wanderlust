@@ -108,5 +108,5 @@ function OrderedList({ locations, enterEditmode, deleteItem }: ListProps) {
       </li>
     ));
 
-  return <ol className="relative border-l border-gray-400">{listElements}</ol>;
+  return <ol className="relative border-l border-gray-400 dark:border-gray-700">{listElements}</ol>;
 }
