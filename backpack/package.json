@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "firebase emulators:exec \"vite\" --import ./firebase_emulator_persistence --export-on-exit",
+    "dev": "firebase emulators:exec \"vite\" --import ./firebase_test_emulator_persistence --export-on-exit",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "set NODE_ENV=test&& firebase emulators:exec \"vitest\" --import ./firebase_test_emulator_persistence",

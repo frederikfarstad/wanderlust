@@ -24,17 +24,15 @@ const TestWrapper = (props: TestWrapperProps) => {
  * @param query the query string to search for element by
  * @returns the element if it was found, otherwise null
  */
-export const searchForChildElementWithQuery = (
-  parent: HTMLElement | Element,
-  query: string
-) =>
-  waitFor(() => {
-    const element = parent.querySelector(query);
-    expect(element).toBeInTheDocument();
-    return element;
-  });
+export const searchForChildElementWithQuery = (parent: HTMLElement | Element, query: string) =>
+  waitFor(
+    () => {
+      const element = parent.querySelector(query);
+      expect(element).toBeInTheDocument();
+      return element;
+    },
+    { timeout: 5000 }
+  );
 
-export const wrappedRender = (
-  ui: React.ReactElement,
-  options?: Omit<RenderOptions, "queries">
-) => render(ui, { wrapper: TestWrapper, ...options });
+export const wrappedRender = (ui: React.ReactElement, options?: Omit<RenderOptions, "queries">) =>
+  render(ui, { wrapper: TestWrapper, ...options });
