@@ -49,6 +49,9 @@ export const getAllFavoritedTripsFromUserId = async (uid: string) => {
 export const createTrip = async (trip: Trip) => {
   return await addDoc(collection(db, "trips"), {
     ...trip,
+    averageRating: 0,
+    numberOfRatings: 0,
+    numberOfFavorites: 0,
     createdAt: Timestamp.fromDate(new Date()),
     createdBy: getUid(),
   });
