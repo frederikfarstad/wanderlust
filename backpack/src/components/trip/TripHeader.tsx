@@ -70,9 +70,9 @@ export default function TripHeader({
               <IconEdit />
             </button>
           </Link>
-          <button onClick={handleDelete}>
+{/*           <button onClick={handleDelete}>
             <IconDelete />
-          </button>
+          </button> */}
         </div>
       )}
     </div>
