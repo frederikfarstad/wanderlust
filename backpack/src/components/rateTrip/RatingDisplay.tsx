@@ -37,6 +37,7 @@ export default function RatingDisplay({
   });
 
   if (!creatorQuery.isSuccess) return <div>Loading...</div>;
+  const ratingOwner = uid === creatorQuery.data.id;
 
   const { username, profilepicture } = creatorQuery.data;
 
@@ -82,16 +83,20 @@ export default function RatingDisplay({
       </div>
       <div className="p-2">{text}</div>
 
-      <div className="absolute right-2 bottom-2 scale-0 group-hover:scale-100 flex flex-row gap-2">
-        <button onClick={() => setEditing(true)}>
-          <IconEdit />
-        </button>
-        <button
-          onClick={() => deleteRatingMutation.mutate({ uid, tripId, ratingId, rating })}
-        >
-          <IconDelete />
-        </button>
-      </div>
+      {ratingOwner && (
+        <div className="absolute right-2 bottom-2 scale-0 group-hover:scale-100 flex flex-row gap-2">
+          <button onClick={() => setEditing(true)}>
+            <IconEdit />
+          </button>
+          <button
+            onClick={() =>
+              deleteRatingMutation.mutate({ uid, tripId, ratingId, rating })
+            }
+          >
+            <IconDelete />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
