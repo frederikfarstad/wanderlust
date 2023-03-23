@@ -1,7 +1,7 @@
 import { Trip } from "../firebase/Interfaces";
 import { KeywordMapping } from "../types";
 
-const splitRegex = / |,|\./;
+const splitRegex = /[\s,.!?]/;
 
 const getWordsFromTrip = (trip: Trip) => {
   const titleWords = trip.title.split(splitRegex);
@@ -19,7 +19,7 @@ export const getRelevanceScore = (keywords: KeywordMapping, trip: Trip): number 
   const words = getWordsFromTrip(trip);
   var score = 0;
   words.forEach((word) => {
-    const findScore = keywords.get(word.toLowerCase()) || 0;
+    const findScore = word === "" ? 0 : keywords.get(word.toLowerCase()) || 0;
     score += findScore;
   });
   return score;
