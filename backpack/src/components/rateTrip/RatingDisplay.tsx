@@ -8,14 +8,7 @@ import { getUid } from "../../utils/FirebaseUtils";
 import { IconDelete, IconEdit } from "../createTrip/Icons";
 import CreateRating, { IconStar } from "./CreateRating";
 
-export default function RatingDisplay({
-  ratingId,
-  createdBy,
-  createdAt,
-  text,
-  rating,
-  edited,
-}: RatingInterface) {
+export default function RatingDisplay({ ratingId, createdBy, createdAt, text, rating, edited }: RatingInterface) {
   const uid = getUid();
   const { tripId } = useParams();
   if (!tripId) throw new Error("navigated to invalid trip");
@@ -37,19 +30,12 @@ export default function RatingDisplay({
   });
 
   if (!creatorQuery.isSuccess) return <div>Loading...</div>;
-  const ratingOwner = uid === creatorQuery.data.id;
+  const ratingOwner = uid === createdBy;
 
   const { username, profilepicture } = creatorQuery.data;
 
   if (editing) {
-    return (
-      <CreateRating
-        ratingId={ratingId}
-        text={text}
-        rating={rating}
-        handleCreate={() => setEditing(false)}
-      />
-    );
+    return <CreateRating ratingId={ratingId} text={text} rating={rating} handleCreate={() => setEditing(false)} />;
   }
 
   return (
@@ -59,16 +45,12 @@ export default function RatingDisplay({
         <div className="flex flex-col">
           <div className="font-semibold">{username}</div>
           <div className="flex flex-row items-center">
-            <div className="font-light text-xs">
-              {moment(createdAt.toDate()).fromNow()}
-            </div>
+            <div className="font-light text-xs">{moment(createdAt.toDate()).fromNow()}</div>
 
             {edited !== undefined && (
               <>
                 <div className="font-light text-xs mx-2">-</div>
-                <div className="font-light text-xs">
-                  edited {moment(edited.toDate()).fromNow()}
-                </div>
+                <div className="font-light text-xs">edited {moment(edited.toDate()).fromNow()}</div>
               </>
             )}
           </div>
@@ -88,11 +70,7 @@ export default function RatingDisplay({
           <button onClick={() => setEditing(true)}>
             <IconEdit />
           </button>
-          <button
-            onClick={() =>
-              deleteRatingMutation.mutate({ uid, tripId, ratingId, rating })
-            }
-          >
+          <button onClick={() => deleteRatingMutation.mutate({ uid, tripId, ratingId, rating })}>
             <IconDelete />
           </button>
         </div>

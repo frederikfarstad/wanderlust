@@ -14,12 +14,7 @@ interface TripHeaderProps {
   // TODO : enter edit mode for later
 }
 
-export default function TripHeader({
-  tripId,
-  createdBy,
-  createdAt,
-  edited,
-}: TripHeaderProps) {
+export default function TripHeader({ tripId, createdBy, createdAt, edited }: TripHeaderProps) {
   const uid = getUid();
   const creatorQuery = useQuery({
     queryKey: ["users", createdBy],
@@ -42,23 +37,20 @@ export default function TripHeader({
     */
   };
 
-
   return (
     <div className="flex flex-row items-center gap-4 relative dark:text-dark-900">
-      <img src={profilepicture} className="w-12 h-12 rounded-full" />
+      <Link to={`/profile/${createdBy}`}>
+        <img src={profilepicture} className="w-12 h-12 rounded-full" />
+      </Link>
       <div className="flex flex-col">
         <div className="font-semibold">{username}</div>
         <div className="flex flex-row items-center">
-          <div className="font-light text-xs">
-            {moment(createdAt.toDate()).fromNow()}
-          </div>
+          <div className="font-light text-xs">{moment(createdAt.toDate()).fromNow()}</div>
 
           {edited !== undefined && (
             <>
               <div className="font-light text-xs mx-2">-</div>
-              <div className="font-light text-xs">
-                edited {moment(edited.toDate()).fromNow()}
-              </div>
+              <div className="font-light text-xs">edited {moment(edited.toDate()).fromNow()}</div>
             </>
           )}
         </div>
@@ -70,7 +62,7 @@ export default function TripHeader({
               <IconEdit />
             </button>
           </Link>
-{/*           <button onClick={handleDelete}>
+          {/*           <button onClick={handleDelete}>
             <IconDelete />
           </button> */}
         </div>
